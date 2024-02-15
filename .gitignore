@@ -1,0 +1,29 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+*__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables file
+.env
+
+# Django development and runtime files
+*.log
+*.pot
+*.pyc
+*.pyo
+
+
+# Virtual environment
+venv/
+
+# Temporary files
+*.pyc
+*.pyo
+*.~
+*.swp
+*.db
+
+# Site-specific configurations
+local_settings.py
