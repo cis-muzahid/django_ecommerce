@@ -6,5 +6,5 @@ urlpatterns = [    # products views
     path('product/<id>/', ProductRetrieve.as_view(), name='product_retrieve'),
     path('product/', ProductCreateView.as_view(), name='create'),
     path('products/<int:pk>/update/', ProductUpdateView.as_view(), name='product_update'),
-    # path('product/<id>/', ProductView.as_view(), name='delete'),
+    path('delete_product/<id>/', ProductView.as_view(), name='product_delete'),
 ]
