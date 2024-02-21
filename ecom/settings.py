@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'home',
+    'users',
+    'products',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +59,7 @@ TEMPLATES = [
 # region
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,3 +132,5 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/assets')
+
+AUTH_USER_MODEL = 'users.CustomUser'
