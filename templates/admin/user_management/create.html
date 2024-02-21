@@ -1,0 +1,65 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block body %}
+	<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+				<h1>General Form</h1>
+			</div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+    		<div class="card card-primary">
+					<div class="card-header">
+						<h3 class="card-title">Quick Example</h3>
+					</div>
+					<!-- /.card-header -->
+					<!-- form start -->
+					<form action="" method="POST">
+						{% csrf_token %}
+						<div class="card-body">
+							<div class="form-group">
+								<label for="email">Email address</label>
+								<input type="email" class="form-control" name="email" id="exampleInputEmail1" placeholder="Enter email">
+							</div>
+							<div class="form-group">
+								<label for="username">Username</label>
+								<input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
+							</div>
+							<div class="form-group">
+								<label for="firstname">First Name</label>
+								<input type="text" class="form-control" name="firstname" id="fname" placeholder="Enter first name">
+							</div>
+							<div class="form-group">
+								<label for="lastname">Last Name</label>
+								<input type="text" class="form-control" name="lastname" id="lname" placeholder="Enter last name">
+							</div>
+							<div class="form-group">
+								<label for="password">Password</label>
+								<input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
+							</div>
+							<div class="form-group">
+								<label for="confirm_password">Confirm Password</label>
+								<input type="cnf_password" class="form-control" name="cnf_password" id="confirm_password" placeholder="Password">
+							</div>
+							<div>
+								<label>Role:</label>
+								<input type="radio" name="role" value="Supplier" id="sup"> <label for="sup">Supplier</label>
+								<input type="radio" name="role" value="Customer" id="cust"> <label for="cust">Customer</label>
+							</div>
+						</div>
+						<!-- /.card-body -->
+
+						<div class="card-footer">
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</section>
+	</div>
+{% endblock %}

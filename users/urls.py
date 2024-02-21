@@ -1,13 +1,11 @@
-from typing import List
+from django.urls import path
+from .views import LoginView, LogoutView, SignupView, UserIndexView, AddUserView
 
-from django.urls import (path, URLPattern)
-
-from . import views
-
-urlpatterns: List[URLPattern] = [
-    path('login_user', views.Login.login_user, name = 'login'),
-    path('logout_user', views.Login.logout_user, name = 'logout'),
-    path('signup_user', views.Login.signup_user, name='signup'),
-    path(route='sub-admin/', view=views.AdminView.as_view(), name='sub-admin'),
+urlpatterns = [
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('signup/', SignupView.as_view(), name='signup'),
+    path('user/index/', UserIndexView.as_view(), name='user_index'),
+    path('user/add/', AddUserView.as_view(), name='add_user'),
+    # Add more paths as needed for your application
 ]
-

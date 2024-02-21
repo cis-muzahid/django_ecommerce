@@ -1,50 +1,68 @@
-from django.contrib.auth.models import Group, Permission
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.views import generic
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.views import View, generic
 from .models import CustomUser
-# Create your views here.
-class Login:
-	def login_user(request):
-		if request.method =="POST":
-			email = request.POST["email"]
-			password = request.POST["password"]
-			user = authenticate(request, email=email, password=password)
-			if user is not None:
-				login(request, user)
-				messages.success(request, 'Welcome login user.')
-				return redirect('home')
-				# Redirect to a success page.
-				...
-			else:
-				messages.info(request, 'user does not exist.')
-				return redirect('login')
-				# Return an 'invalid login' error message.
-				...
-		else:
-			return render(request, 'authenticate/login.html', {})
 
-	def logout_user(request):
-		logout(request)
-		return redirect('home')
+# Custom User model
+User = get_user_model()
 
-	def signup_user(request):
-		if request.method =="POST":
-			User = get_user_model()
-			# breakpoint()
-			user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-			user.first_name = request.POST['firstname']
-			user.last_name = request.POST['lastname']
-			user.save()
-			messages.success(request, 'Your accout has been successfully created.')
-			return redirect('login')
-		else:
-			return render(request, "authenticate/signup.html")
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'authenticate/login.html')
 
-class AdminView(generic.TemplateView):
-	template_name: str = 'admin/home.html'
+    def post(self, request):
+        email = request.POST["email"]
+        password = request.POST["password"]
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Welcome, you are now logged in.')
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid login credentials.')
+            return redirect('login')
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')
+
+class SignupView(View):
+    def get(self, request):
+        return render(request, "authenticate/signup.html")
+
+    def post(self, request):
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        first_name = request.POST['firstname']
+        last_name = request.POST['lastname']
+        role = request.POST['role']
+
+        user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name, role=role)
+        messages.success(request, 'Your account has been successfully created.')
+        return redirect('login')
+
+class UserIndexView(generic.TemplateView):
+    template_name = 'admin/user_management/index.html'
+
+class AddUserView(View):
+    def get(self, request):
+        return render(request, 'admin/user_management/create.html')
+
+    def post(self, request):
+        role = request.POST.get('role', None)
+        user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+        user.first_name = request.POST['firstname']
+        user.last_name = request.POST['lastname']
+        user.role = role
+        user.save()
+        messages.success(request, 'User account has been successfully created.')
+        return redirect('user_index')
+
+			
 
 # @login_required
 # def create_user(request):
