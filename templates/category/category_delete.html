@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class='container'>
+    <h1>Delete Category</h1>
+    <p>Are you sure you want to delete "{{ object.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class='btn btn-danger' type="submit">Yes, delete</button>
+    <a href='/categories' class='btn btn-secondary'>Cancle</a>
+    </form>
+{% endblock %}

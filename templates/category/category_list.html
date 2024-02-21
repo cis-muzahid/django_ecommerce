@@ -2,32 +2,32 @@
 {% load static %}
 
 {% block body %}
+    <h3>Category List</h3>
     <div class='container-fluid'>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a href='/product' class="btn btn-info me-md-2 mx-5 my-3" type="button">Add Product</a>
+            <a href='/category/create' class="btn btn-info me-md-2 mr-5" type="button">Add Category</a>
         </div>
         <div class='container'>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Product Name</th>
-                    <th scope="col">Edit</th>
-                    <th scope="col">Delete</th>
+                    <th scope="col">Categories</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                     </tr>
                 </thead>
-                {% for product in products %}
+                {% for category in object_list %}
                 <tbody>
                     <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{product.name}}</td>
-                    <td><a href='/products/{{product.id}}/update/'>Edit</a></td>
-                    <td><a href='/delete_product/{{product.id}}/'>Delete</a></td>
+                    <td>{{ category.name }}</td>
+                    <td><a href='/category/{{category.id}}/update/'>Edit</a></td>
+                    <td><a href='/category/{{category.id}}/delete/'>Delete</a></td>
                     </tr>
                 </tbody>
                 {% endfor %}
             </table>
         </div>
     </div>
-{% endblock %}
-  
+{% endblock %} 

@@ -3,10 +3,10 @@
 
 {% block body %}
 <div class='container'>
-    <h3 class='m-3'>Add Details to create new Product</h3>
-    <form method="post">{% csrf_token %}
+    <h3 class='m-3'>Update Product</h3>
+    <form action='' method="post">{% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Save">
+        <input type="submit" value="Update">
     </form>
 </div>
 {% endblock %}

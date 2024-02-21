@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from products.models import Product, ProductAttribute, ProductSpecification
+from products.models import Product, ProductAttribute, ProductSpecification, Category
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
@@ -9,7 +9,6 @@ from django.urls import reverse
 		
 class ProductView(View):
     def get(self, request):
-        breakpoint()
         products = Product.objects.all()
         return render(request, 'products/index.html', {'products': products})
 
@@ -19,11 +18,18 @@ class ProductView(View):
         product.is_delete = True 
         product.save()
         return redirect('product_view_get')
+    
+    def post(self, request):
+        category = Category.objects.get(pk=request.POST.get("category"))
+
+        if category != None:
+            products = Product.objects.filter(category=category)
+
 
 class ProductRetrieve(View):
     def get(self, request, id):
         product = get_object_or_404(Product, id=id)
-        return render(request, 'products/retrieve.html', {'product': product})
+        return render(request, 'products/retrieve.html', {'product': product})        
 
 
 class ProductCreateView(CreateView):
@@ -31,6 +37,26 @@ class ProductCreateView(CreateView):
     fields = ["name", 'description', 'price', 'weight', 'length', 'width', 'height', 'category']
     def get_success_url(self):
         return reverse('product_view_get')
+    
+class CreateProductAtrributes(View):
+    def get(self, request):
+        return render('product_attributes/form.html')
+
+    def post(self, request):
+        product = request.POST.get("product_id")
+        productattribute = ProductAttribute.objects.create("title", "value", "image")
+        productattribute.save()
+        return redirect("")
+
+class CreateProductSpecification(View):
+    def get(self, request):
+        return render('product_attributes/form.html')
+
+    def post(self, request):
+        product = request.POST.get("product_id")
+        productattribute = ProductSpecification.objects.create("title", "value")
+        productattribute.save()
+        return redirect("")
 	
 class ProductUpdateView(UpdateView):
     model = Product
