@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4;">
+    <div style="margin: 0 auto; max-width: 300px; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <h2 style="color: #333;">Login</h2>
+        <form action="" method="POST" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label for="email" style="display: block; margin-bottom: 5px; color: #555;">Email:</label>
+                <input type="email" id="email" name="email" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="password" style="display: block; margin-bottom: 5px; color: #555;">Password:</label>
+                <input type="password" id="password" name="password" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button type="submit" style="background-color: #4CAF50; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">Login</button>
+            </div>
+        </form>
+        <p style="font-size: 12px; color: #888;">Don't have an account? <a href="signup_user">Sign up</a></p>
+    </div>
+</body>
+</html>
