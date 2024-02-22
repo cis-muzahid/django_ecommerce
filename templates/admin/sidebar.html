@@ -44,6 +44,15 @@
               </p>
             </a>
           </li>
+          <li class="  nav-item {% if request.path == '/users/user/index/' %}menu-open{% endif %}">
+            <a href="{% url 'user_index' %}" class="nav-link {% if request.path == '/users/user/index/' %}active{% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Role Management
+                <span class="right badge badge-danger">New</span>
+              </p>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>

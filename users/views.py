@@ -2,7 +2,10 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import View, generic
-from .models import CustomUser
+from .models import CustomUser, Role, Permission
+from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm
+
+
 
 # Custom User model
 User = get_user_model()
@@ -48,88 +51,107 @@ class SignupView(View):
 class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = CustomUser.objects.all()
+        return context
 class AddUserView(View):
+    # def get(self, request):
+    #     return render(request, 'admin/user_management/create.html')
+
+    # def post(self, request):
+    #     form = CutomUserForm(request.POST)
+    #     if form.is_valid():
+    #         role = request.POST.get('role', None)
+    #         user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+    #         user.first_name = request.POST['firstname']
+    #         user.last_name = request.POST['lastname']
+    #         user.role = role
+    #         user.save()
+    #         messages.success(request, 'User account has been successfully created.')
+    #         return redirect('user_index')
+        
+    template_name = 'admin/user_management/create.html'  # Adjust the template name
+
     def get(self, request):
-        return render(request, 'admin/user_management/create.html')
+        form = CutomUserForm()
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        role = request.POST.get('role', None)
-        user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-        user.first_name = request.POST['firstname']
-        user.last_name = request.POST['lastname']
-        user.role = role
-        user.save()
-        messages.success(request, 'User account has been successfully created.')
-        return redirect('user_index')
+        
+        form = CutomUserForm(request.POST)
+        try:
+            if form.is_valid():
+                role = form.cleaned_data['role'].strip().lower()
+                if role not in dict(CustomUser.ROLE_CHOICES).keys():
+                    raise ValueError('Invalid role choice')
+                user = CustomUser.objects.create_user(
+                    username=form.cleaned_data['username'],
+                    email=form.cleaned_data['email'],
+                    password=form.cleaned_data['password']
+                )
+                user.first_name = form.cleaned_data['first_name']
+                user.last_name = form.cleaned_data['last_name']
+                user.role = role
+                user.save()
+                messages.success(request, 'User account has been successfully created.')
+                return render(request, self.template_name, {'form': form})
+        except Exception as e:
+            messages.error(request, f'Error creating user: {str(e)}')
+        
+        return render(request, self.template_name, {'form': form})
 
+class RoleIndexView(View):
+    template_name = 'admin/role_management/index.html'
+
+    def get(self, request):
+        roles = Role.objects.all()
+        return render(request, self.template_name, {'roles': roles})
+
+class AddRoleView(View):
+    template_name = 'admin/role_management/create.html'
+
+    def get(self, request):
+        form = RoleForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = RoleForm(request.POST)
+        try:
+            if form.is_valid():
+                role = form.cleaned_data['name']
+                new_role = Role.objects.create(name=role)
+                messages.success(request, 'Role has been successfully created.')
+                return redirect('role_index')
+        except Exception as e:
+            messages.error(request, f'Error creating role: {str(e)}')
+        
+        return render(request, self.template_name, {'form': form})
+
+# class PermissionIndexView(View):
+#     template_name = 'admin/role_management/permission_index.html'
+
+#     def get(self, request):
+#         permissions = Permission.objects.all()
+#         return render(request, self.template_name, {'permissions': permissions})
+
+# class AddPermissionView(View):
+#     template_name = 'admin/user_management/create_permission.html'
+
+#     def get(self, request):
+#         form = PermissionForm()
+#         return render(request, self.template_name, {'form': form})
+
+#     def post(self, request):
+#         form = PermissionForm(request.POST)
+#         try:
+#             if form.is_valid():
+#                 permission = form.cleaned_data['name']
+#                 new_permission = Permission.objects.create(name=permission)
+#                 messages.success(request, 'Permission has been successfully created.')
+#                 return redirect('permission_index')
+#         except Exception as e:
+#             messages.error(request, f'Error creating permission: {str(e)}')
+        
+#         return render(request, self.template_name, {'form': form})
 			
-
-# @login_required
-# def create_user(request):
-#     if request.method == "POST":
-#         # Check if the logged-in user has the required permissions to create a user
-#         if request.user.has_perm('auth.add_customuser'):
-#             User = get_user_model()
-#             user = User.objects.create_user(...)
-#             # Assign role based on the form input
-#             user.role = request.POST['role']
-#             user.save()
-#             messages.success(request, 'User created successfully.')
-#             return redirect('user_list')
-#         else:
-#             messages.error(request, 'You do not have permission to create a user.')
-#             return redirect('home')
-#     else:
-#         return render(request, "authenticate/create_user.html")
-
-# @login_required
-# def user_list(request):
-#     # Check if the logged-in user has the required permissions to view user list
-#     if request.user.has_perm('auth.view_customuser'):
-#         users = CustomUser.objects.all()
-#         return render(request, "authenticate/user_list.html", {'users': users})
-#     else:
-#         messages.error(request, 'You do not have permission to view user list.')
-#         return redirect('home')
-
-# @login_required
-# def edit_user(request, user_id):
-#     # Check if the logged-in user has the required permissions to edit a user
-#     if request.user.has_perm('auth.change_customuser'):
-#         user = CustomUser.objects.get(pk=user_id)
-#         if request.method == "POST":
-#             # Update user fields and role based on the form input
-#             user.email = request.POST['email']
-#             user.first_name = request.POST['first_name']
-#             user.last_name = request.POST['last_name']
-#             user.role = request.POST['role']
-#             user.save()
-#             messages.success(request, 'User updated successfully.')
-#             return redirect('user_list')
-#         else:
-#             return render(request, "authenticate/edit_user.html", {'user': user})
-#     else:
-#         messages.error(request, 'You do not have permission to edit this user.')
-#         return redirect('home')
-
-# @login_required
-# def delete_user(request, user_id):
-#     # Check if the logged-in user has the required permissions to delete a user
-#     if request.user.has_perm('auth.delete_customuser'):
-#         user = CustomUser.objects.get(pk=user_id)
-#         user.delete()
-#         messages.success(request, 'User deleted successfully.')
-#         return redirect('user_list')
-#     else:
-#         messages.error(request, 'You do not have permission to delete this user.')
-#         return redirect('home')
-		
-
-		
-# """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-# @permission_required('users.delete_customuser')
-# def delete_user(request):
-# 	"""
-# 	delete requested user
-# 	"""
