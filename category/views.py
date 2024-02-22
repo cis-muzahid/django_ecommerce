@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from products.models import Category
+from category.forms import CategoryForm
+from django.views import View
 from django.urls import reverse_lazy
 
 
@@ -11,17 +13,28 @@ class CategoryListView(ListView):
 
 class CategoryCreateView(CreateView):
     model = Category
-    fields = ['name', 'parent_category']
+    form_class = CategoryForm
     template_name = 'category/category_form.html'
     success_url = reverse_lazy('category-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
 
 class CategoryUpdateView(UpdateView):
     model = Category
-    fields = ['name', 'parent_category']
+    form_class = CategoryForm
     template_name = 'category/category_form.html'
     success_url = reverse_lazy('category-list')
 
-class CategoryDeleteView(DeleteView):
-    model = Category
-    success_url = reverse_lazy('category-list')
-    template_name = 'category/category_delete.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+class CategoryDeleteView(View):
+    def get(self, request, id):
+        category = Category.objects.get(id=id)
+        category.is_delete = True 
+        category.save()
+        return redirect('category-list')

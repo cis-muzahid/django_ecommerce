@@ -3,41 +3,52 @@ from products.models import Product, ProductAttribute, ProductSpecification, Cat
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
-
-
+from .forms import ProductForm
 # Create your views here.
 		
 class ProductView(View):
-    def get(self, request):
-        products = Product.objects.all()
-        return render(request, 'products/index.html', {'products': products})
-
-    def delete(self, request, id):
-        print('delete')
-        product = Product.objects.get(id=id)
-        product.is_delete = True 
-        product.save()
-        return redirect('product_view_get')
-    
-    def post(self, request):
-        category = Category.objects.get(pk=request.POST.get("category"))
-
-        if category != None:
+    def get(self, request, **kargs):
+        if kargs and kargs['category'] != None:
+            category = Category.objects.get(name=kargs['category'])
             products = Product.objects.filter(category=category)
-
-
+        else:
+            products = Product.objects.all()
+        return render(request, 'products/index.html', {'products': products})
 class ProductRetrieve(View):
-    def get(self, request, id):
-        product = get_object_or_404(Product, id=id)
-        return render(request, 'products/retrieve.html', {'product': product})        
-
+    def get(self, request, id, action):
+        if action == 'delete':
+            product = Product.objects.get(id=id)
+            product.is_delete = True
+            product.save()
+            return redirect('product_view_get')
+        else:
+            product = get_object_or_404(Product, id=id)
+            return render(request, 'products/retrieve.html', {'product': product})
 
 class ProductCreateView(CreateView):
     model = Product
-    fields = ["name", 'description', 'price', 'weight', 'length', 'width', 'height', 'category']
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
     def get_success_url(self):
         return reverse('product_view_get')
-    
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse('product_view_get')
+
 class CreateProductAtrributes(View):
     def get(self, request):
         return render('product_attributes/form.html')
@@ -57,11 +68,3 @@ class CreateProductSpecification(View):
         productattribute = ProductSpecification.objects.create("title", "value")
         productattribute.save()
         return redirect("")
-	
-class ProductUpdateView(UpdateView):
-    model = Product
-    fields = ["name", 'description', 'price', 'weight', 'length', 'width', 'height', 'category']
-    template_name_suffix = "_update_form"
-    
-    def get_success_url(self):
-        return reverse('product_view_get')

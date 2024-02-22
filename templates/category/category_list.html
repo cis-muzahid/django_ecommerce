@@ -21,7 +21,7 @@
                 <tbody>
                     <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ category.name }}</td>
+                    <td><a href="/products/{{category.name}}/">{{ category.name }}</a></td>
                     <td><a href='/category/{{category.id}}/update/'>Edit</a></td>
                     <td><a href='/category/{{category.id}}/delete/'>Delete</a></td>
                     </tr>
