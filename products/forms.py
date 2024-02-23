@@ -21,15 +21,22 @@ class ProductForm(forms.ModelForm):
 class ProductAttributeForm(forms.ModelForm):
     class Meta:
         model = ProductAttribute
-        fields = ['title', 'value', 'product', 'product_image', 'out_of_stoke', 'is_display']
+        fields = ['title', 'value', 'product_image', 'out_of_stoke', 'is_display', 'product']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'value': forms.TextInput(attrs={'class': 'form-control'}),
-            'product': forms.Select(attrs={'class': 'custom-select form-control'}),
             'image': forms.ImageField(),
             'out_of_stoke': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_display': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
+    
+    def __init__(self, *args, **kwargs):
+        """Init method for overriding fields objects."""
+        product = kwargs.pop('product', None)
+        super(ProductAttributeForm, self).__init__(*args, **kwargs)
+        
+        self.fields['product'].initial = product
+        self.fields['product'].widget = forms.HiddenInput()
 
 class ProductSpecificationForm(forms.ModelForm):
     class Meta:
