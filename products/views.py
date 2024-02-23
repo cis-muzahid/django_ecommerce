@@ -1,19 +1,20 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from products.models import Product, ProductAttribute, ProductSpecification, Category
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
-from .forms import ProductForm
+from .forms import ProductForm, ProductAttributeForm, ProductSpecificationForm
 # Create your views here.
-		
+
 class ProductView(View):
     def get(self, request, **kargs):
         if kargs and kargs['category'] != None:
             category = Category.objects.get(name=kargs['category'])
-            products = Product.objects.filter(category=category)
+            products = Product.objects.filter(category=category, is_delete=False)
         else:
-            products = Product.objects.all()
+            products = Product.objects.filter(is_delete=False)
         return render(request, 'products/index.html', {'products': products})
+
 class ProductRetrieve(View):
     def get(self, request, id, action):
         if action == 'delete':
@@ -22,8 +23,8 @@ class ProductRetrieve(View):
             product.save()
             return redirect('product_view_get')
         else:
-            product = get_object_or_404(Product, id=id)
-            return render(request, 'products/retrieve.html', {'product': product})
+            product_specs = ProductSpecification.objects.filter(product=id, is_delete=False)
+            return render(request, 'products/retrieve.html', {'product_specs': product_specs, "product_id": id})
 
 class ProductCreateView(CreateView):
     model = Product
@@ -49,22 +50,46 @@ class ProductUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('product_view_get')
 
-class CreateProductAtrributes(View):
-    def get(self, request):
-        return render('product_attributes/form.html')
+class CreateProductSpecification(CreateView):
+    model = ProductSpecification
+    form_class = ProductSpecificationForm
+    template_name = 'products/product_spec_form.html'
 
-    def post(self, request):
-        product = request.POST.get("product_id")
-        productattribute = ProductAttribute.objects.create("title", "value", "image")
-        productattribute.save()
-        return redirect("")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
-class CreateProductSpecification(View):
-    def get(self, request):
-        return render('product_attributes/form.html')
+    def get_success_url(self):
+        breakpoint()
+        if self.request.POST["save_and_continue"] == 'True':
+            return reverse('add_product_specification') + f'?product_id={self.request.POST["product"]}'
+        else:
+            return reverse('product_retrieve', args=[self.request.POST['product'], 'get'])
 
-    def post(self, request):
-        product = request.POST.get("product_id")
-        productattribute = ProductSpecification.objects.create("title", "value")
-        productattribute.save()
-        return redirect("")
+    def get_form_kwargs(self):
+        kwargs = super(CreateProductSpecification, self).get_form_kwargs()
+        kwargs['product'] = self.request.GET.get('product_id')
+        return kwargs
+
+class UpdateProductSpecification(UpdateView):
+    model = ProductSpecification
+    form_class = ProductSpecificationForm
+    template_name = 'products/product_spec_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse('product_retrieve', args=[self.request.POST['product'], 'get'])
+    
+class deleteProductAttribute(View):
+    def get(self, request, pk, attr):
+        if attr == "attributes":
+            product_detail = ProductAttribute.objects.get(pk=pk)
+        elif attr == "specification":
+            product_detail = ProductSpecification.objects.get(pk=pk)
+
+        product_detail.is_delete = True
+        product_detail.save()
+        return redirect('product_retrieve', product_detail.product.id, 'get')

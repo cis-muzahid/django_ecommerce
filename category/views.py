@@ -33,8 +33,8 @@ class CategoryUpdateView(UpdateView):
         return context
 
 class CategoryDeleteView(View):
-    def get(self, request, id):
-        category = Category.objects.get(id=id)
+    def get(self, request, pk):
+        category = Category.objects.get(id=pk)
         category.is_delete = True 
         category.save()
         return redirect('category-list')

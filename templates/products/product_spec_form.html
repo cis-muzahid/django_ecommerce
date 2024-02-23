@@ -12,8 +12,9 @@
         <form>
         {% for field in form %}
             <div class="mb-3 row">
-                {% if field.name != 'user'%}
-                <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
+                {% if field.id_for_label != "id_product" %}
+                    <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
+                {% endif %}
                 <div class="col-sm-10">
                     <span class='form-field'>{{ field }}</span>
                     {% if field.help_text %}
@@ -23,20 +24,21 @@
                         <span class="text-danger">{{ error }}</span>
                     {% endfor %}
                 </div>
-                {% endif %}
             </div>
         {% endfor %}
-        <div class="mb-3 row">
-            <div class="col-sm-10">
-                <span class='form-field'>
-                    <input type='hidden' name='user' value={{user.id}}>
-                </span>
-            </div>
-        </div>
         <div class="card-footer">
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" name="save_and_continue" value="False" class="btn btn-primary">Save</button>
+            <button type="submit" name="save_and_continue" value="True" class="btn btn-primary">Save and add another</button>
         </div>
         </form>
     </div>
 </div>
 {% endblock %}
+
+<script>
+$(document).ready(function() {
+    $('#test').click(function() {
+        $('#save_input').val('hello');
+    });
+});
+</script>

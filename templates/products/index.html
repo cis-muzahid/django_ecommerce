@@ -23,8 +23,11 @@
                     <td>
                         <a href='/product/{{product.id}}/get/'>{{product.name}}</a>
                     </td>
-                    <td><a href='/products/{{product.id}}/update/'>Edit</a></td>
-                    <td><a href='/delete_product/{{product.id}}/delete/' action='delete'>Delete</a></td>
+                        <td>
+                        <a href='/update_product/{{product.id}}/' style='font-weight:100; color:black;'>
+                            <i class="fa fa-pencil"></i></a>
+                    </td>
+                    <td><a href='/product/{{product.id}}/delete/' action='delete'>Delete</a></td>
                     </tr>
                 </tbody>
                 {% endfor %}
