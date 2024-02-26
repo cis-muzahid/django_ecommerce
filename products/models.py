@@ -5,7 +5,8 @@ from users.models import CustomUser
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     parent_category = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
-    is_delete = models.BooleanField(null=True)
+    is_delete = models.BooleanField(default=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -33,7 +34,7 @@ class ProductAttribute(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
-    product_image = models.ImageField(upload_to='static/images', blank=True, null=True )
+    product_image = models.ImageField(upload_to='products/images/', blank=True, null=True )
     out_of_stoke = models.BooleanField(default=False)
     is_display =  models.BooleanField(default=True)
     is_delete = models.BooleanField(default=False)

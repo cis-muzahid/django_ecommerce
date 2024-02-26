@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.core.paginator import Paginator
+from django.views.generic import CreateView, UpdateView
 from products.models import Category
 from category.forms import CategoryForm
 from django.views import View
@@ -7,9 +8,17 @@ from django.urls import reverse_lazy
 
 
 # Create your views here.
-class CategoryListView(ListView):
-    model = Category
-    template_name = 'category/category_list.html'
+class CategoryListView(View):
+    def get(self, request, **kargs):
+        if request.GET.get('q'):
+            categories = Category.objects.filter(name__icontains=request.GET['q'], is_delete=False)
+        else:
+            categories = Category.objects.filter(is_delete=False)
+
+        paginator = Paginator(categories, 10)
+        page_number = request.GET.get("page")
+        categories = paginator.get_page(page_number)
+        return render(request, 'category/category_list.html', {'categories': categories})
 
 class CategoryCreateView(CreateView):
     model = Category
