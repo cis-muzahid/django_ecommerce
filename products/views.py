@@ -22,7 +22,7 @@ class ProductView(View):
         paginator = Paginator(products, 10)
         page_number = request.GET.get("page")
         products = paginator.get_page(page_number)
-        return render(request, 'products/index.html', {'products': products})
+        return render(request, 'admin/products/index.html', {'products': products})
 
 class ProductRetrieve(View):
     def get(self, request, id, action):
@@ -35,12 +35,12 @@ class ProductRetrieve(View):
             product_specs = ProductSpecification.objects.filter(product=id, is_delete=False)
             product_attr = ProductAttribute.objects.filter(product=id, is_delete=False)
             product = get_object_or_404(Product, pk=id)
-            return render(request, 'products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
+            return render(request, 'admin/products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
 
 class ProductCreateView(CreateView, UpdateView):
     model = Product
     form_class = ProductForm
-    template_name = 'products/product_form.html'
+    template_name = 'admin/products/product_form.html'
     
     def get_object(self, queryset=None):
         if 'pk' in self.kwargs:
@@ -59,7 +59,7 @@ class ProductCreateView(CreateView, UpdateView):
 
 class CreateProductSpecification(CreateView):
     form_class = ProductSpecificationForm
-    template_name = 'products/product_spec_form.html'
+    template_name = 'admin/products/product_spec_form.html'
 
     def get(self, request, product_id):
         form = self.form_class()
@@ -78,7 +78,7 @@ class CreateProductSpecification(CreateView):
                     product_specs = ProductSpecification.objects.filter(product=product_id, is_delete=False)
                     product_attr = ProductAttribute.objects.filter(product=product_id, is_delete=False)
                     product = get_object_or_404(Product, pk=product_id)
-                    return render(request, 'products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
+                    return render(request, 'admin/products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
             except Exception as e:
                 print("Error:", e)
                 error_message = "An error occurred while saving the product attribute."
@@ -90,7 +90,7 @@ class CreateProductSpecification(CreateView):
 class UpdateProductSpecification(UpdateView):
     model = ProductSpecification
     form_class = ProductSpecificationForm
-    template_name = 'products/product_spec_form.html'
+    template_name = 'admin/products/product_spec_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -112,7 +112,7 @@ class deleteProductAttribute(View):
 
 class ProductAttributeView(View):
     form_class = ProductAttributeForm
-    template_name = 'products/product_spec_form.html'
+    template_name = 'admin/products/product_spec_form.html'
 
     def get(self, request, product_id, pk=None):
         if pk:
@@ -140,7 +140,7 @@ class ProductAttributeView(View):
                         product_specs = ProductSpecification.objects.filter(product=product_id, is_delete=False)
                         product_attr = ProductAttribute.objects.filter(product=product_id, is_delete=False)
                         product = get_object_or_404(Product, pk=product_id)
-                        return render(request, 'products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
+                        return render(request, 'admin/products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
                     else:
                         return redirect(reverse('add_product_specification', kwargs={'product_id': product_id}))
             except Exception as e:
