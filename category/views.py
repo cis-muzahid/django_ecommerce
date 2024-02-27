@@ -18,12 +18,12 @@ class CategoryListView(View):
         paginator = Paginator(categories, 10)
         page_number = request.GET.get("page")
         categories = paginator.get_page(page_number)
-        return render(request, 'category/category_list.html', {'categories': categories})
+        return render(request, 'admin/category/category_list.html', {'categories': categories})
 
 class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category/category_form.html'
+    template_name = 'admin/category/category_form.html'
     success_url = reverse_lazy('category-list')
 
     def get_context_data(self, **kwargs):
@@ -34,7 +34,7 @@ class CategoryCreateView(CreateView):
 class CategoryUpdateView(UpdateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category/category_form.html'
+    template_name = 'admin/category/category_form.html'
     success_url = reverse_lazy('category-list')
 
     def get_context_data(self, **kwargs):
