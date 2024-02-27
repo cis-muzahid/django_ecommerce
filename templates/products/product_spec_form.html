@@ -1,0 +1,78 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class='container'>
+	<div class="card mt-5">
+			<div class="card-header d-flex justify-content-center">
+				<h1 class="card-title font-weight-bold" style='font-size: 30px'>
+                {% if form.instance.pk %}Update{% else %}Create{% endif %} Product 
+                {% if "attribute" in request.path %} Attribute {% else %} Specification {% endif %}
+                </h1>
+			</div>
+		<div class="card-body m-2">
+        <form method="post" enctype="multipart/form-data" >{% csrf_token %} 
+            {% for field in form %}
+                <div class="mb-3 row">
+                    {% if field.id_for_label != "id_product" %}
+                        <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
+                    {% endif %}
+                    <div class="col-sm-10">
+                        <span class='form-field'>{{ field }}</span>
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            <input type='hidden' name='product' value={{product_id}}>
+            <div class="">
+                {% if form.instance.pk %}
+                    <button type="submit" name="save_and_continue" value="False" class="btn btn-primary">
+                        {% if form.instance.pk %}Update{% else %}Create{% endif %}
+                    </button>
+                {% else %}
+                    <button type="submit" name="save_and_continue" value="False" class="btn btn-primary">
+                    {% if form.instance.pk %}Update{% else %}Create{% endif %}
+                    </button>
+                    <button type="submit" name="save_and_continue" value="True" class="btn btn-primary">Save and Create another</button>
+                {% endif %}
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function toggleProductImageField() {
+            var productTitleValue = $('#id_title').val();
+            console.log('productTitleValue', productTitleValue)
+            if (productTitleValue === 'color') {
+                $('#id_product_image').closest('.row').removeClass('d-none');
+            } else {
+                $('#id_product_image').closest('.row').addClass('d-none');
+            }
+        }
+        function handleCheckboxChange() {
+            if ($('#id_out_of_stoke').is(':checked')) {
+                $('#id_is_display').closest('.row').removeClass('d-none');
+            } else {
+                $('#id_is_display').closest('.row').addClass('d-none');
+            }
+        }
+        toggleProductImageField();
+        handleCheckboxChange();
+
+        $('#id_title').change(function() {
+            toggleProductImageField();
+        });
+        $('#id_out_of_stoke').change(function() {
+            handleCheckboxChange();
+        });
+    });
+</script>
+{% endblock %}

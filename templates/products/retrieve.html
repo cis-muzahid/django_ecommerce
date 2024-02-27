@@ -1,0 +1,104 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class='container'>
+    <div class='card categorie_main'>
+        <div class='card-header'>
+            <h4 class='text-center font-weight-bold'>{{ product.name.capitalize }} Details</h4>
+        </div>
+        <div class='card-body'>
+        <div class='row'>
+        <div class="col-12 card">
+            <div class="card-header"> 
+                <h3 class='card-title font-weight-bold mt-2'>Product Attributes</h3>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href='/product_attribute/{{product.id}}/create/' class="btn btn-info me-md-2 mr-5" type="button">Add Attributes</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="text-center">
+                        <th scope="col">S. no</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">value</th>
+                        <th scope="col">Out of stoke</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    {% for attr in product_attr %}
+                    <tbody>
+                        <tr class="text-center">
+                        <th scope="row">{{ forloop.counter }}
+                        <td>
+                            <p>{{attr.title}}</p>
+                        </td>
+                        <td>
+                            <p>{{attr.value}}</p>
+                        </td>
+                        <td>
+                            <p>{% if attr.out_of_stoke == False %} No {% else %} Yes {% endif %}</p>
+                        </td>
+                        <td>
+                         <div class='d-flex justify-content-center'>
+                        <span class="ml-2 mr-2">
+                        <a href='/product/{{product.id}}/attribute_update/{{attr.id}}' style='color:black;'>
+                        <i class="fa fa-pencil text-success"></i></a></span>
+                        <span class="ml-2 mr-2"><a href='/delete_product_detail/{{attr.id}}/attributes'>
+                        <i class='fa fa-trash text-danger'></i></a></span></div></td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class="col-12 card">
+            <div class="card-header"> 
+                <h3 class='card-title font-weight-bold mt-2'>Product Specifications</h3>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href='/product/add_specification/{{product.id}}' class="btn btn-info me-md-2 mr-5" type="button">Add Specification</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="text-center">
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    {% for spec in product_specs %}
+                    <tbody>
+                        <tr class="text-center">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>
+                            <p>{{spec.title}}</p>
+                        </td>
+                        <td>
+                            <p>{{spec.description}}</p>
+                        </td>
+                        <td>
+                        <div class='d-flex justify-content-center'>
+                        <span class="ml-2 mr-2"><a href='/product/{{product.id}}/update_specification/{{spec.id}}' style='color:black;'>
+                        <i class="fa fa-pencil text-success"></i></a></span>
+                        <span class="ml-2 mr-2">
+                        <a href='/delete_product_detail/{{spec.id}}/specification' action='delete'><i class='fa fa-trash text-danger'></i></a>
+                        </span></div>
+                        </td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+  
