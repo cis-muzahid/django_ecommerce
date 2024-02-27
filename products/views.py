@@ -58,24 +58,34 @@ class ProductCreateView(CreateView, UpdateView):
             return reverse('product_attributes', kwargs={'product_id': self.object.pk})
 
 class CreateProductSpecification(CreateView):
-    model = ProductSpecification
     form_class = ProductSpecificationForm
     template_name = 'products/product_spec_form.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    def get(self, request, product_id):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form, 'product_id': product_id})
 
-    def get_success_url(self):
-        if self.request.POST["save_and_continue"] == 'True':
-            return reverse('add_product_specification', kwargs={'product_id': self.request.POST['product']})
+    def post(self, request, product_id):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                product = form.save(commit=False)
+                product.product_id = product_id
+                product.save()
+                if self.request.POST.get("save_and_continue") == 'True':
+                    return HttpResponseRedirect(request.path_info)  
+                else:
+                    product_specs = ProductSpecification.objects.filter(product=product_id, is_delete=False)
+                    product_attr = ProductAttribute.objects.filter(product=product_id, is_delete=False)
+                    product = get_object_or_404(Product, pk=product_id)
+                    return render(request, 'products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
+            except Exception as e:
+                print("Error:", e)
+                error_message = "An error occurred while saving the product attribute."
+                return render(request, self.template_name, {'form': form, 'product_id': product_id, 'error_message': error_message})
         else:
-            return reverse('product_retrieve', args=[self.request.POST['product'], 'get'])
+            return render(request, self.template_name, {'form': form, 'product_id': product_id})
 
-    def get_form_kwargs(self):
-        kwargs = super(CreateProductSpecification, self).get_form_kwargs()
-        kwargs['product'] = self.kwargs['product_id']
-        return kwargs
 
 class UpdateProductSpecification(UpdateView):
     model = ProductSpecification
@@ -101,16 +111,23 @@ class deleteProductAttribute(View):
         return redirect('product_retrieve', product_detail.product.id, 'get')
 
 class ProductAttributeView(View):
-
     form_class = ProductAttributeForm
     template_name = 'products/product_spec_form.html'
 
-    def get(self, request, product_id):
-        form = self.form_class()
+    def get(self, request, product_id, pk=None):
+        if pk:
+            product_attribute = get_object_or_404(ProductAttribute, pk=pk)
+            form = self.form_class(instance=product_attribute)
+        else:
+            form = self.form_class()
         return render(request, self.template_name, {'form': form, 'product_id': product_id})
 
-    def post(self, request, product_id):
-        form = self.form_class(request.POST, request.FILES)
+    def post(self, request, product_id, pk=None):
+        if pk:
+            product_attribute = get_object_or_404(ProductAttribute, pk=pk)
+            form = self.form_class(request.POST, request.FILES, instance=product_attribute)
+        else:
+            form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             try:
                 product = form.save(commit=False)
@@ -119,10 +136,13 @@ class ProductAttributeView(View):
                 if self.request.POST.get("save_and_continue") == 'True':
                     return HttpResponseRedirect(request.path_info)  
                 else:
-                    product_specs = ProductSpecification.objects.filter(product=product_id, is_delete=False)
-                    product_attr = ProductAttribute.objects.filter(product=product_id, is_delete=False)
-                    product = get_object_or_404(Product, pk=product_id)
-                    return render(request, 'products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
+                    if pk:
+                        product_specs = ProductSpecification.objects.filter(product=product_id, is_delete=False)
+                        product_attr = ProductAttribute.objects.filter(product=product_id, is_delete=False)
+                        product = get_object_or_404(Product, pk=product_id)
+                        return render(request, 'products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
+                    else:
+                        return redirect(reverse('add_product_specification', kwargs={'product_id': product_id}))
             except Exception as e:
                 print("Error:", e)
                 error_message = "An error occurred while saving the product attribute."

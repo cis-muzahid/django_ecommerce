@@ -6,12 +6,14 @@
 	<div class="card mt-5">
 			<div class="card-header d-flex justify-content-center">
 				<h1 class="card-title font-weight-bold" style='font-size: 30px'>
-                {% if form.instance.pk %}Update{% else %}Create{% endif %} Product Details</h1>
+                {% if form.instance.pk %}Update{% else %}Create{% endif %} Product 
+                {% if "attribute" in request.path %} Attribute {% else %} Specification {% endif %}
+                </h1>
 			</div>
 		<div class="card-body m-2">
         <form method="post" enctype="multipart/form-data" >{% csrf_token %} 
             {% for field in form %}
-                <div class="mb-3 row {% if field.name == 'product_image' or field.name == 'is_display' %} d-none {% endif %}">
+                <div class="mb-3 row">
                     {% if field.id_for_label != "id_product" %}
                         <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
                     {% endif %}
@@ -62,6 +64,8 @@
                 $('#id_is_display').closest('.row').addClass('d-none');
             }
         }
+        toggleProductImageField();
+        handleCheckboxChange();
 
         $('#id_title').change(function() {
             toggleProductImageField();
