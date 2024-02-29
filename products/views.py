@@ -151,5 +151,3 @@ class ProductAttributeView(View):
             return render(request, self.template_name, {'form': form, 'product_id': product_id})
 
 
-
-

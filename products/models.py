@@ -20,6 +20,7 @@ class Product(models.Model):
     length = models.DecimalField(max_digits=10, decimal_places=2, help_text="Length in centimeters")
     width = models.DecimalField(max_digits=10, decimal_places=2, help_text="Width in centimeters")
     height = models.DecimalField(max_digits=10, decimal_places=2, help_text="Height in centimeters")
+    tag = models.TextField(null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     is_delete = models.BooleanField(default=False)

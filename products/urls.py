@@ -1,8 +1,6 @@
 from django.urls import path
 from products.views import ProductView, ProductRetrieve, ProductCreateView
 from .views import CreateProductSpecification, UpdateProductSpecification, deleteProductAttribute, ProductAttributeView
-
-
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -19,7 +17,6 @@ urlpatterns = [    # products views
     path('delete_product_detail/<int:pk>/<attr>', deleteProductAttribute.as_view(), name='delete_product_specification'),
     path('product_attribute/<int:product_id>/create/', ProductAttributeView.as_view(), name='product_attributes'),
     path('product/<int:product_id>/attribute_update/<int:pk>/', ProductAttributeView.as_view(), name='update_product_attributes'),
-
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

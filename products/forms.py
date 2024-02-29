@@ -1,11 +1,12 @@
 from typing import Any
 from django import forms
-from .models import Product, ProductAttribute, ProductSpecification
+from .models import Product, ProductAttribute, ProductSpecification, ProductReview
 
 class ProductForm(forms.ModelForm):
     class Meta:
+        """Form for product"""
         model = Product
-        fields = ['name', 'description', 'price', 'weight', 'length', 'width', 'height', 'category', 'user']
+        fields = ['name', 'description', 'price', 'weight', 'length', 'width', 'height', 'category', 'user', 'tag']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
@@ -15,12 +16,14 @@ class ProductForm(forms.ModelForm):
             'width': forms.NumberInput(attrs={'class': 'form-control'}),
             'height': forms.NumberInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'custom-select form-control'}),
-
+            'tag': forms.Select(attrs={'class': 'custom-select form-control'},
+                                choices=[('', 'None'), ('SALE', 'Sale'), ('NEW', 'New'), ('HOT', 'Hot')]),
         }
 
 
 class ProductAttributeForm(forms.ModelForm):
     class Meta:
+        """Form for product attributes"""
         model = ProductAttribute
         fields = ['title', 'value', 'product_image', 'out_of_stoke', 'is_display', 'product']
         widgets = {
@@ -41,12 +44,12 @@ class ProductAttributeForm(forms.ModelForm):
 
 class ProductSpecificationForm(forms.ModelForm):
     class Meta:
+        """Form for product specification"""
         model = ProductSpecification
         fields = ['title', 'description', 'product']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            # 'product': forms.Select(attrs={'class': 'custom-select form-control'}),
             }
 
     def __init__(self, *args, **kwargs):
@@ -56,3 +59,16 @@ class ProductSpecificationForm(forms.ModelForm):
         
         self.fields['product'].initial = product
         self.fields['product'].widget = forms.HiddenInput()
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        """Form for product review"""
+        model = ProductReview
+        fields = ['product', 'user', 'price', 'quality', 'summary','description']
+        widgets = {
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'quality': forms.NumberInput(attrs={'class': 'form-control'}),
+            'summary': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            }
