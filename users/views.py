@@ -1,117 +1,184 @@
-from django.contrib.auth.models import Group, Permission
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.views import generic
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .models import CustomUser
-# Create your views here.
-class Login:
-	def login_user(request):
-		if request.method =="POST":
-			email = request.POST["email"]
-			password = request.POST["password"]
-			user = authenticate(request, email=email, password=password)
-			if user is not None:
-				login(request, user)
-				messages.success(request, 'Welcome login user.')
-				return redirect('home')
-				# Redirect to a success page.
-				...
-			else:
-				messages.info(request, 'user does not exist.')
-				return redirect('login')
-				# Return an 'invalid login' error message.
-				...
-		else:
-			return render(request, 'authenticate/login.html', {})
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View, generic
+from .models import CustomUser, Role, Permission
+from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm
+from django.urls import reverse
 
-	def logout_user(request):
-		logout(request)
-		return redirect('home')
 
-	def signup_user(request):
-		if request.method =="POST":
-			User = get_user_model()
-			# breakpoint()
-			user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-			user.first_name = request.POST['firstname']
-			user.last_name = request.POST['lastname']
-			user.save()
-			messages.success(request, 'Your accout has been successfully created.')
-			return redirect('login')
-		else:
-			return render(request, "authenticate/signup.html")
+# Custom User model
+User = get_user_model()
 
-class AdminView(generic.TemplateView):
-	template_name: str = 'admin/home.html'
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'authenticate/login.html')
 
-# @login_required
-# def create_user(request):
-#     if request.method == "POST":
-#         # Check if the logged-in user has the required permissions to create a user
-#         if request.user.has_perm('auth.add_customuser'):
-#             User = get_user_model()
-#             user = User.objects.create_user(...)
-#             # Assign role based on the form input
-#             user.role = request.POST['role']
-#             user.save()
-#             messages.success(request, 'User created successfully.')
-#             return redirect('user_list')
-#         else:
-#             messages.error(request, 'You do not have permission to create a user.')
-#             return redirect('home')
-#     else:
-#         return render(request, "authenticate/create_user.html")
+    def post(self, request):
+        email = request.POST["email"]
+        password = request.POST["password"]
+        user = authenticate(request, email=email, password=password)
 
-# @login_required
-# def user_list(request):
-#     # Check if the logged-in user has the required permissions to view user list
-#     if request.user.has_perm('auth.view_customuser'):
-#         users = CustomUser.objects.all()
-#         return render(request, "authenticate/user_list.html", {'users': users})
-#     else:
-#         messages.error(request, 'You do not have permission to view user list.')
-#         return redirect('home')
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Welcome, you are now logged in.')
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid login credentials.')
+            return redirect('login')
 
-# @login_required
-# def edit_user(request, user_id):
-#     # Check if the logged-in user has the required permissions to edit a user
-#     if request.user.has_perm('auth.change_customuser'):
-#         user = CustomUser.objects.get(pk=user_id)
-#         if request.method == "POST":
-#             # Update user fields and role based on the form input
-#             user.email = request.POST['email']
-#             user.first_name = request.POST['first_name']
-#             user.last_name = request.POST['last_name']
-#             user.role = request.POST['role']
-#             user.save()
-#             messages.success(request, 'User updated successfully.')
-#             return redirect('user_list')
-#         else:
-#             return render(request, "authenticate/edit_user.html", {'user': user})
-#     else:
-#         messages.error(request, 'You do not have permission to edit this user.')
-#         return redirect('home')
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')
 
-# @login_required
-# def delete_user(request, user_id):
-#     # Check if the logged-in user has the required permissions to delete a user
-#     if request.user.has_perm('auth.delete_customuser'):
-#         user = CustomUser.objects.get(pk=user_id)
-#         user.delete()
-#         messages.success(request, 'User deleted successfully.')
-#         return redirect('user_list')
-#     else:
-#         messages.error(request, 'You do not have permission to delete this user.')
-#         return redirect('home')
-		
+class SignupView(View):
+    def get(self, request):
+        return render(request, "authenticate/signup.html")
 
-		
-# """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    def post(self, request):
+        username = request.POST['username']
+        email = request.POST['email']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        password = request.POST['password']
+        confirm_password = request.POST['cnf_password']
+        user = User.objects.create_user(email=email, username=username, first_name=first_name, last_name=last_name, password=password)
+        user.save()
+        print (user.username)
+        messages.success(request, 'Your account has been successfully created.')
+        return redirect('login')
 
-# @permission_required('users.delete_customuser')
-# def delete_user(request):
-# 	"""
-# 	delete requested user
-# 	"""
+class UserIndexView(generic.TemplateView):
+    template_name = 'admin/user_management/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = CustomUser.objects.all()
+        return context
+class AddUserView(View):        
+    template_name = 'admin/user_management/create.html'  # Adjust the template name
+
+    def get(self, request):
+        form = CutomUserForm()
+        roles = Role.objects.all()  # Fetch all roles
+        form.fields['user_role'].queryset = roles
+        return render(request, self.template_name, {'form': form, 'roles': roles})
+
+    def post(self, request):
+        form = CutomUserForm(request.POST)
+        print(form.is_valid())
+        try:
+            if form.is_valid():
+                role = form.cleaned_data['user_role']
+                user = CustomUser.objects.create_user(
+                    username=form.cleaned_data['username'],
+                    email=form.cleaned_data['email'],
+                    password=form.cleaned_data['password']
+                )
+                user.first_name = form.cleaned_data['first_name']
+                user.last_name = form.cleaned_data['last_name']
+                user.user_role = role
+                user.save()
+                messages.success(request, 'User account has been successfully created.')
+                return redirect('user_index')
+        except Exception as e:
+            messages.error(request, f'Error creating user: {str(e)}')
+        
+        roles = Role.objects.all()  # Fetch all roles
+        return render(request, self.template_name, {'form': form, 'roles': roles})
+class RoleIndexView(View):
+    template_name = 'admin/role_management/index.html'
+
+    def get(self, request, *args, **kwargs):
+        roles_with_permissions = Role.objects.prefetch_related('permissions').all()
+        return render(request, self.template_name, {'roles_with_permissions': roles_with_permissions})
+class AddRoleView(View):
+    template_name = 'admin/role_management/create.html'
+
+    def get(self, request):
+        all_permissions = Permission.objects.all()
+        return render(request, self.template_name, {'all_permissions': all_permissions})
+
+    def post(self, request):
+        try:
+            role_name = request.POST.get('role_name')
+            selected_permissions = request.POST.getlist('permissions')
+
+            new_role = Role.objects.create(name=role_name)
+            new_role.permissions.set(selected_permissions)
+
+            messages.success(request, 'Role has been successfully created.')
+            return redirect('role_index')
+        except Exception as e:
+            messages.error(request, f'Error creating role: {str(e)}')
+
+        all_permissions = Permission.objects.all()
+        return render(request, self.template_name, {'all_permissions': all_permissions})
+class UpdateRoleView(View):
+    template_name = 'admin/role_management/update.html'
+
+    # template_name = 'admin/role_management/update.html'
+
+    def get(self, request, role_id):
+        role = get_object_or_404(Role, id=role_id)
+        form = UserRoleForm(instance=role)
+
+        # Redirect to the create role view with pre-filled data
+        create_role_url = reverse('add_role') + f'?name={role.name}&permissions={",".join(str(perm.id) for perm in role.permissions.all())}'
+        return redirect(create_role_url)
+
+    def post(self, request, role_id):
+        role = get_object_or_404(Role, id=role_id)
+        form = UserRoleForm(request.POST, instance=role)
+        try:
+            if form.is_valid():
+                form.save()
+
+                messages.success(request, 'Role has been successfully updated.')
+                return redirect('role_index')
+        except Exception as e:
+            messages.error(request, f'Error updating role: {str(e)}')
+
+        return render(request, self.template_name, {'form': form, 'role': role})
+
+class DeleteRoleView(View):
+
+    def post(self, request, role_id):
+        role = get_object_or_404(Role, id=role_id)
+        try:
+            role.delete()
+            messages.success(request, 'Role has been successfully deleted.')
+        except Exception as e:
+            messages.error(request, f'Error deleting role: {str(e)}')
+
+        return redirect('role_index')
+    
+class PermissionIndexView(View):
+    template_name = 'admin/permission/index.html'
+
+    def get(self, request):
+        permissions = Permission.objects.all()
+        return render(request, self.template_name, {'permissions': permissions})
+
+class AddPermissionView(View):
+    template_name = 'admin/permission/create.html'
+
+    def get(self, request):
+        form = UserPermissionForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        # breakpoint()
+        form = UserPermissionForm(request.POST)
+        try:
+            if form.is_valid():
+                permission = form.cleaned_data['name']
+                new_permission = Permission.objects.create(name=permission)
+                messages.success(request, 'Permission has been successfully created.')
+                return redirect('permission_index')
+                # return render(request, self.template_name, {'form': form})
+        except Exception as e:
+            messages.error(request, f'Error creating permission: {str(e)}')
+        
+        return render(request, self.template_name, {'form': form})
