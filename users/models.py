@@ -13,27 +13,19 @@ class Permission(models.Model):
 		return self.name
 
 class Role(models.Model):
-	name = models.CharField(max_length=255)
+	
+	name = models.CharField(max_length=20, blank=True, null=True)
 	permissions = models.ManyToManyField(Permission)
 
 	def __str__(self):
 			return self.name
 class CustomUser(AbstractUser):
-	CUSTOMER = 'customer'
-	SUPPLIER = 'supplier'
-	ADMIN = 'admin'
-
-	ROLE_CHOICES = [
-			(CUSTOMER, 'customer'),
-			(SUPPLIER, 'supplier'),
-			(ADMIN, 'admin'),
-	]
-
+	
 	username = models.CharField(max_length=100, null=True, blank=True)
 	email = models.EmailField(unique=True)
 	first_name = models.CharField(max_length=30)
 	last_name = models.CharField(max_length=30)
-	# role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=CUSTOMER)
+	# user_role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=customer)
 	user_role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
 
 	# objects = CustomUserManager()

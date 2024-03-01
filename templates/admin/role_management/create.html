@@ -2,43 +2,47 @@
 {% load static %}
 
 {% block body %}
-	<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-				<h1>General Form</h1>
-			</div>
-    </section>
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <h1>Add Role</h1>
+            </div>
+        </section>
 
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-    		<div class="card card-primary">
-					<div class="card-header">
-						<h3 class="card-title">Quick Example</h3>
-					</div>
-					<!-- /.card-header -->
-					<!-- form start -->
-					<form action="" method="POST">
-						{% csrf_token %}
-						<div class="card-body">
-							<div class="form-group">
-								<label for="role">Role</label>
-								<input type="text" class="form-control" name="role" id="role" placeholder="Enter Role">
-							</div>
-							<div class="form-group">
-								<label for="firstname">Permissions</label>
-								<input type="text" class="form-control" name="first_name" id="fname" placeholder="Enter first name">
-							</div>
-						</div>
-						<!-- /.card-body -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Role Form</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <form action="{% url 'add_role' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="roleName">Role Name:</label>
+                                <input type="text" class="form-control" id="roleName" name="role_name" required>
+                            </div>
+                            <div class="form-group">
+															<label for="permissions">Permissions:</label>
+															<select class="form-control" id="permissions" name="permissions" multiple required>
+																	{% for permission in all_permissions %}
+																			<option value="{{ permission.id }}">{{ permission.name }}</option>
+																	{% endfor %}
+															</select>
+													</div>
+                        </div>
+                        <!-- /.card-body -->
 
-						<div class="card-footer">
-							<button type="submit" class="btn btn-primary">Submit</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</section>
-	</div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
 {% endblock %}

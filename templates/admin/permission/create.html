@@ -1,0 +1,40 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block body %}
+	<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+				<h1>Permissions Form</h1>
+			</div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+    		<div class="card card-primary">
+					<div class="card-header">
+						<h3 class="card-title">Quick Example</h3>
+					</div>
+					<!-- /.card-header -->
+					<!-- form start -->
+					<form action="" method="POST">
+						{% csrf_token %}
+						<div class="card-body">
+							<div class="form-group">
+								<label for="permission">Permissions</label>
+								<input type="text" class="form-control" name="name" id="name" placeholder="Enter permission">
+							</div>
+						</div>
+						<!-- /.card-body -->
+
+						<div class="card-footer">
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</section>
+	</div>
+{% endblock %}

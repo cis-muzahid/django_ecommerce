@@ -3,53 +3,85 @@
 
 {% block body %}
 	<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
+		<!-- Content Header (Page header) -->
 		<section class="content-header">
-			<a href="{% url 'add_user' %}"><button type="button" class="btn btn-block btn-success btn-sm col-sm-1" >Add User</button></a>
-			<div class="container-fluid">
-				<div class="row mb-2">
-					<div class="col-sm-6">
-						<h1>Users</h1>
-					</div>
-					<div class="col-sm-6">
-						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href="#">Home</a></li>
-							<li class="breadcrumb-item active">DataTables</li>
-						</ol>
-					</div>
-				</div>
-			</div><!-- /.container-fluid -->
+			
 		</section>
+
+		<!-- Main content -->
 		<section class="content">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header">
-								<h3 class="card-title">DataTable with default features</h3>
+								<h3 class='card-title font-weight-bold mt-2'>Roles and Permissions</h3>
+								<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+									<form class="d-flex mr-4">
+										<input name='q' class="form-control me-2 mr-4" type="search" placeholder="Search" aria-label="Search">
+										<button class="btn btn-outline-info" type="submit">Search</button>
+									</form>
+									<a href="{% url 'add_role' %}"><button type="button" class="btn btn-info me-md-2 mr-5">Add Role</button></a>
+								</div>
 							</div>
-								<div class="card-body">
-									<table id="example1" class="table table-bordered table-striped">
+							<div class="card-body">
+								<div class="table-responsive">
+									<table class="table table-bordered table-striped">
 										<thead>
-										<tr>
-											<th>Roles</th>
-											<th>Count</th>
-										</tr>
+											<tr>
+												<th>Role</th>
+												<th>Actions</th>
+											</tr>
 										</thead>
 										<tbody>
-											{% for user in users %}
-												<tr>
-													<td>{{ user.username }}</td>
-													<td>{{ user.email }}</td>
+											{% for role in roles_with_permissions %}
+												<tr class="role-row" data-role-id="{{ role.id }}">
+													<td>{{ role.name }}</td>
+													<td>
+														<div style="display: flex; align-items: center;">
+															<a href="{% url 'update_role' role.id %}" style='font-weight:100; color:black;'>
+																	<i class='fa fa-pencil text-success'></i>
+															</a>
+															<span style="margin: 0 5px;"> |</span> <!-- Adjust margin for spacing -->
+															<form method="POST" action="{% url 'delete_role' role.id %}" onsubmit="return confirm('Are you sure you want to delete the role \'{{ role.name }}\'?');">
+																	{% csrf_token %}
+																	<button type="submit" style="border: none; background-color: transparent; cursor: pointer;">
+																			<i class="fa fa-trash text-danger"></i>
+																	</button>
+															</form>
+														</div>
+													</td>
+												</tr>
+												<tr class="permissions-row" data-role-id="{{ role.id }}">
+													<td colspan="2">
+														<strong>Permissions:</strong>
+														<ul>
+															{% for permission in role.permissions.all %}
+																<li>{{ permission.name }}</li>
+															{% endfor %}
+														</ul>
+													</td>
 												</tr>
 											{% endfor %}
 										</tbody>
 									</table>
 								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('.permissions-row').hide(); // Hide permissions rows initially
+			$('.role-row').click(function() {
+				var roleId = $(this).data('role-id');
+				$('.permissions-row[data-role-id=' + roleId + ']').toggle();
+			});
+		});
+	</script>
 {% endblock %}
