@@ -1,6 +1,7 @@
 from django import template
 from django.shortcuts import get_object_or_404
 from products.models import ProductAttribute, Product, Category
+from cart.models import Cart
 
 register = template.Library()
 
@@ -38,3 +39,16 @@ def fetch_all_parent_category(category):
             break
     categories.reverse()
     return categories
+
+@register.filter
+def total_price(cart):
+    return cart.product.price * cart.quantity
+
+@register.filter
+def product_quantity(product, user):
+    try: 
+        cart = Cart.objects.get(active=True, product=product, user=user).quantity
+    except Cart.DoesNotExist:
+        return 1
+    
+    return cart 

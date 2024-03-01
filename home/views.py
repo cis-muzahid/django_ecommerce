@@ -29,3 +29,12 @@ class HomeView(View):
             """ View for Client Home page """
             return render(request, 'home.html', {'latest_products': products, 'categories': categories,
                                                  'special_offer_products':products[:3], 'hot_deals': hot_deals[:3] })
+        
+    def post(self, request, category):
+        """ fetch product with price filter """
+        category = Category.objects.get(name=category)
+        products = fetch_category_product(fetch_categories(category)).order_by('-id')
+        products = products.filter(price__range=(request.POST['price'].split(',')))
+        return render(request, 'home/category.html', {'products': products, 'categories': fetch_all_categories(),
+                                                        'category': category})
+        

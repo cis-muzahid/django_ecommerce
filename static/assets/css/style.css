@@ -2,3 +2,10 @@
     width: 1396px;
     margin-top: 53px;
 }
+
+.wishlist_css {
+    background: inherit;
+    border: none;
+    margin-left: 4px;
+    margin-right: 4px;
+}
