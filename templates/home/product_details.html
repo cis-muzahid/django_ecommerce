@@ -71,8 +71,13 @@
               <div class="cart clearfix animate-effect">
                 <div class="action">
                   <div class="add-cart-button btn-group">
-                    <button class="btn btn-primary icon" data-toggle="dropdown" type="button">
-					 <i class="fa fa-shopping-cart"></i> </button>
+					<form action='/add_cart/' method='post'>{% csrf_token %}
+						<input type='hidden' name='product' value='{{ product.id }}'>
+						<input type='hidden' name='user' value='{{ user.id }}'>
+						<input type='hidden' name='quantity' value='{{ "1" }}'>
+						<button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
+						title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
+					</form>
                     <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
                   </div>
                 </div>
@@ -450,7 +455,7 @@
 						<div class="product">		
 							<div class="product-image">
 								<div class="image">
-									<a href="/category//{{product.category}}/{{product}}/"><img  src="/media/{{product.id|product_attributes}}" alt=""></a>
+									<a href="/category/{{product.category}}/{{product}}/"><img  src="/media/{{product.id|product_attributes}}" alt=""></a>
 								</div><!-- /.image -->			
 
 								{% if product.tag is not None %}
@@ -471,9 +476,13 @@
 								<div class="action">
 									<ul class="list-unstyled">
 										<li class="add-cart-button btn-group">
-											<button class="btn btn-primary icon" data-toggle="dropdown" type="button">
-												<i class="fa fa-shopping-cart"></i>													
-											</button>
+										<form action='/add_cart/' method='post'>{% csrf_token %}
+											<input type='hidden' name='product' value='{{ product.id }}'>
+											<input type='hidden' name='user' value='{{ user.id }}'>
+											<input type='hidden' name='quantity' value='{{ "1" }}'>
+											<button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
+											title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
+											</form>
 											<button class="btn btn-primary cart-btn" type="button">Add to cart</button>
 																	
 										</li>

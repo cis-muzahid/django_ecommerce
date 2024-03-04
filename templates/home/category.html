@@ -291,7 +291,13 @@
                             <div class="action">
                               <ul class="list-unstyled">
                                 <li class="add-cart-button btn-group">
-                                  <button class="btn btn-primary icon" data-toggle="dropdown" type="button"> <i class="fa fa-shopping-cart"></i> </button>
+                                  <form action='/add_cart/' method='post'>{% csrf_token %}
+                                    <input type='hidden' name='product' value='{{ product.id }}'>
+                                    <input type='hidden' name='user' value='{{ user.id }}'>
+                                    <input type='hidden' name='quantity' value='{{ "1" }}'>
+                                    <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
+                                    title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
+                                  </form>
                                   <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
                                 </li>
                                 <li class="lnk wishlist"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Wishlist"> <i class="icon fa fa-heart"></i> </a> </li>
@@ -340,7 +346,13 @@
                               <div class="action">
                                 <ul class="list-unstyled">
                                   <li class="add-cart-button btn-group">
-                                    <button class="btn btn-primary icon" data-toggle="dropdown" type="button"> <i class="fa fa-shopping-cart"></i> </button>
+                                    <form action='/add_cart/' method='post'>{% csrf_token %}
+                                      <input type='hidden' name='product' value='{{ product.id }}'>
+                                      <input type='hidden' name='user' value='{{ user.id }}'>
+                                      <input type='hidden' name='quantity' value='{{ "1" }}'>
+                                      <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
+                                      title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
+                                    </form>
                                     <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
                                   </li>
                                   <li class="lnk wishlist"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Wishlist"> <i class="icon fa fa-heart"></i> </a> </li>

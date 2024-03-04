@@ -27,7 +27,6 @@ class CartView(View):
             return redirect(reverse('product_details', kwargs={'product':cart.product, 
                                                                        'category': cart.product.category}))
         else:
-            breakpoint()
             form = self.form_class(request.POST)        
             if form.is_valid():
                 

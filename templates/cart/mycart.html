@@ -38,7 +38,7 @@
 				<tr>
 					<td class="romove-item"><a href="/remove_product/cart/{{ cart.id }}" title="cancel" class="icon"><i class="fa fa-trash-o"></i></a></td>
 					<td class="cart-image">
-						<a class="entry-thumbnail" href="detail.html">
+						<a class="entry-thumbnail" href="/category/{{ cart.product.category }}/{{ cart.product }}/">
 						    <img src='/media/{{ cart.product.id|product_attributes }}' alt="">
 						</a>
 					</td>
@@ -162,12 +162,14 @@
 		<thead>
 			<tr>
 				<th>
+					{% with carts|cart_total_price as total %}
 					<div class="cart-sub-total">
-						Subtotal<span class="inner-left-md">$600.00</span>
+						Subtotal<span class="inner-left-md">${{ total.sub_total }}</span>
 					</div>
 					<div class="cart-grand-total">
-						Grand Total<span class="inner-left-md">$600.00</span>
+						Grand Total<span class="inner-left-md">${{ total.grand_total }}</span>
 					</div>
+					{% endwith %}
 				</th>
 			</tr>
 		</thead><!-- /thead -->
