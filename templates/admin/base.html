@@ -4,10 +4,21 @@
 
 {% include "admin/sidebar.html" %}
 
-
+<div class="body-content outer-top-vs mt-5" id="top-banner-and-menu">
+    <div class="container">
+      {% if messages %}
+      <div class="messages">
+          {% for message in messages %}
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+              {{ message }}
+          </div>
+          {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <!-- /.container --> 
+</div>
 {% block body %} {% endblock %}
-
-
 
 {% include "admin/footer.html" %}
   
