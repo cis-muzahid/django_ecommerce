@@ -51,9 +51,9 @@
             <li class="header_cart hidden-xs"><a href="/my_cart"><span>My Cart</span></a></li>
             <li class="check"><a href="#"><span>Checkout</span></a></li>
             {% if user.is_authenticated %}
-              <li class="logout"><a href="users/logout_user"><span>Logout</span></a></li>
+              <li class="logout"><a href="{% url 'logout_user' %}"><span>Logout</span></a></li>
             {% else %}
-              <li class="login"><a href="users/login_user"><span>Login</span></a></li>
+              <li class="login"><a href="{% url 'login_user' %}"><span>Login</span></a></li>
             {% endif %}
           </ul>
         </div>

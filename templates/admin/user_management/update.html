@@ -6,7 +6,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-				<h1>User Form</h1>
+				<h1>Update</h1>
 			</div>
     </section>
 
@@ -15,43 +15,35 @@
       <div class="container-fluid">
     		<div class="card card-primary">
 					<div class="card-header">
-						<h3 class="card-title">Create User</h3>
+						<h3 class="card-title">User Form</h3>
 					</div>
 					<!-- /.card-header -->
 					<!-- form start -->
-					<form action="" method="POST">
+					<form action="{% url 'update_user' user.id %}" method="POST">
 						{% csrf_token %}
 						<div class="card-body">
 							<div class="form-group">
 								<label for="email">Email address</label>
-								<input type="email" class="form-control" name="email" id="exampleInputEmail1" placeholder="Enter email">
+								<input type="email" class="form-control" name="email" id="exampleInputEmail1" placeholder="Enter email" value="{{ user.email }}">
 							</div>
 							<div class="form-group">
 								<label for="username">Username</label>
-								<input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
+								<input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="{{ user.username }}">
 							</div>
 							<div class="form-group">
 								<label for="firstname">First Name</label>
-								<input type="text" class="form-control" name="first_name" id="fname" placeholder="Enter first name">
+								<input type="text" class="form-control" name="first_name" id="fname" placeholder="Enter first name" value="{{ user.first_name }}">
 							</div>
 							<div class="form-group">
 								<label for="lastname">Last Name</label>
-								<input type="text" class="form-control" name="last_name" id="lname" placeholder="Enter last name">
-							</div>
-							<div class="form-group">
-								<label for="password">Password</label>
-								<input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
-							</div>
-							<div class="form-group">
-								<label for="confirm_password">Confirm Password</label>
-								<input type="password" class="form-control" name="cnf_password" id="confirm_password" placeholder="Password">
+								<input type="text" class="form-control" name="last_name" id="lname" placeholder="Enter last name" value="{{ user.last_name }}">
 							</div>
 							<div class="form-group">
 								<label for="user_role">Role:</label>
 								<select class="form-control" name="user_role" id="user_role">
 									<option value="">Select a role</option>
 									{% for role in roles %}
-										<option value="{{ role.id }}">{{ role.name }}</option>
+										<option value="{{ role.id }}" {% if user.user_role == role %}selected{% endif %}>{{ role.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -59,7 +51,7 @@
 						<!-- /.card-body -->
 
 						<div class="card-footer">
-							<button type="submit" class="btn btn-primary">Submit</button>
+							<button type="submit" class="btn btn-primary">Update</button>
 						</div>
 					</form>
 				</div>

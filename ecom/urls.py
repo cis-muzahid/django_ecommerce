@@ -26,11 +26,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    
     path('', include('products.urls')),
     path('', include('home.urls')),
-    path('users/', include('django.contrib.auth.urls')),
-    path('users/', include('users.urls')),
+    path('admin/', include('django.contrib.auth.urls')),
+    path('admin/', include('users.urls')),
     path('', include('category.urls')),
     path('', include('cart.urls')),
     path('', include('orders.urls')),

@@ -67,6 +67,35 @@
 									</table>
 								</div>
 							</div>
+							<div class="card-footer clearfix bg-white justify-content-md-start">
+								<ul class="pagination pagination-sm m-0 float-right">
+									{% if roles_with_permissions.has_previous %}
+										<li class="page-item">
+											<a class="page-link" href="?page=1" aria-label="First">
+													<span aria-hidden="true">&laquo;&laquo;</span>
+											</a>
+										</li>
+										<li class="page-item">
+											<a class="page-link" href="?page={{ roles_with_permissions.previous_page_number }}" aria-label="Previous">&laquo;</a>		
+										</li>
+									{% endif %}
+			
+									{% for num in roles_with_permissions.paginator.page_range %}
+										<li class="page-item {% if roles_with_permissions.number == num %}active{% endif %}">
+												<a class="page-link" href="?page={{ num }}">{{ num }}</a>
+										</li>
+									{% endfor %}
+			
+									{% if roles_with_permissions.has_next %}
+										<li class="page-item">
+												<a class="page-link" href="?page={{ roles_with_permissions.next_page_number }}" aria-label="Next">&laquo;</a>
+										</li>
+										<li class="page-item">
+												<a class="page-link" href="?page={{ roles_with_permissions.paginator.num_pages }}" aria-label="Last">&laquo;</a>
+										</li>
+									{% endif %}
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
