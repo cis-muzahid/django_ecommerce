@@ -25,7 +25,7 @@ class LoginView(View):
             return redirect('home')
         else:
             messages.error(request, 'Invalid login credentials.')
-            return redirect('login')
+            return redirect('login_user')
 
 class LogoutView(View):
     def get(self, request):
@@ -47,7 +47,7 @@ class SignupView(View):
         user.save()
         print (user.username)
         messages.success(request, 'Your account has been successfully created.')
-        return redirect('login')
+        return redirect('login_user')
 
 class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'

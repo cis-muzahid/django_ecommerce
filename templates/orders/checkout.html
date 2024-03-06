@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filter %}
+{% load order_filter %}
+{% block body %}
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <ul class="list-inline list-unstyled">
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li class='active'>Checkout</li>
+        </ul>
+      </div>
+      <!-- /.breadcrumb-inner -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.breadcrumb -->
+  <div class="body-content">
+    <div class="container">
+      <div class="checkout-box ">
+        <div class="row">
+          <div class="col-xs-12 col-sm-9 col-md-9 rht-col">
+            <div class="panel-group checkout-steps" id="accordion">
+              <!-- checkout-step-01  -->
+              <div class="panel panel-default checkout-step-01">
+                <!-- panel-heading -->
+                <div class="panel-heading">
+                  <h4 class="unicase-checkout-title">
+                    <a data-toggle="collapse"
+                       class=""
+                       data-parent="#accordion"
+                       href="#collapseOne">
+                      <span>1</span>Address Details
+                    </a>
+                  </h4>
+                </div>
+                <!-- panel-heading -->
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <!-- panel-body  -->
+                  <div class="panel-body">
+                    <div class="row">
+                      <!-- already-registered-login -->
+                      <div class="col-md-6 col-sm-6 already-registered-login">
+                        <h4 class="checkout-subtitle">Add Shipping Address</h4>
+                        <form action="{% url 'orders' %}" method="post" id="payment-form">
+                          {% csrf_token %}
+                          <div class="form-group">
+                            <label class="info-title" for="exampleInputEmail1">
+                              Shipping Address <span>*</span>
+                            </label>
+                            <input type='hidden' name='total_amount' value="{{ user|current_user_cart_total_price }}">
+                            <input type='hidden' name='user' value="{{ user.id }}">
+                            <input type='hidden' name='status' value='initial'>
+                            <textarea class="form-control unicase-form-control text-input"
+                                      id="address_textarea" name='address' required></textarea>
+                          </div>
+                          <div class='payment_btn_div'>
+                            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                data-key="{{ publishable_key }}"
+                                data-name="Ecommerce payment"
+                                data-description="Payment">
+                            </script>
+                          </div>
+                        </form>
+                        <button class='btn-checkout btn-upper btn btn-primary disabled'>CHECKOUT WITHOUT PAYMENT</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.checkout-steps -->
+          </div>
+          <div class="col-xs-12 col-sm-3 col-md-3 sidebar">
+            <!-- checkout-progress-sidebar -->
+            <div class="checkout-progress-sidebar ">
+              <div class="panel-group">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="unicase-checkout-title">Your Checkout Progress</h4>
+                  </div>
+                  <div class="">
+                    <ul class="nav nav-checkout-progress list-unstyled">
+                      <li>
+                        <a href="#">Billing Address</a>
+                      </li>
+                      <li>
+                        <a href="#">Shipping Address</a>
+                      </li>
+                      <li>
+                        <a href="#">Shipping Method</a>
+                      </li>
+                      <li>
+                        <a href="#">Payment Method</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- checkout-progress-sidebar -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.checkout-box -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+      <div id="brands-carousel" class="logo-slider wow fadeInUp">
+        <div class="logo-slider-inner">
+          <div id="brand-slider"
+               class="owl-carousel brand-slider custom-carousel owl-theme">
+            <div class="item m-t-15">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item m-t-10">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand3.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand6.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+          </div>
+          <!-- /.owl-carousel #logo-slider -->
+        </div>
+        <!-- /.logo-slider-inner -->
+      </div>
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.body-content -->
+  <!-- ============================================================= FOOTER ============================================================= -->
+  <!-- ============================================================= FOOTER ============================================================= -->
+  <!-- ============================================== INFO BOXES ============================================== -->
+  <div class="row our-features-box">
+    <div class="container">
+      <ul>
+        <li>
+          <div class="feature-box">
+            <div class="icon-truck"></div>
+            <div class="content-blocks">We ship worldwide</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-support"></div>
+            <div class="content-blocks">
+              call
+              +1 800 789 0000
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-money"></div>
+            <div class="content-blocks">Money Back Guarantee</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-return"></div>
+            <div class="content">30 days return</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}

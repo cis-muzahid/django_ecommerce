@@ -6,4 +6,4 @@ class OrderForm(forms.ModelForm):
     class Meta:
         """Form for orders"""
         model = Order
-        fields = ['total_amount', 'cart', 'status', 'user']
+        fields = ['total_amount', 'user', 'address', 'status']

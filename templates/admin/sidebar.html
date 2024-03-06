@@ -23,23 +23,6 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="/categories/" class="nav-link {% if "categor" in request.path %}active{% endif %}">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                Categories
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/products" class="nav-link {% if "product" in request.path %}active{% endif %}">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                Products
-              </p>
-            </a>
-          </li>
-          
           <li class="  nav-item {% if request.path == '/users/user/index/' %}menu-open{% endif %}">
             <a href="{% url 'user_index' %}" class="nav-link {% if request.path == '/users/user/index/' %}active{% endif %}">
               <i class="nav-icon fas fa-th"></i>

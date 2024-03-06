@@ -9,3 +9,7 @@
     margin-left: 4px;
     margin-right: 4px;
 }
+
+.btn-stripe>span {
+    min-height: 10px !important;
+}
