@@ -1,11 +1,48 @@
-{% extends 'base.html' %}
+{% extends 'admin/base.html' %}
+{% load static %}
 
-{% block content %}
-  <h2>Update Role</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update Role</button>
-  </form>
-  <a href="{% url 'role_index' %}">Cancel</a>
+{% block body %}
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <h1>Update Role</h1>
+            </div>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Role Form</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <form action="{% url 'update_role' role.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="roleName">Role Name:</label>
+                                <input type="text" class="form-control" id="roleName" name="name" value="{{ role.name }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="permissions">Permissions:</label>
+                                <select class="form-control" id="permissions" name="permissions" multiple required>
+                                    {% for permission in all_permissions %}
+                                        <option value="{{ permission.id }}" {% if permission in role.permissions.all %}selected{% endif %}>{{ permission.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
 {% endblock %}
