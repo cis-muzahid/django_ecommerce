@@ -5,7 +5,7 @@ from .views import CategoryListView, CategoryCreateView, CategoryUpdateView, Cat
 
 urlpatterns = [
     path('categories/', CategoryListView.as_view(), name='category-list'),
-    path('category/create/', CategoryCreateView.as_view(), name='category-create'),
+    path('categories/create/', CategoryCreateView.as_view(), name='category-create'),
     path('category/<int:pk>/update/', CategoryUpdateView.as_view(), name='category-update'),
     path('category/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category-delete'),
 ]

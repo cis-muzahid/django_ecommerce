@@ -10,7 +10,7 @@ from django.urls import reverse
 class CartView(View):
     form_class = CartForm
     def get(self, request):
-        carts = Cart.objects.filter(user=request.user, active=True)
+        carts = Cart.objects.filter(user=request.user.id, active=True)
         return render(request, 'cart/mycart.html', {'carts': carts} )
     
     def post(self, request, pk=None):
@@ -27,7 +27,6 @@ class CartView(View):
             return redirect(reverse('product_details', kwargs={'product':cart.product, 
                                                                        'category': cart.product.category}))
         else:
-            breakpoint()
             form = self.form_class(request.POST)        
             if form.is_valid():
                 
