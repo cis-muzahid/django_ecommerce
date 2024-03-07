@@ -45,7 +45,7 @@
                       <!-- already-registered-login -->
                       <div class="col-md-6 col-sm-6 already-registered-login">
                         <h4 class="checkout-subtitle">Add Shipping Address</h4>
-                        <form action="{% url 'orders' %}" method="post" id="payment-form">
+                        <form action="/checkout/" method="post" id="payment-form">
                           {% csrf_token %}
                           <div class="form-group">
                             <label class="info-title" for="exampleInputEmail1">

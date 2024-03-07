@@ -49,7 +49,7 @@
             <li class="myaccount"><a href="#"><span>My Account</span></a></li>
             <li class="wishlist"><a href="/my_wishlist"><span>Wishlist</span></a></li>
             <li class="header_cart hidden-xs"><a href="/my_cart"><span>My Cart</span></a></li>
-            <li class="check"><a href="#"><span>Checkout</span></a></li>
+            <li class="check"><a href="/orders"><span>Checkout</span></a></li>
             {% if user.is_authenticated %}
               <li class="logout"><a href="{% url 'logout_user' %}"><span>Logout</span></a></li>
             {% else %}

@@ -1,10 +1,10 @@
 # urls.py
 
 from django.urls import path
-from .views import OrderView
+from .views import OrderView, ReturnAndReplaceView
 
 
 urlpatterns = [
-    path('orders/', OrderView.as_view(), name='orders'),
+    path('orders/', ReturnAndReplaceView.as_view(), name='orders_list'),
     path('checkout/', OrderView.as_view(), name='orders'),
 ]

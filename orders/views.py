@@ -8,6 +8,8 @@ from cart.models import Cart
 from .forms import OrderForm
 from django.contrib import messages
 from .utilities import *
+from datetime import timezone, timedelta
+from django.utils import timezone
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -64,3 +66,14 @@ class OrderView(View):
         except stripe.error.CardError as e:
             error_msg = e.error.message
             return render(request, 'orders/checkout.html')
+        
+class ReturnAndReplaceView(View):
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user)
+        order_items = []
+        for order in orders:
+            order_items = OrderItem.objects.filter(order=order)
+        return render(request, 'orders/orders.html', {'orders': order_items })
+    
+    def post(self, request):
+        return redirect('orders_list')
