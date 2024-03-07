@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filter %}
+{% load order_filter %}
 
 {% block body %}
 <div class="breadcrumb">
@@ -64,9 +65,19 @@
 					<td class="cart-product-quantity">
 						<span>{{cart.quantity}}</span>
 		            </td>
-					<td class="cart-product-sub-total"><span class="cart-sub-total-price">${{cart.product.price}}</span></td>
+					<td class="cart-product-sub-total"><span class="cart-sub-total-price">${{ cart.product.price }}</span></td>
 					<td class="cart-product-grand-total"><span class="cart-grand-total-price">
 					${{ cart|total_price }}</span></td>
+					{% if user.id|current_user_replace_request %}
+					<td class="cart-product-sub-total">
+						<form action="/orders/replace/{{ user.id|current_user_replace_request }}" method='post'>
+							{% csrf_token %}
+							<input type='hidden' name='requested' value="Replace">
+							<input type='hidden' name='cart' value="{{ cart.id }}">
+							<button type='submit' class='btn btn-primary'>Replace product</button>
+						</form>
+					</td>
+					{% endif %}
 				</tr>
 				{% endfor %}
 			</tbody><!-- /tbody -->

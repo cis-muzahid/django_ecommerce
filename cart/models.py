@@ -10,7 +10,7 @@ class Cart(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.user.name + " : Cart Product"
+        return self.user.email + " : Cart Product"
 
 class Wishlist(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -19,4 +19,4 @@ class Wishlist(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.user.name + " : Wishlist"
+        return self.user.email + " : Wishlist"

@@ -3,11 +3,12 @@ from django.shortcuts import render
 from django.views import View
 from django.conf import settings
 from django.shortcuts import redirect
-from .models import Order
+from .models import Order, ReturnAndReplaceOrder
 from cart.models import Cart
-from .forms import OrderForm
+from .forms import OrderForm, ReturnAndReplaceOrderForm
 from django.contrib import messages
 from .utilities import *
+from home.utilities import *
 from datetime import timezone, timedelta
 from django.utils import timezone
 
@@ -75,5 +76,25 @@ class ReturnAndReplaceView(View):
             order_items = OrderItem.objects.filter(order=order)
         return render(request, 'orders/orders.html', {'orders': order_items })
     
-    def post(self, request):
-        return redirect('orders_list')
+    def post(self, request, pk=None):
+        if pk and request.POST.get('requested'):
+            replace = ReturnAndReplaceOrder.objects.get(id=pk)
+            breakpoint()
+            cart = request.POST.get('cart')
+            replace.cart = Cart.objects.get(id=cart)
+            replace.save()
+            messages.success(request, 'Your request is completed. Wait sometime for approvment.')
+            return redirect('orders_list')
+
+        if request.POST.get('requested') and request.POST.get('action') == 'Replace':     
+            carts = current_user_cart(request.user)
+            try:
+                replace = ReturnAndReplaceOrder.objects.get(user=request.user, cart=None)
+                messages.success(request,  f'Your previous request is not completed. Please complete or Cancle the request.')
+                return render(request, 'cart/mycart.html', {'carts': carts } )
+            except ReturnAndReplaceOrder.DoesNotExist:
+                form = ReturnAndReplaceOrderForm(request.POST)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request,  f'Your request is in progress. Please proceed Products in cart to complete the request.')
+                    return render(request, 'cart/mycart.html', {'carts': carts } )
