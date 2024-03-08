@@ -12,17 +12,20 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
+from dotenv import load_dotenv
+
+# from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z1e6vv%$*po+)*vpn$ox_k#3^a9akgztf6z(a8sgv8wvdi7ob^'
+SECRET_KEY = os.environ.get("DJANGO_KEY", None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -159,9 +162,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+# # Stripe
+# STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+# STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+# BACKEND_DOMAIN = config("BACKEND_DOMAIN")
+# PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")
+# PAYMENT_CANCEL_URL = config("PAYMENT_CANCEL_URL")
 # Stripe
-STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
-BACKEND_DOMAIN = config("BACKEND_DOMAIN")
-PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")
-PAYMENT_CANCEL_URL = config("PAYMENT_CANCEL_URL")
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+BACKEND_DOMAIN = os.environ.get("BACKEND_DOMAIN")
+PAYMENT_SUCCESS_URL = os.environ.get("PAYMENT_SUCCESS_URL")
+PAYMENT_CANCEL_URL = os.environ.get("PAYMENT_CANCEL_URL")

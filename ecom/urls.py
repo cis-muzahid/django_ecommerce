@@ -31,7 +31,7 @@ urlpatterns = [
     path('', include('products.urls')),
     path('', include('home.urls')),
     path('admin/', include('django.contrib.auth.urls')),
-    path('admin/', include('users.urls')),
+    path('', include('users.urls')),
     path('', include('category.urls')),
     path('', include('cart.urls')),
     path('', include('orders.urls')),

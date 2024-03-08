@@ -9,7 +9,7 @@ from .forms import OrderForm, ReturnAndReplaceOrderForm
 from django.contrib import messages
 from .utilities import *
 from home.utilities import *
-from datetime import timezone, timedelta
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -79,22 +79,34 @@ class ReturnAndReplaceView(View):
     def post(self, request, pk=None):
         if pk and request.POST.get('requested'):
             replace = ReturnAndReplaceOrder.objects.get(id=pk)
-            breakpoint()
             cart = request.POST.get('cart')
             replace.cart = Cart.objects.get(id=cart)
             replace.save()
             messages.success(request, 'Your request is completed. Wait sometime for approvment.')
             return redirect('orders_list')
 
-        if request.POST.get('requested') and request.POST.get('action') == 'Replace':     
+        if request.POST.get('requested'):
             carts = current_user_cart(request.user)
-            try:
-                replace = ReturnAndReplaceOrder.objects.get(user=request.user, cart=None)
-                messages.success(request,  f'Your previous request is not completed. Please complete or Cancle the request.')
-                return render(request, 'cart/mycart.html', {'carts': carts } )
-            except ReturnAndReplaceOrder.DoesNotExist:
+            if request.POST.get('action') == 'Replace':
+                try:
+                    current_time = timezone.now()
+                    date_before_seven_days = current_time - timedelta(days=7)
+                    replace = ReturnAndReplaceOrder.objects.filter(action='Replace', user=request.user, cart=None, created_at__gte=date_before_seven_days)
+                    if replace.exists():
+                        messages.success(request,  f'Your previous request is not completed. Please complete or cancel the request.')
+                    else:
+                        form = ReturnAndReplaceOrderForm(request.POST)
+                        if form.is_valid():
+                            form.save()
+                            messages.success(request,  f'Your request is in progress. Please proceed with products in the cart to complete the request.')
+                except Exception as e:
+                    # Handle exceptions that may occur during form processing or data saving
+                    messages.error(request, f'An error occurred: {e}')
+                return render(request, 'cart/mycart.html', {'carts': carts})
+
+            elif request.POST.get('action') == 'Return':
                 form = ReturnAndReplaceOrderForm(request.POST)
                 if form.is_valid():
                     form.save()
-                    messages.success(request,  f'Your request is in progress. Please proceed Products in cart to complete the request.')
+                    messages.success(request,  f'Your request is completed. Wait sometime for approvment.')
                     return render(request, 'cart/mycart.html', {'carts': carts } )

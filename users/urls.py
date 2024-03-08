@@ -10,20 +10,20 @@ urlpatterns = [
     path('logout_user/', LogoutView.as_view(), name='logout_user'),
     path('signup_user/', SignupView.as_view(), name='signup_user'),
 
-    path('user/index/', UserIndexView.as_view(), name='user_index'),
-    path('user/add/', AddUserView.as_view(), name='add_user'),
-    path('user/update/<int:user_id>/', UserUpdateView.as_view(), name='update_user'),
-    path('user/delete/<int:user_id>/', UserDeleteView.as_view(), name='delete_user'),
+    path('admin/user/index/', UserIndexView.as_view(), name='user_index'),
+    path('admin/user/add/', AddUserView.as_view(), name='add_user'),
+    path('admin/user/update/<int:user_id>/', UserUpdateView.as_view(), name='update_user'),
+    path('admin/user/delete/<int:user_id>/', UserDeleteView.as_view(), name='delete_user'),
 
-    path('role/index', RoleIndexView.as_view(), name='role_index'),
-    path('role/add', AddRoleView.as_view(), name='add_role'),
-    path('role/update/<int:role_id>/', UpdateRoleView.as_view(), name='update_role'),
-    path('role/delete/<int:role_id>/', DeleteRoleView.as_view(), name='delete_role'),
+    path('admin/role/index', RoleIndexView.as_view(), name='role_index'),
+    path('admin/role/add', AddRoleView.as_view(), name='add_role'),
+    path('admin/role/update/<int:role_id>/', UpdateRoleView.as_view(), name='update_role'),
+    path('admin/role/delete/<int:role_id>/', DeleteRoleView.as_view(), name='delete_role'),
 
-    path('permission/add', AddPermissionView.as_view(), name='add_permission'),
-    path('permission/index', PermissionIndexView.as_view(), name='permission_index'),
-    path('permission/delete/<int:perm_id>/', DeletePermissionView.as_view(), name='delete_permission'),
-    path('permission/update/<int:perm_id>/', UpdatePermissionView.as_view(), name='update_permission'),
+    path('admin/permission/add', AddPermissionView.as_view(), name='add_permission'),
+    path('admin/permission/index', PermissionIndexView.as_view(), name='permission_index'),
+    path('admin/permission/delete/<int:perm_id>/', DeletePermissionView.as_view(), name='delete_permission'),
+    path('admin/permission/update/<int:perm_id>/', UpdatePermissionView.as_view(), name='update_permission'),
 
     # Add more paths as needed for your application
 ]
