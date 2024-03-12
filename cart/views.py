@@ -10,11 +10,17 @@ from django.urls import reverse
 class CartView(View):
     form_class = CartForm
     def get(self, request):
-        carts = Cart.objects.filter(user=request.user.id, active=True)
-        return render(request, 'cart/mycart.html', {'carts': carts} )
+        if request.user.id:
+            try:
+                carts = Cart.objects.filter(user=request.user.id, active=True)
+            except Cart.DoesNotExist:
+                carts = None
+            return render(request, 'cart/mycart.html', {'carts': carts} )
+        else:
+            return redirect('login_user')  
     
     def post(self, request, pk=None):
-        try: 
+        try:
             cart = get_object_or_404(Cart, user=request.POST['user'], product=request.POST['product'], active=True)
         except:
             cart = None
@@ -29,7 +35,6 @@ class CartView(View):
         else:
             form = self.form_class(request.POST)        
             if form.is_valid():
-                
                 cart = form.save()
                 messages.success(request,  f'{cart.product} added successfully in cart.')
                 return redirect(reverse('product_details', kwargs={'product':cart.product, 
