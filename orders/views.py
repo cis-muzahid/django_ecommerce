@@ -70,11 +70,17 @@ class OrderView(View):
         
 class ReturnAndReplaceView(View):
     def get(self, request):
-        orders = Order.objects.filter(user=request.user)
         order_items = []
-        for order in orders:
-            order_items = OrderItem.objects.filter(order=order)
-        return render(request, 'orders/orders.html', {'orders': order_items })
+        if request.user.id:
+            try:
+                orders = Order.objects.filter(user=request.user)
+                for order in orders:
+                    order_items = OrderItem.objects.filter(order=order)
+            except Order.DoesNotExist:
+                pass
+            return render(request, 'orders/orders.html', {'orders': order_items })
+        else:
+            return redirect('login_user')
     
     def post(self, request, pk=None):
         if pk and request.POST.get('requested'):
