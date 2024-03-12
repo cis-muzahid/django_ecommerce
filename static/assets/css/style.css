@@ -13,3 +13,8 @@
 .btn-stripe>span {
     min-height: 10px !important;
 }
+
+.sign-btn {
+    width: 100%;
+    margin-top: 20px;
+}

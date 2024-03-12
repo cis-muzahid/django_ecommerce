@@ -32,14 +32,15 @@ class OrderItem(models.Model):
         return f"OrderItem #{self.pk} - {self.cart.product.name}"
     
 class ReturnAndReplaceOrder(models.Model):
-    order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    order = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name='order_return_replace')
     requested = models.BooleanField(default=True)
     approved = models.BooleanField(default=False)
     reason = models.TextField(blank=True)
     action = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField( auto_now_add = True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True,blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.order.user.email} : {self.order.id} - {self.action}"
+        return f"{self.user.email} : {self.order.id} - {self.action}"

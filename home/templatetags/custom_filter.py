@@ -74,4 +74,13 @@ def product_quantity(product, user):
     except Cart.DoesNotExist:
         return 1
     
-    return cart 
+    return cart
+
+@register.filter
+def categories_all(a):
+    try:
+        categories= Category.objects.filter(is_delete=False, parent_category=None)
+    except Category.DoesNotExist:
+        categories = None
+        pass
+    return categories

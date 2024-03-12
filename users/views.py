@@ -1,13 +1,12 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View, generic
 from .models import CustomUser, Role, Permission
 from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm,LoginForm
 from django.urls import reverse
 from django.core.paginator import Paginator
-
-
+from django.core.exceptions import ObjectDoesNotExist
 
 # Custom User model
 User = get_user_model()
@@ -18,17 +17,20 @@ class LoginView(View):
         return render(request, 'authenticate/login.html')
 
     def post(self, request):
-        email = request.POST["email"]
-        password = request.POST["password"]
-        user = authenticate(request, email=email, password=password)
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, email=email, password=password)
+            print('user', user)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Welcome, you are now logged in.')
+                return redirect('home')
+            else:
+                messages.error(request, 'Invalid login credentials.')
+                return redirect('login_user')
 
-        if user is not None:
-            login(request, user)
-            messages.success(request, 'Welcome, you are now logged in.')
-            return redirect('home')
-        else:
-            messages.error(request, 'Invalid login credentials.')
-            return redirect('login_user')
 class CustomAdminLoginView(View):
     template_name = 'admin/admin_login.html'  # Replace with your admin login template
 
@@ -70,21 +72,33 @@ class LogoutView(View):
 
 class SignupView(View):
     def get(self, request):
-        return render(request, "authenticate/signup.html")
+        try:
+            role = Role.objects.get(name='user')
+            return render(request, "authenticate/signup.html", {'user_role':role})
+        except ObjectDoesNotExist:
+            return HttpResponse("User role does not exist. Please check your database setup or create the 'user' role.")
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {e}. Please contact the administrator.")
 
     def post(self, request):
-        username = request.POST['username']
-        email = request.POST['email']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        password = request.POST['password']
-        confirm_password = request.POST['cnf_password']
-        user = User.objects.create_user(email=email, username=username, first_name=first_name, last_name=last_name, password=password)
-        user.save()
-        print (user.username)
-        messages.success(request, 'Your account has been successfully created.')
-        return redirect('login_user')
+        form = CutomUserForm(request.POST)
+        if form.is_valid():
+            role = form.cleaned_data['user_role']
+            user = CustomUser.objects.create_user(
+                username=form.cleaned_data['username'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
+            )
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.user_role = role
+            user.save()
 
+            messages.success(request, 'Your account has been successfully created.')
+            return redirect('login_user')
+        else:
+            messages.error(request, form.errors)
+            return render(request, "authenticate/signup.html")
 class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'
     paginate_by = 10

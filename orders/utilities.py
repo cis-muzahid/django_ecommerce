@@ -9,3 +9,10 @@ def order_cart_item(order, user):
         OrderItem.objects.create(order=order, cart=cart)
         cart.active = False
         cart.save()
+
+def current_user_cart(user):
+    try:
+        carts =  Cart.objects.filter(user=user.id, active=True)
+    except Cart.DoesNotExist:
+        carts = None
+    return carts

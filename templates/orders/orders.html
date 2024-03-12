@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filter %}
-
+{% load order_filter %}
 {% block body %}
 
 <!-- ============================================== HEADER : END ============================================== -->
@@ -25,7 +25,7 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th colspan="4" class="heading-title">My Wishlist</th>
+					<th colspan="4" class="heading-title">My Orders</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -44,13 +44,19 @@
 							<span class="review">( 06 Reviews )</span>
 						</div>
 						<div class="price">
-							${{order.cart.product.price}}
+							${{ order.cart.product.price }}
 						</div>
 					</td>
                     <td class="col-md-2 ">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter"> 
-                    return / replace
-                    </button>
+						{% if order.id|current_user_return_request == None %}
+							{% if order.id|is_last_seven_days_order %}
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter"> 
+									return / replace
+								</button>
+							{% endif %}
+						{% else %}
+							In Process : {{ order.id|current_user_return_request }}
+						{% endif %}
 					</td>
 					<td class="col-md-1 close-btn">
 						<a href="#" class=""><i class="fa fa-times"></i>Cancle</a>
@@ -60,7 +66,7 @@
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle">Return/Replace Order</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
@@ -69,16 +75,18 @@
                             <form action='/orders/' method='post'>{% csrf_token %}
                                 <div class="modal-body">
                                     <input class="form-control" placeholder='Reason to return/replace order' type='text' name='reason'>
-                                    <select class="form-control form-select" style='margin-top: 10px;' aria-label="Default select example">
+                                    <select name='action' class="form-control form-select" style='margin-top: 10px;' aria-label="Default select example">
                                         <option selected>Open this select menu</option>
                                         <option value="Return">Return</option>
                                         <option value="Replace">Replace</option>
                                     </select>
-                                    <input type='hidden' name='order' value='order.id'>
+                                    <input type='hidden' name='order' value="{{ order.id }}">
+                                    <input type='hidden' name='requested' value='True'>
+                                    <input type='hidden' name='user' value="{{ user.id }}">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">return</button>
+                                    <button type="submit" class="btn btn-primary">Proceed</button>
                                 </div>
                             </form>
                         </div>
