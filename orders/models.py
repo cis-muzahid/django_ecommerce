@@ -10,7 +10,7 @@ class Order(models.Model):
         ('deliverd', 'Deliverd'),
         ('replace', 'Replace'),
         ('return', 'Return'),
-        ('cancled', 'Cancle'),
+        ('cancelled', 'Cancle'),
     )
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     active = models.BooleanField(default=False)
@@ -27,6 +27,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"OrderItem #{self.pk} - {self.cart.product.name}"

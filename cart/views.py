@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Cart, Wishlist
-from .forms import CartForm
+from .forms import CartForm, WishlistForm
 from django.contrib import messages
 from django.urls import reverse
 
@@ -12,45 +12,71 @@ class CartView(View):
     def get(self, request):
         if request.user.id:
             try:
-                carts = Cart.objects.filter(user=request.user.id, active=True)
+                try:
+                    carts = Cart.objects.filter(user=request.user.id, active=True, product__name__icontains=request.GET['q']).order_by('-id')
+                except:
+                    carts = Cart.objects.filter(user=request.user.id, active=True).order_by('-id')
             except Cart.DoesNotExist:
                 carts = None
             return render(request, 'cart/mycart.html', {'carts': carts} )
         else:
-            return redirect('login_user')  
-    
+            return redirect('login_user')
+
     def post(self, request, pk=None):
         try:
             cart = get_object_or_404(Cart, user=request.POST['user'], product=request.POST['product'], active=True)
         except:
             cart = None
             pass
-        
+
         if cart:
-            cart.quantity = request.POST['quantity']
+            try:
+                cart.quantity += request.POST['quantity']
+            except:
+                cart.quantity += 1
             cart.save()
             messages.success(request,  f'{cart.product} updated successfully in cart.')
-            return redirect(reverse('product_details', kwargs={'product':cart.product, 
-                                                                       'category': cart.product.category}))
+            return redirect('cart_view')
         else:
-            form = self.form_class(request.POST)        
+            form = self.form_class(request.POST)
             if form.is_valid():
                 cart = form.save()
                 messages.success(request,  f'{cart.product} added successfully in cart.')
-                return redirect(reverse('product_details', kwargs={'product':cart.product, 
-                                                                    'category': cart.product.category}))
+                return redirect('cart_view')
             else:
                 messages.error(request, form.errors)
                 return render(request, 'cart/mycart.html')
-    
+
 class WishlistView(View):
     def get(self, request):
-        return render(request, 'cart/wishlist.html')
-    
+        try:
+            try:
+                wishlists = Wishlist.objects.filter(user=request.user.id, active=True, product__name__icontains=request.GET['q']).order_by('-id')
+            except:
+                wishlists = Wishlist.objects.filter(user=request.user.id, active=True).order_by('-id')
+        except Wishlist.DoesNotExist:
+            wishlists = []
+        return render(request, 'cart/wishlist.html', {'wishlists': wishlists})
+
     def post(self, request, pk=None):
-        pass
-        return render(request, 'cart/wishlist.html')
-    
+        try:
+            wishlist = get_object_or_404(Wishlist, user=request.POST['user'], product=request.POST['product'], active=True)
+        except:
+            wishlist = None
+
+        if wishlist:
+            return redirect('wishlist_view')
+        else:
+            form = WishlistForm(request.POST)
+            if form.is_valid():
+                wishlist = form.save()
+                messages.success(request,  f'{wishlist.product} added successfully in Wishlist.')
+                return redirect(reverse('product_details', kwargs={'product':wishlist.product,
+                                                                    'category': wishlist.product.category}))
+            else:
+                messages.error(request, form.errors)
+                return render(request, 'cart/wishlist.html')
+
 
 class DeleteView(View):
     def get(self, request, pk, action):

@@ -57,33 +57,49 @@ class OrderView(View):
         try:
             payment_intent = stripe.PaymentIntent.create(
                 amount=int(float(request.POST['total_amount'])*100),
-                currency='inr',
+                currency='usd',
                 description='Product payment',
                 customer= customer.id,
                 source=source,
                 setup_future_usage='off_session' 
             )
-            return payment_intent.id
+
+            stripe.PaymentIntent.confirm(
+                payment_intent.id,
+                payment_method="pm_card_visa",
+                )
+
+            if payment_intent.status == 'successful':
+                return payment_intent.id
+            else:
+                messages.error(request, 'Payment is not completed by this method. please try again.')
+                return render(request, 'orders/checkout.html')
+
         except stripe.error.CardError as e:
             error_msg = e.error.message
             return render(request, 'orders/checkout.html')
-        
+
 class ReturnAndReplaceView(View):
+    """ orders list for user """
     def get(self, request):
         order_items = []
         if request.user.id:
             try:
                 orders = Order.objects.filter(user=request.user)
                 for order in orders:
-                    order_items = OrderItem.objects.filter(order=order)
+                    try:
+                        order_items = OrderItem.objects.filter(order=order, active=True, cart__product__name__icontains=request.GET['q']).order_by('-id')
+                    except:
+                        order_items = OrderItem.objects.filter(order=order, active=True).order_by('-id')
             except Order.DoesNotExist:
                 pass
             return render(request, 'orders/orders.html', {'orders': order_items })
         else:
             return redirect('login_user')
-    
+
     def post(self, request, pk=None):
         if pk and request.POST.get('requested'):
+            """ replace request order item with new order item using cart. """
             replace = ReturnAndReplaceOrder.objects.get(id=pk)
             cart = request.POST.get('cart')
             replace.cart = Cart.objects.get(id=cart)
@@ -91,7 +107,8 @@ class ReturnAndReplaceView(View):
             messages.success(request, 'Your request is completed. Wait sometime for approvment.')
             return redirect('orders_list')
 
-        if request.POST.get('requested'):
+        elif request.POST.get('requested'):
+            """ create a request to return or replace order_item """
             carts = current_user_cart(request.user)
             if request.POST.get('action') == 'Replace':
                 try:
@@ -106,8 +123,7 @@ class ReturnAndReplaceView(View):
                             form.save()
                             messages.success(request,  f'Your request is in progress. Please proceed with products in the cart to complete the request.')
                 except Exception as e:
-                    # Handle exceptions that may occur during form processing or data saving
-                    messages.error(request, f'An error occurred: {e}')
+                    messages.info(request, f'An error occurred: {e}')
                 return render(request, 'cart/mycart.html', {'carts': carts})
 
             elif request.POST.get('action') == 'Return':
@@ -116,3 +132,28 @@ class ReturnAndReplaceView(View):
                     form.save()
                     messages.success(request,  f'Your request is completed. Wait sometime for approvment.')
                     return render(request, 'cart/mycart.html', {'carts': carts } )
+
+
+class ChangeOrderStatus(View):
+    def post(self, request):
+        try:
+            order = OrderItem.objects.get(id= request.POST['order'])
+        except OrderItem.DoesNotExist:
+            order = None
+
+        if order != None:
+            order.active = False
+            order.save()
+            breakpoint()
+            if order.order.payment_status:
+                refund = stripe.Refund.create(
+                    payment_intent=order.order.payment_status,
+                    amount=order.cart.product.price,
+                    )
+            messages.success(request, 'order is cancelled successfully.')
+            return redirect('orders_list')
+        else:
+            messages.info(request, 'order does not exist.')
+            return redirect('orders_list')
+
+

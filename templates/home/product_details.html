@@ -74,7 +74,6 @@
 					<form action='/add_cart/' method='post'>{% csrf_token %}
 						<input type='hidden' name='product' value='{{ product.id }}'>
 						<input type='hidden' name='user' value='{{ user.id }}'>
-						<input type='hidden' name='quantity' value='{{ "1" }}'>
 						<button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
 						title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
 					</form>
@@ -320,9 +319,12 @@
 
 									<div class="col-sm-6 col-xs-6">
 										<div class="favorite-button m-t-5">
-											<a class="btn btn-primary" data-toggle="tooltip" data-placement="right" title="Wishlist" href="#">
-											    <i class="fa fa-heart"></i>
-											</a>
+											<form action='/add_to_wishlist/' method='post' style='float: left;margin-right:3px;'>{% csrf_token %}
+												<input type='hidden' name='product' value='{{ product.id }}'>
+												<input type='hidden' name='user' value='{{ user.id }}'>
+												<button type='submit' data-toggle="tooltip" data-placement="right"  class="btn btn-primary" title="Wishlist">
+												<i class="fa fa-heart"></i> </button>
+											</form>
 											<a class="btn btn-primary" data-toggle="tooltip" data-placement="right" title="Add to Compare" href="#">
 											   <i class="fa fa-signal"></i>
 											</a>
@@ -479,7 +481,6 @@
 										<form action='/add_cart/' method='post'>{% csrf_token %}
 											<input type='hidden' name='product' value='{{ product.id }}'>
 											<input type='hidden' name='user' value='{{ user.id }}'>
-											<input type='hidden' name='quantity' value='{{ "1" }}'>
 											<button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
 											title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
 											</form>
@@ -488,9 +489,12 @@
 										</li>
 															
 										<li class="lnk wishlist">
-											<a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Wishlist">
-													<i class="icon fa fa-heart"></i>
-											</a>
+											<form action='/add_to_wishlist/' method='post'>{% csrf_token %}
+											<input type='hidden' name='product' value='{{ product.id }}'>
+											<input type='hidden' name='user' value='{{ user.id }}'>
+											<button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
+											<i class="icon fa fa-heart"></i> </button>
+											</form>
 										</li>
 
 										<li class="lnk">

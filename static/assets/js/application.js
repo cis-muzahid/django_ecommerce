@@ -28,4 +28,31 @@ $(document).ready(function() {
     $('.btn-checkout').click(function() {
         $('#payment-form').submit();
     });
+
+    $('#checkoutLink').click(function() {
+        console.log("Username:", useremail);
+        if (useremail) {
+            window.location.href = '/orders'
+        } else {
+            $('#loginModal').modal('show');
+        }
+    });
+
+    $('#my_cart').click(function() {
+        console.log("Username:", useremail);
+        if (useremail) {
+            window.location.href = '/my_cart'
+        } else {
+            $('#loginModal').modal('show');
+        }
+    });
+
+    $('#my_wishlist').click(function() {
+        console.log("Username:", useremail);
+        if (useremail) {
+            window.location.href = '/my_wishlist'
+        } else {
+            $('#loginModal').modal('show');
+        }
+    });
 });
