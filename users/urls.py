@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import LoginView, LogoutView, SignupView, UserIndexView, AddUserView, RoleIndexView, AddRoleView, PermissionIndexView, AddPermissionView, UpdateRoleView, DeleteRoleView, UserDeleteView, UserUpdateView, UpdatePermissionView, DeletePermissionView, CustomAdminLoginView, CustomAdminLogoutView
+from .views import LoginView, LogoutView, SignupView, UserIndexView, AddUserView, RoleIndexView, AddRoleView, PermissionIndexView, AddPermissionView, UpdateRoleView, DeleteRoleView, UserDeleteView, UserUpdateView, UpdatePermissionView, DeletePermissionView, CustomAdminLoginView, CustomAdminLogoutView, AdminDashboardView
 
 urlpatterns = [
     path('admin_login/', CustomAdminLoginView.as_view(), name='admin_login'),
     path('admin_logout/', CustomAdminLogoutView.as_view(), name='admin_logout'),
+    path('admin/', AdminDashboardView.as_view(), name='admin' ),
     # path('admin/', admin_redirect, name='admin_redirect'),
     
     path('login_user/', LoginView.as_view(), name='login_user'),
