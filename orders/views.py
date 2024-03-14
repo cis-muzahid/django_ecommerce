@@ -11,6 +11,7 @@ from .utilities import *
 from home.utilities import *
 from datetime import datetime, timedelta
 from django.utils import timezone
+from home.utilities import *
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -144,7 +145,6 @@ class ChangeOrderStatus(View):
         if order != None:
             order.active = False
             order.save()
-            breakpoint()
             if order.order.payment_status:
                 refund = stripe.Refund.create(
                     payment_intent=order.order.payment_status,
@@ -156,4 +156,40 @@ class ChangeOrderStatus(View):
             messages.info(request, 'order does not exist.')
             return redirect('orders_list')
 
+class SupplierReturnAndReplaceView(View):
+    def get(self, request):
+        if "return" in request.path:
+            orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False)
+        else:
+            orders = ReturnAndReplaceOrder.objects.filter(action='Replace', requested=True, approved=False)
+        return render(request, 'admin/orders/return_replace.html', {'orders': orders})
 
+    def post(self, request):
+        if request.POST['request']:
+            return_replace_request = ReturnAndReplaceOrder.objects.get(id=request.POST['request'])
+            return_replace_request.approved = True
+            return_replace_request.save()
+            if return_replace_request.action == 'Replace':
+                breakpoint()
+                return_replace_request.order.cart = return_replace_request.cart
+                return_replace_request.save()
+                return redirect('admin_replace_request_list')
+            elif return_replace_request.action == 'Return':
+                if return_replace_request.order.order.payment_status:
+                    stripe.Refund.create(
+                        payment_intent=return_replace_request.order.order.payment_status,
+                        amount=return_replace_request.order.cart.product.price,
+                        )
+                return redirect('admin_return_request_list')
+            
+
+
+class AdminOrderView(View):
+    def get(self, request, pk=None):
+        if pk:
+            orders = OrderItem.objects.filter(order=pk)
+            return render(request, 'admin/orders/order_items.html', {'orders': orders})
+        else:
+            orders = Order.objects.all()
+            orders = pagination(orders, request.GET.get("page"))
+            return render(request, 'admin/orders/order.html', {'orders': orders})
