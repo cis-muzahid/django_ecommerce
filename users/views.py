@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View, generic
 from .models import CustomUser, Role, Permission
+from products.models import Product
+from orders.models import Order
 from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm,LoginForm
 from django.urls import reverse
 from django.core.paginator import Paginator
@@ -49,7 +51,7 @@ class CustomAdminLoginView(View):
             print('user', user)
             if user.is_superuser:
                 login(request, user)
-                messages.success(request, 'Welcome, you are now logged in as admin.')
+                messages.error(request, 'Welcome, you are now logged in as admin.')
                 return redirect('user_index')  # Redirect superusers to user index
             elif user.user_role.name == 'Supplier':
                 login(request, user)
@@ -103,21 +105,29 @@ class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'
     paginate_by = 10
     def get(self, request, *args, **kwargs):
-        users = CustomUser.objects.all()
-        paginator = Paginator(users, self.paginate_by)
-        page_number = request.GET.get('page')
-        users_page = paginator.get_page(page_number)
+        if request.user.is_authenticated:
+            users = CustomUser.objects.all()
+            paginator = Paginator(users, self.paginate_by)
+            page_number = request.GET.get('page')
+            users_page = paginator.get_page(page_number)
 
-        return render(request, self.template_name, {'users': users_page})
+            return render(request, self.template_name, {'users': users_page})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
     
 class AddUserView(View):        
     template_name = 'admin/user_management/create.html'  # Adjust the template name
 
     def get(self, request):
-        form = CutomUserForm()
-        roles = Role.objects.all()  # Fetch all roles
-        form.fields['user_role'].queryset = roles
-        return render(request, self.template_name, {'form': form, 'roles': roles})
+        if request.user.is_authenticated:
+            form = CutomUserForm()
+            roles = Role.objects.all()  # Fetch all roles
+            form.fields['user_role'].queryset = roles
+            return render(request, self.template_name, {'form': form, 'roles': roles})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
     def post(self, request):
         form = CutomUserForm(request.POST)
@@ -145,11 +155,15 @@ class UserUpdateView(View):
     template_name = 'admin/user_management/update.html'  # Use the same template as AddUserView
 
     def get(self, request, user_id):
-        user = CustomUser.objects.get(id=user_id)
-        form = CutomUserForm(instance=user)
-        roles = Role.objects.all()  # Fetch all roles
-        form.fields['user_role'].queryset = roles
-        return render(request, self.template_name, {'form': form, 'roles': roles, 'user': user})
+        if request.user.is_authenticated:
+            user = CustomUser.objects.get(id=user_id)
+            form = CutomUserForm(instance=user)
+            roles = Role.objects.all()  # Fetch all roles
+            form.fields['user_role'].queryset = roles
+            return render(request, self.template_name, {'form': form, 'roles': roles, 'user': user})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
     def post(self, request, user_id):
         try:
@@ -173,30 +187,42 @@ class UserUpdateView(View):
 class UserDeleteView(View):
 
     def post(self, request, user_id):
-        user = get_object_or_404(User, id=user_id)
-        try:
-            user.delete()
-            messages.success(request, 'Role has been successfully deleted.')
-        except Exception as e:
-            messages.error(request, f'Error deleting role: {str(e)}')
+        if request.user.is_authenticated:
+            user = get_object_or_404(User, id=user_id)
+            try:
+                user.delete()
+                messages.success(request, 'Role has been successfully deleted.')
+            except Exception as e:
+                messages.error(request, f'Error deleting role: {str(e)}')
 
-        return redirect('user_index')
+            return redirect('user_index')
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 class RoleIndexView(View):
     template_name = 'admin/role_management/index.html'
     paginate_by = 5 
     def get(self, request, *args, **kwargs):
-        roles_with_permissions = Role.objects.prefetch_related('permissions').all()
-        paginator = Paginator(roles_with_permissions, self.paginate_by)
-        page_number = request.GET.get('page')
-        roles_page = paginator.get_page(page_number)
+        if request.user.is_authenticated:
+            roles_with_permissions = Role.objects.prefetch_related('permissions').all()
+            paginator = Paginator(roles_with_permissions, self.paginate_by)
+            page_number = request.GET.get('page')
+            roles_page = paginator.get_page(page_number)
 
-        return render(request, self.template_name, {'roles_with_permissions': roles_page})
+            return render(request, self.template_name, {'roles_with_permissions': roles_page})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 class AddRoleView(View):
     template_name = 'admin/role_management/create.html'
 
     def get(self, request):
-        all_permissions = Permission.objects.all()
-        return render(request, self.template_name, {'all_permissions': all_permissions})
+        if request.user.is_authenticated:
+            all_permissions = Permission.objects.all()
+            return render(request, self.template_name, {'all_permissions': all_permissions})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
     def post(self, request):
         try:
@@ -217,9 +243,13 @@ class UpdateRoleView(View):
     template_name = 'admin/role_management/update.html'
 
     def get(self, request, role_id):
-        role = get_object_or_404(Role, id=role_id)
-        form = UserRoleForm(instance=role)
-        return render(request, self.template_name, {'form': form, 'role': role, 'all_permissions': Permission.objects.all()})
+        if request.user.is_authenticated:
+            role = get_object_or_404(Role, id=role_id)
+            form = UserRoleForm(instance=role)
+            return render(request, self.template_name, {'form': form, 'role': role, 'all_permissions': Permission.objects.all()})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
     def post(self, request, role_id):
         role = get_object_or_404(Role, id=role_id)
@@ -239,33 +269,45 @@ class UpdateRoleView(View):
 class DeleteRoleView(View):
 
     def post(self, request, role_id):
-        role = get_object_or_404(Role, id=role_id)
-        try:
-            role.delete()
-            messages.success(request, 'Role has been successfully deleted.')
-        except Exception as e:
-            messages.error(request, f'Error deleting role: {str(e)}')
+        if request.user.is_authenticated:
+            role = get_object_or_404(Role, id=role_id)
+            try:
+                role.delete()
+                messages.success(request, 'Role has been successfully deleted.')
+            except Exception as e:
+                messages.error(request, f'Error deleting role: {str(e)}')
 
-        return redirect('role_index')
-    
+            return redirect('role_index')
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
+
 class PermissionIndexView(View):
     template_name = 'admin/permission/index.html'
     paginate_by = 10  # Set the number of permissions per page
 
     def get(self, request, *args, **kwargs):
-        permissions_list = Permission.objects.all()
-        paginator = Paginator(permissions_list, self.paginate_by)
-        page_number = request.GET.get('page')
-        permissions_page = paginator.get_page(page_number)
+        if request.user.is_authenticated:
+            permissions_list = Permission.objects.all()
+            paginator = Paginator(permissions_list, self.paginate_by)
+            page_number = request.GET.get('page')
+            permissions_page = paginator.get_page(page_number)
 
-        return render(request, self.template_name, {'permissions': permissions_page})
+            return render(request, self.template_name, {'permissions': permissions_page})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
 class AddPermissionView(View):
     template_name = 'admin/permission/create.html'
 
     def get(self, request):
-        form = UserPermissionForm()
-        return render(request, self.template_name, {'form': form})
+        if request.user.is_authenticated:
+            form = UserPermissionForm()
+            return render(request, self.template_name, {'form': form})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
     def post(self, request):
         form = UserPermissionForm(request.POST)
@@ -285,9 +327,13 @@ class UpdatePermissionView(View):
     template_name = 'admin/permission/update.html'  # Adjust the template name
 
     def get(self, request, perm_id):
-        permission = get_object_or_404(Permission, id=perm_id)
-        form = UserPermissionForm(instance=permission)
-        return render(request, self.template_name, {'form': form, 'permission': permission})
+        if request.user.is_authenticated:
+            permission = get_object_or_404(Permission, id=perm_id)
+            form = UserPermissionForm(instance=permission)
+            return render(request, self.template_name, {'form': form, 'permission': permission})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
     def post(self, request, perm_id):
         permission = get_object_or_404(Permission, id=perm_id)
@@ -307,12 +353,27 @@ class DeletePermissionView(View):
     template_name = 'admin/permission/delete.html'  # Adjust the template name
 
     def post(self, request, perm_id):
-        permission = get_object_or_404(Permission, id=perm_id)
-        try:
-            permission.delete()
-            messages.success(request, 'Permission has been successfully deleted.')
-        except Exception as e:
-            messages.error(request, f'Error deleting permission: {str(e)}')
+        if request.user.is_authenticated:
+            permission = get_object_or_404(Permission, id=perm_id)
+            try:
+                permission.delete()
+                messages.success(request, 'Permission has been successfully deleted.')
+            except Exception as e:
+                messages.error(request, f'Error deleting permission: {str(e)}')
 
-        return redirect('permission_index')
+            return redirect('permission_index')
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
     
+class AdminDashboardView(View):
+    template_name = 'admin/dashboard.html'
+
+    def get(self, request):
+        if request.user.is_authenticated and request.user.is_superuser:
+            users = CustomUser.objects.all()
+            products = Product.objects.all()
+            orders = Order.objects.all()
+
+            return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
+

@@ -53,9 +53,13 @@
         <a href="#" class="nav-link">Contact</a>
       </li>
       {% if user.is_authenticated %}
-        <li class="logout"><a href="{% url 'admin_logout' %}">Logout</a></li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="{% url 'admin_logout' %}" class="nav-link">Logout</a>
+        </li>
       {% else %}
-        <li class="login"><a href="{% url 'admin_login' %}">Login</a></li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{% url 'admin_login' %}" class="nav-link">Login</a>
+      </li>
       {% endif %}
     </ul>
 
