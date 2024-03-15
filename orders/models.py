@@ -42,6 +42,7 @@ class ReturnAndReplaceOrder(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True,blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user.email} : {self.order.id} - {self.action}"

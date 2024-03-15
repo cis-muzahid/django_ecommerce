@@ -58,7 +58,7 @@ class OrderView(View):
         try:
             payment_intent = stripe.PaymentIntent.create(
                 amount=int(float(request.POST['total_amount'])*100),
-                currency='usd',
+                currency='inr',
                 description='Product payment',
                 customer= customer.id,
                 source=source,
@@ -86,12 +86,12 @@ class ReturnAndReplaceView(View):
         order_items = []
         if request.user.id:
             try:
-                orders = Order.objects.filter(user=request.user)
+                orders = Order.objects.filter(user=request.user).order_by('-id')
                 for order in orders:
                     try:
-                        order_items = OrderItem.objects.filter(order=order, active=True, cart__product__name__icontains=request.GET['q']).order_by('-id')
+                        order_items.extend(OrderItem.objects.filter(order=order, active=True, cart__product__name__icontains=request.GET['q']))
                     except:
-                        order_items = OrderItem.objects.filter(order=order, active=True).order_by('-id')
+                        order_items.extend(OrderItem.objects.filter(order=order, active=True))
             except Order.DoesNotExist:
                 pass
             return render(request, 'orders/orders.html', {'orders': order_items })
@@ -132,7 +132,7 @@ class ReturnAndReplaceView(View):
                 if form.is_valid():
                     form.save()
                     messages.success(request,  f'Your request is completed. Wait sometime for approvment.')
-                    return render(request, 'cart/mycart.html', {'carts': carts } )
+                    return redirect('orders_list')
 
 
 class ChangeOrderStatus(View):
@@ -159,9 +159,10 @@ class ChangeOrderStatus(View):
 class SupplierReturnAndReplaceView(View):
     def get(self, request):
         if "return" in request.path:
-            orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False)
+            orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False, active=True)
         else:
-            orders = ReturnAndReplaceOrder.objects.filter(action='Replace', requested=True, approved=False)
+            orders = ReturnAndReplaceOrder.objects.filter(action='Replace', requested=True, approved=False, active=True)
+            orders = orders.exclude(cart=None)
         return render(request, 'admin/orders/return_replace.html', {'orders': orders})
 
     def post(self, request):
@@ -181,8 +182,6 @@ class SupplierReturnAndReplaceView(View):
                         amount=return_replace_request.order.cart.product.price,
                         )
                 return redirect('admin_return_request_list')
-            
-
 
 class AdminOrderView(View):
     def get(self, request, pk=None):
@@ -193,3 +192,14 @@ class AdminOrderView(View):
             orders = Order.objects.all()
             orders = pagination(orders, request.GET.get("page"))
             return render(request, 'admin/orders/order.html', {'orders': orders})
+
+class CancelRequest(View):
+    def post(self, request):
+        breakpoint()
+        cancel_request = ReturnAndReplaceOrder.objects.get(id=request.POST.get('request'))
+        cancel_request.active = False
+        cancel_request.save()
+        if cancel_request.action == 'return':
+            return redirect('admin_return_request_list')
+        else:
+            return redirect('admin_replace_request_list')

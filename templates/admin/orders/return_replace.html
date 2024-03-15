@@ -32,12 +32,12 @@
                     {% for order in orders %}
                     <tr class='text-center'>
                         <th scope="row">
-                            <img src="" width='50px' height='50px' alt="">
+                            <img src="/media/{{ order.order.cart.product.id|product_attributes }}" width='40px' height='40px' alt="">
                             <a href="/product/{{ order.order.cart.product.id }}/get/">{{ order.order.cart.product.name }}</a>
                         </th>
                         {% if 'replace' in request.path %}
                             <td>
-                                <img src="" width='50px' height='50px' alt="">
+                                <img src="/media/{{ order.cart.product.id|product_attributes }}" width='40px' height='40px' alt="">
                                 <a href="/product/{{ order.cart.product.id }}/get/">{{ order.cart.product.name }}</a>
                             </td>
                         {% endif %}
@@ -51,10 +51,11 @@
                                 </form>
                             {% endif %}</td>
                         <td>
-                            <div class='d-flex justify-content-center'>
-                                <span class='ml-2 mr-2'>
-                                    <a href='/category/{{ order.id }}/delete/'><i class="fa fa-trash text-danger"></i></a>
-                                </span>
+                            <div class='d-flex justify-content-center m-1'>
+                                <form action='/cancle_request/' method='post'>{% csrf_token %}
+                                    <input type='hidden' name='request' value='{{ order.id }}'>
+                                    <button type='submit' style="border: none;"><i class="fa fa-trash text-danger"></i></button>
+                                </form>
                             </div>
                         </td>
                     </tr>

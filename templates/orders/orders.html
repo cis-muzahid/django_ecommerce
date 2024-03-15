@@ -48,8 +48,8 @@
 						</div>
 					</td>
                     <td class="col-md-2 ">
-						{% if order.id|current_user_return_request == None %}
-							{% if order.id|is_last_seven_days_order %}
+						{% if order.id|is_last_seven_days_order %}
+							{% if order.id|current_user_return_request == None %}
 								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter{{ order.id }}">
 									return / replace
 								</button>
@@ -84,9 +84,14 @@
 										</div>
 									</div>
 								</div>
+							{% else %}
+								{% if order.id|current_user_return_request == 'Approved' %}
+									<b>Return Approved</b>
+								{% elif order.id|current_user_return_request == 'Replaced' %}
+								{% else %}
+									In Process : {{ order.id|current_user_return_request }}
+								{% endif %}
 							{% endif %}
-						{% else %}
-							In Process : {{ order.id|current_user_return_request }}
 						{% endif %}
 					</td>
 					<td class="col-md-1 close-btn">
