@@ -36,7 +36,13 @@ def current_user_replace_request(user):
 @register.filter
 def current_user_return_request(order_item):
     try:
-        replace_order = ReturnAndReplaceOrder.objects.get(order=order_item).action
+        replace_order = ReturnAndReplaceOrder.objects.get(order=order_item)
+        if replace_order.approved and replace_order.action == 'Return':
+            replace_order = 'Approved'
+        elif replace_order.approved and replace_order.action == 'Replace':
+            replace_order = None
+        else:
+            replace_order = replace_order.action
     except ReturnAndReplaceOrder.DoesNotExist:
         replace_order = None
     return replace_order

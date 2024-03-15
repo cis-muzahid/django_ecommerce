@@ -105,6 +105,7 @@ class ReturnAndReplaceView(View):
             cart = request.POST.get('cart')
             replace.cart = Cart.objects.get(id=cart)
             replace.save()
+            order_cart_item(replace.order.order, request.user.pk)
             messages.success(request, 'Your request is completed. Wait sometime for approvment.')
             return redirect('orders_list')
 
@@ -171,7 +172,6 @@ class SupplierReturnAndReplaceView(View):
             return_replace_request.approved = True
             return_replace_request.save()
             if return_replace_request.action == 'Replace':
-                breakpoint()
                 return_replace_request.order.cart = return_replace_request.cart
                 return_replace_request.save()
                 return redirect('admin_replace_request_list')
