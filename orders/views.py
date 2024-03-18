@@ -11,6 +11,7 @@ from .utilities import *
 from home.utilities import *
 from datetime import datetime, timedelta
 from django.utils import timezone
+from home.utilities import *
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -63,35 +64,55 @@ class OrderView(View):
                 source=source,
                 setup_future_usage='off_session' 
             )
-            return payment_intent.id
+
+            stripe.PaymentIntent.confirm(
+                payment_intent.id,
+                payment_method="pm_card_visa",
+                )
+
+            if payment_intent.status == 'successful':
+                return payment_intent.id
+            else:
+                messages.error(request, 'Payment is not completed by this method. please try again.')
+                return render(request, 'orders/checkout.html')
+
         except stripe.error.CardError as e:
             error_msg = e.error.message
             return render(request, 'orders/checkout.html')
-        
+
 class ReturnAndReplaceView(View):
+    """ orders list for user """
     def get(self, request):
         order_items = []
         if request.user.id:
             try:
-                orders = Order.objects.filter(user=request.user)
+                orders = Order.objects.filter(user=request.user).order_by('-id')
                 for order in orders:
-                    order_items = OrderItem.objects.filter(order=order)
+                    try:
+                        order_items.extend(OrderItem.objects.filter(order=order, active=True, cart__product__name__icontains=request.GET['q']))
+                    except:
+                        order_items.extend(OrderItem.objects.filter(order=order, active=True))
             except Order.DoesNotExist:
                 pass
             return render(request, 'orders/orders.html', {'orders': order_items })
         else:
             return redirect('login_user')
-    
+
     def post(self, request, pk=None):
         if pk and request.POST.get('requested'):
+            """ replace request order item with new order item using cart. """
             replace = ReturnAndReplaceOrder.objects.get(id=pk)
             cart = request.POST.get('cart')
-            replace.cart = Cart.objects.get(id=cart)
+            cart = Cart.objects.get(id=cart)
+            replace.cart = cart
             replace.save()
+            cart.active = False
+            cart.save()
             messages.success(request, 'Your request is completed. Wait sometime for approvment.')
             return redirect('orders_list')
 
-        if request.POST.get('requested'):
+        elif request.POST.get('requested'):
+            """ create a request to return or replace order_item """
             carts = current_user_cart(request.user)
             if request.POST.get('action') == 'Replace':
                 try:
@@ -106,8 +127,7 @@ class ReturnAndReplaceView(View):
                             form.save()
                             messages.success(request,  f'Your request is in progress. Please proceed with products in the cart to complete the request.')
                 except Exception as e:
-                    # Handle exceptions that may occur during form processing or data saving
-                    messages.error(request, f'An error occurred: {e}')
+                    messages.info(request, f'An error occurred: {e}')
                 return render(request, 'cart/mycart.html', {'carts': carts})
 
             elif request.POST.get('action') == 'Return':
@@ -115,4 +135,75 @@ class ReturnAndReplaceView(View):
                 if form.is_valid():
                     form.save()
                     messages.success(request,  f'Your request is completed. Wait sometime for approvment.')
-                    return render(request, 'cart/mycart.html', {'carts': carts } )
+                    return redirect('orders_list')
+
+
+class ChangeOrderStatus(View):
+    def post(self, request):
+        try:
+            order = OrderItem.objects.get(id= request.POST['order'])
+        except OrderItem.DoesNotExist:
+            order = None
+
+        if order != None:
+            order.active = False
+            order.save()
+            if order.order.payment_status:
+                refund = stripe.Refund.create(
+                    payment_intent=order.order.payment_status,
+                    amount=order.cart.product.price,
+                    )
+            messages.success(request, 'order is cancelled successfully.')
+            return redirect('orders_list')
+        else:
+            messages.info(request, 'order does not exist.')
+            return redirect('orders_list')
+
+class SupplierReturnAndReplaceView(View):
+    def get(self, request):
+        if "return" in request.path:
+            orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False, active=True)
+        else:
+            orders = ReturnAndReplaceOrder.objects.filter(action='Replace', requested=True, approved=False, active=True)
+            orders = orders.exclude(cart=None)
+        return render(request, 'admin/orders/return_replace.html', {'orders': orders})
+
+    def post(self, request):
+        if request.POST['request']:
+            return_replace_request = ReturnAndReplaceOrder.objects.get(id=request.POST['request'])
+            return_replace_request.approved = True
+            return_replace_request.save()
+            if return_replace_request.action == 'Replace':
+                return_replace_request.order.cart = return_replace_request.cart
+                return_replace_request.order.save()
+                return_replace_request.cart = None
+                return_replace_request.save()
+                return redirect('admin_replace_request_list')
+            elif return_replace_request.action == 'Return':
+                if return_replace_request.order.order.payment_status:
+                    stripe.Refund.create(
+                        payment_intent=return_replace_request.order.order.payment_status,
+                        amount=return_replace_request.order.cart.product.price,
+                        )
+                return redirect('admin_return_request_list')
+
+class AdminOrderView(View):
+    def get(self, request, pk=None):
+        if pk:
+            orders = OrderItem.objects.filter(order=pk)
+            return render(request, 'admin/orders/order_items.html', {'orders': orders})
+        else:
+            orders = Order.objects.all()
+            orders = pagination(orders, request.GET.get("page"))
+            return render(request, 'admin/orders/order.html', {'orders': orders})
+
+class CancelRequest(View):
+    def post(self, request):
+        breakpoint()
+        cancel_request = ReturnAndReplaceOrder.objects.get(id=request.POST.get('request'))
+        cancel_request.active = False
+        cancel_request.save()
+        if cancel_request.action == 'return':
+            return redirect('admin_return_request_list')
+        else:
+            return redirect('admin_replace_request_list')

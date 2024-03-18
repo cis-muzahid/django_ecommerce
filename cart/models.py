@@ -6,7 +6,7 @@ from products.models import Product
 class Cart(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=1)
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -15,7 +15,6 @@ class Cart(models.Model):
 class Wishlist(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
     active = models.BooleanField(default=True)
 
     def __str__(self):

@@ -42,6 +42,16 @@ def electronics_product_filter(category):
     return product_filter(category)
 
 @register.filter
+def electronics_sub_categories(category):
+    try:
+        category = Category.objects.get(name__icontains=category)
+        categories = Category.objects.filter(parent_category=category.id)
+    except Category.DoesNotExist:
+        categories = None
+    return categories
+
+
+@register.filter
 def fetch_all_parent_category(category):
     categories = []
     while category is not None:

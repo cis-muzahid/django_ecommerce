@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.filter
 def current_user_cart_total_price(user):
-    try: 
+    try:
         carts = Cart.objects.filter(user=user, active= True)
         grand_total = 0
         for cart in carts:
@@ -21,19 +21,30 @@ def current_user_cart_total_price(user):
 
 @register.filter
 def current_user_replace_request(user):
-    try: 
+    try:
         current_time = timezone.now()
         date_before_seven_days = current_time - timedelta(days=7)
         replace_order =  ReturnAndReplaceOrder.objects.get(action='Replace', user=user, cart=None)
-        replace_order = replace_order.created_at >= date_before_seven_days and replace_order.created_at <= current_time
+        breakpoint()
+        if replace_order and replace_order.created_at >= date_before_seven_days and replace_order.created_at <= current_time:
+            replace_order = replace_order.id
+        else:
+            replace_order = None
     except ReturnAndReplaceOrder.DoesNotExist:
-        replace_order = False
+        replace_order = None
     return replace_order
 
 @register.filter
 def current_user_return_request(order_item):
     try:
-        replace_order = ReturnAndReplaceOrder.objects.get(order=order_item).action
+        replace_order = ReturnAndReplaceOrder.objects.filter(order=order_item).last()
+        if replace_order:
+            if replace_order.approved and replace_order.action == 'Return':
+                replace_order = 'Approved'
+            elif replace_order.approved and replace_order.action == 'Replace':
+                replace_order = None
+            else:
+                replace_order = replace_order.action
     except ReturnAndReplaceOrder.DoesNotExist:
         replace_order = None
     return replace_order

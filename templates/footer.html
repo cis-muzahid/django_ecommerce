@@ -1,4 +1,58 @@
 {% load static %}
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Login</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body m-3">
+            <form action="/login_user/" method="POST">
+              {% csrf_token %}
+              <div class="form-group row">
+                <label for="email" class="col-sm-2 col-form-label">Email :</label>
+                <div class="col-sm-10">
+                  <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="password" class="col-sm-2 col-form-label">Password :</label>
+                <div class="col-sm-10">
+                  <input type="password"
+                         id="password"
+                         name="password"
+                         class="form-control"
+                         required>
+                </div>
+              </div>
+              <div style="margin-bottom: 15px;" class='my-1'>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <p style="font-size: 12px;color: #888;width:50%;float:left;text-align: justify;">
+            Don't have an account? <a href="/signup_user/">Sign up</a>
+          </p>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class='btn btn-primary'>Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  var useremail = "{{ user.email }}";
+  var isAuthenticated = "{{ user.is_authenticated }}";
+  console.log("user", useremail)
+</script>
+
 <!-- ============================================================= FOOTER ============================================================= -->
 <footer id="footer" class="footer color-bg">
     <div class="footer-bottom">

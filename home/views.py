@@ -7,7 +7,11 @@ class HomeView(View):
     def get(self, request, category=None, product=None):
         categories = fetch_all_categories()
         hot_deals = hot_deals_product()
-        products = Product.objects.filter(is_delete=False).order_by('-id')
+        try:
+            products = Product.objects.filter(is_delete=False, name__icontains=request.GET['q']).order_by('-id')
+            return render(request, 'home/category.html', {'products': products, 'categories': categories })
+        except:
+            products = Product.objects.filter(is_delete=False).order_by('-id')
         if product !=None:
             """ View for product details """
             product = Product.objects.get(name=product)

@@ -47,9 +47,9 @@
         <div class="cnt-account">
           <ul class="list-unstyled">
             <li class="myaccount"><a href="#"><span>My Account</span></a></li>
-            <li class="wishlist"><a href="/my_wishlist"><span>Wishlist</span></a></li>
-            <li class="header_cart hidden-xs"><a href="/my_cart"><span>My Cart</span></a></li>
-            <li class="check"><a href="/orders"><span>Checkout</span></a></li>
+            <li class="wishlist"><a href="#" id='my_wishlist' ><span>Wishlist</span></a></li>
+            <li class="header_cart hidden-xs"><a href="#" id='my_cart'><span>My Cart</span></a></li>
+            <li class="check"><a href="#" id="checkoutLink"><span>Checkout</span></a></li>
             {% if user.is_authenticated %}
               <li class="logout"><a href="{% url 'logout_user' %}"><span>Logout</span></a></li>
             {% else %}
@@ -63,17 +63,13 @@
           <ul class="list-unstyled list-inline">
             <li class="dropdown dropdown-small"> <a href="#" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">INR </span><b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <!-- <li><a href="#">USD</a></li> -->
                 <li><a href="#">INR</a></li>
+                <li><a href="#">USD</a></li>
                 <!-- <li><a href="#">GBP</a></li> -->
               </ul>
             </li>
             <li class="dropdown dropdown-small lang"> <a href="#" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">English </span><b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">English</a></li>
-                <!-- <li><a href="#">French</a></li>
-                <li><a href="#">German</a></li> -->
-              </ul>
+
             </li>
           </ul>
           <!-- /.list-unstyled --> 
@@ -102,19 +98,19 @@
           <!-- ============================================================= SEARCH AREA ============================================================= -->
           <div class="search-area">
             <form>
-              <div class="control-group">
+              <div class="control-group" style="padding:1px;">
                 <ul class="categories-filter animate-dropdown">
                   <li class="dropdown"> <a class="dropdown-toggle"  data-toggle="dropdown" href="home/category.html">Categories <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu" >
                       <li class="menu-header">Computer</li>
-                      {% for category in categories %}
+                      {% for category in ""|categories_all %}
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="/category/{{category.name}}">- {{category.name.capitalize}}</a></li>
                       {% endfor %}
                     </ul>
                   </li>
                 </ul>
-                <input class="search-field" placeholder="Search here..." />
-                <a class="search-button" href="#" ></a> </div>
+                <input class="search-field" name='q' placeholder="Search here..." />
+                <button class="search-button" type='submit' href="#" style="padding:18px 25px;"></button> </div>
             </form>
           </div>
           <!-- /.search-area --> 
