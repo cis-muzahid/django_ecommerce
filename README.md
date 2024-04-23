@@ -25,7 +25,7 @@ This E-commerce web application is built using Django, providing a robust platfo
 
 1. **Clone the repository:**
 
-git clone https://github.com/yourusername/django_ecommerce.git
+git clone https://github.com/cis-muzahid/django_ecommerce.git
 
 
 2. **Navigate to the project directory:**
@@ -33,8 +33,6 @@ git clone https://github.com/yourusername/django_ecommerce.git
 cd django_ecommerce
 
 3. **Install dependencies:**
-
-pip install -r requirements.txt
 
 pip install -r requirements.txt
 
