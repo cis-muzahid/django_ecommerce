@@ -25,7 +25,6 @@ def current_user_replace_request(user):
         current_time = timezone.now()
         date_before_seven_days = current_time - timedelta(days=7)
         replace_order =  ReturnAndReplaceOrder.objects.get(action='Replace', user=user, cart=None)
-        breakpoint()
         if replace_order and replace_order.created_at >= date_before_seven_days and replace_order.created_at <= current_time:
             replace_order = replace_order.id
         else:

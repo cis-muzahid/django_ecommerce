@@ -3,6 +3,21 @@
 {% load custom_filter %}
 {% load order_filter %}
 {% block body %}
+<head>
+  <style>
+    .stripe-button-el {
+      background-color: #007bff; /* Change this to your desired background color */
+      border-color: #007bff; /* Change this to match the background color */
+      color: #ffffff; /* Change this to your desired text color */
+    }
+  
+    .stripe-button-el:hover {
+      background-color: #0056b3; /* Change this to your desired hover background color */
+      border-color: #0056b3; /* Change this to match the hover background color */
+    }
+  </style>
+</head>
+
   <div class="breadcrumb">
     <div class="container">
       <div class="breadcrumb-inner">
@@ -44,28 +59,137 @@
                     <div class="row">
                       <!-- already-registered-login -->
                       <div class="col-md-6 col-sm-6 already-registered-login">
-                        <h4 class="checkout-subtitle">Add Shipping Address</h4>
-                        <form action="/checkout/" method="post" id="payment-form">
-                          {% csrf_token %}
-                          <div class="form-group">
-                            <label class="info-title" for="exampleInputEmail1">
-                              Shipping Address <span>*</span>
-                            </label>
-                            <input type='hidden' name='total_amount' value="{{ user|current_user_cart_total_price }}">
-                            <input type='hidden' name='user' value="{{ user.id }}">
-                            <input type='hidden' name='status' value='initial'>
-                            <textarea class="form-control unicase-form-control text-input"
-                                      id="address_textarea" name='address' required></textarea>
-                          </div>
-                          <div class='payment_btn_div'>
-                            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                data-key="{{ publishable_key }}"
-                                data-name="Ecommerce payment"
-                                data-description="Payment">
-                            </script>
-                          </div>
-                        </form>
-                        <button class='btn-checkout btn-upper btn btn-primary disabled'>CHECKOUT WITHOUT PAYMENT</button>
+                        
+                        
+
+<!-- payments buttons here ================================ -->
+
+<form action="/checkout/" method="post" id="payment-form">
+  {% csrf_token %}
+  <div class="form-group">
+    <h4 class="checkout-subtitle">Add Shipping Address</h4>
+    <label class="info-title" for="exampleInputEmail1">Shipping Address <span>*</span></label>
+    <input type='hidden' name='total_amount' value="{{ user|current_user_cart_total_price }}">
+    <input type='hidden' name='user' value="{{ user.id }}">
+    <input type='hidden' name='status' value='initial'>
+    <textarea class="form-control unicase-form-control text-input" id="address_textarea" name='address' required
+    
+    ></textarea>
+    <p class="This field is required ">Please add address in this field</p>
+  </div><br><br>
+
+  <h4>Select your account method to continue</h4>
+  <div class="payment-methods">
+    <label for="stripe-radio">
+      <input type="radio" id="stripe-radio" name="payment_method" value="stripe" checked>
+      Stripe
+    </label>
+    <label for="paypal-radio">
+      <input type="radio" id="paypal-radio" name="payment_method" value="paypal">
+      PayPal
+    </label>
+    <label for="no-payment-radio">
+      <input type="radio" id="no-payment-radio" name="payment_method" value="none">
+      Checkout Without Payment
+    </label>
+  </div><br><br>
+
+  <div class="payment-btns-container">
+    <!-- Stripe Payment Button -->
+    <div class='payment_btn_div stripe-btn' style="display: inline-block;">
+      <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+              data-key="{{ publishable_key }}"
+              data-name="Ecommerce payment"
+              data-description="Payment">
+      </script>
+    </div>
+
+    <!-- PayPal Payment Button (Hidden by default) -->
+    <div class="payment_btn_div paypal-btn" style="display: none; margin-left: 10px;">
+      <script>
+        const YOUR_PAYPAL_CLIENT_ID = 'ASJv0B8HmmX94iHHDTbcC-2UUVbrn0IbJHv343F4komsUbZigK3AteePFizjoyTvODKRhGrxB4OtsW-3';
+        const PAYPAL_SCRIPT_URL = `https://www.paypal.com/sdk/js?client-id=${YOUR_PAYPAL_CLIENT_ID}&currency=USD`;
+        const script = document.createElement('script');
+        script.src = PAYPAL_SCRIPT_URL;
+        script.setAttribute('data-sdk-integration-source', 'button-factory');
+        document.head.appendChild(script);
+
+        script.onload = function() {
+          paypal.Buttons({
+            createOrder: function(data, actions) {
+              // Set up the transaction details
+              return actions.order.create({
+                purchase_units: [{
+                  amount: {
+                    // value: '10.00', // Total amount in USD
+                    value: '{{ user|current_user_cart_total_price }}', // Use the total_amount variable here
+                    currency_code: 'USD',
+                  },
+                  description: 'Payment for Product/Service',
+                }],
+              });
+            },
+            onApprove: function(data, actions) {
+              // Capture the payment when the customer approves the transaction
+              return actions.order.capture().then(function(details) {
+                // Redirect or show success message
+                window.location.href = 'http://127.0.0.1:8000/';
+              });
+            },
+            onError: function(error) {
+              console.error('PayPal error:', error);
+              // Handle errors
+              alert('Payment error occurred. Please try again later.');
+            }
+          }).render('.paypal-btn');
+        };
+      </script>
+    </div>
+
+    <!-- Checkout Without Payment Button (Hidden by default) -->
+    <button type="submit" class='btn-checkout btn-upper btn btn-primary no-payment-btn' style="display: none; margin-top: 20px;">
+      Cash Payment
+    </button>
+  </div>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const stripeRadio = document.getElementById('stripe-radio');
+    const paypalRadio = document.getElementById('paypal-radio');
+    const noPaymentRadio = document.getElementById('no-payment-radio');
+
+    const stripeBtn = document.querySelector('.stripe-btn');
+    const paypalBtn = document.querySelector('.paypal-btn');
+    const noPaymentBtn = document.querySelector('.no-payment-btn');
+
+    function updateButtonVisibility() {
+      if (stripeRadio.checked) {
+        stripeBtn.style.display = 'inline-block';
+        paypalBtn.style.display = 'none';
+        noPaymentBtn.style.display = 'none';
+      } else if (paypalRadio.checked) {
+        stripeBtn.style.display = 'none';
+        paypalBtn.style.display = 'inline-block';
+        noPaymentBtn.style.display = 'none';
+      } else if (noPaymentRadio.checked) {
+        stripeBtn.style.display = 'none';
+        paypalBtn.style.display = 'none';
+        noPaymentBtn.style.display = 'block';
+      }
+    }
+
+    stripeRadio.addEventListener('change', updateButtonVisibility);
+    paypalRadio.addEventListener('change', updateButtonVisibility);
+    noPaymentRadio.addEventListener('change', updateButtonVisibility);
+
+    updateButtonVisibility(); // Initial call to set the correct visibility
+  });
+</script>
+
+
+
+                        
                       </div>
                     </div>
                   </div>
@@ -240,3 +364,25 @@
     </div>
   </div>
 {% endblock %}
+
+<!-- Add this to your template where you want the PayPal button to appear -->
+<script>
+  document.getElementById('paypalForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Submit the form using JavaScript
+      fetch(this.action, {
+          method: this.method,
+          body: new FormData(this), // Include form data in the request
+      })
+      .then(response => response.json())
+      .then(data => {
+          // Redirect to the PayPal approval URL
+          window.location.href = data.approval_url;
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          // Handle any errors
+      });
+  });
+</script>

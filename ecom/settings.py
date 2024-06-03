@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     'users',
     'products',
     'cart',
-    'orders'
+    'orders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,28 +82,28 @@ TEMPLATES = [
 # endregion
 
 WSGI_APPLICATION = 'ecom.wsgi.application'
-
-
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = ["*"]
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "ecom",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "ecom",
+#         "USER": "postgres",
+#         "PASSWORD": "postgres",
+#         "HOST": "127.0.0.1",
+#         "PORT": "5432",
+#     }
+# }
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -162,15 +164,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# # Stripe
-# STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
-# STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
-# BACKEND_DOMAIN = config("BACKEND_DOMAIN")
-# PAYMENT_SUCCESS_URL = config("PAYMENT_SUCCESS_URL")
-# PAYMENT_CANCEL_URL = config("PAYMENT_CANCEL_URL")
 # Stripe
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 BACKEND_DOMAIN = os.environ.get("BACKEND_DOMAIN")
 PAYMENT_SUCCESS_URL = os.environ.get("PAYMENT_SUCCESS_URL")
 PAYMENT_CANCEL_URL = os.environ.get("PAYMENT_CANCEL_URL")
+
+
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = os.environ.get('PAYPAL_SECRET')
