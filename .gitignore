@@ -27,3 +27,4 @@ venv/
 
 # Site-specific configurations
 local_settings.py
+*venv

@@ -12,6 +12,8 @@ from home.utilities import *
 from datetime import datetime, timedelta
 from django.utils import timezone
 from home.utilities import *
+import paypalrestsdk
+from django.views.generic.base import TemplateView
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -208,6 +210,71 @@ class CancelRequest(View):
         else:
             return redirect('admin_replace_request_list')
 
+
+# PAYPAL IMPLEMENTATION===============================================
+# Configure PayPal SDK
+paypalrestsdk.configure({
+    "mode": "sandbox",  # Change to "live" for production
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_SECRET,
+})
+
+class CreatePaymentView(View):
+    def get(self, request):
+        payment = paypalrestsdk.Payment({
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal",
+            },
+            "redirect_urls": {
+                "return_url": request.build_absolute_uri(reverse('execute_payment')),
+                "cancel_url": request.build_absolute_uri(reverse('payment_failed')),
+            },
+            "transactions": [
+                {
+                    "amount": {
+                        "total": "10.00",  # Total amount in USD
+                        "currency": "USD",
+                    },
+                    "description": "Payment for Product/Service",
+                }
+            ],
+        })
+
+        if payment.create():
+            for link in payment.links:
+                if link.rel == "approval_url":
+                    approval_url = str(link.href)
+                    return redirect(approval_url)
+        return render(request, 'payment_failed.html')
+
+class ExecutePaymentView(View):
+    def get(self, request):
+        payment_id = request.GET.get('paymentId')
+        payer_id = request.GET.get('PayerID')
+
+        payment = paypalrestsdk.Payment.find(payment_id)
+
+        if payment.execute({"payer_id": payer_id}):
+            return render(request, 'payment_success.html')
+        return render(request, 'payment_failed.html')
+
+class PaymentSuccessView(TemplateView):
+    template_name = 'payment_success.html'  # Create a template for displaying payment success
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # You can add any additional context data here if needed
+        return context
+
+
+class PaymentCheckoutView(View):
+    def get(self, request):
+        return render(request, 'checkout.html')
+
+class PaymentFailedView(View):
+    def get(self, request):
+        return render(request, 'payment_failed.html')
 class OrderTracking(View):
     def post(self, request):
         order = Order.objects.get(id=request.POST.get('order_id'))

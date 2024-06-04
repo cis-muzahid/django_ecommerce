@@ -32,6 +32,10 @@ class LoginView(View):
             else:
                 messages.error(request, 'Invalid login credentials.')
                 return redirect('login_user')
+        else:
+            messages.error(request, 'Invalid login credentials.')
+            return redirect('login_user')
+
 
 class CustomAdminLoginView(View):
     template_name = 'admin/admin_login.html'  # Replace with your admin login template
@@ -376,4 +380,5 @@ class AdminDashboardView(View):
             orders = Order.objects.all()
 
             return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
-
+        else:
+            return redirect('admin_login')
