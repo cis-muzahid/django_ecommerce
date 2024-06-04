@@ -3,7 +3,7 @@
 from django.urls import path
 from .views import (OrderView, ReturnAndReplaceView, ChangeOrderStatus, AdminOrderView, SupplierReturnAndReplaceView,
  CreatePaymentView, ExecutePaymentView, PaymentCheckoutView, PaymentFailedView, PaymentSuccessView)
-from .views import CancelRequest
+from .views import CancelRequest, OrderTracking
 
 urlpatterns = [
     path('orders/', ReturnAndReplaceView.as_view(), name='orders_list'),
@@ -23,6 +23,7 @@ urlpatterns = [
     path('payment-checkout/', PaymentCheckoutView.as_view(), name='payment_checkout'),
     path('payment-failed/', PaymentFailedView.as_view(), name='payment_failed'),
     path('payment-success/', PaymentSuccessView.as_view(), name='payment_success'),
+    path('order_tracking/', OrderTracking.as_view(), name='order_tracking'),
 
 ]
 

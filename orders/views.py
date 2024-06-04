@@ -34,6 +34,7 @@ class OrderView(View):
         if form.is_valid():    
             order = form.save(commit=False)
             order.payment_status = payment_intent 
+            order.tracking_number = create_order_tracking(order)
             order.save()
             order_cart_item(order, request.user.pk)
 
@@ -274,3 +275,11 @@ class PaymentCheckoutView(View):
 class PaymentFailedView(View):
     def get(self, request):
         return render(request, 'payment_failed.html')
+class OrderTracking(View):
+    def post(self, request):
+        order = Order.objects.get(id=request.POST.get('order_id'))
+        try:
+            orders = OrderItem.objects.filter(order=order, active=True)
+        except:
+            messages.error(request, 'unable to track this order please try again.')
+        return render(request, 'orders/tracking.html', {'orders': orders})

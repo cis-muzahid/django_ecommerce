@@ -25,7 +25,7 @@ def current_user_replace_request(user):
         current_time = timezone.now()
         date_before_seven_days = current_time - timedelta(days=7)
         replace_order =  ReturnAndReplaceOrder.objects.get(action='Replace', user=user, cart=None)
-        if replace_order and replace_order.created_at >= date_before_seven_days and replace_order.created_at <= current_time:
+        if replace_order  and replace_order.order.active and replace_order.created_at >= date_before_seven_days and replace_order.created_at <= current_time:
             replace_order = replace_order.id
         else:
             replace_order = None
@@ -37,7 +37,7 @@ def current_user_replace_request(user):
 def current_user_return_request(order_item):
     try:
         replace_order = ReturnAndReplaceOrder.objects.filter(order=order_item).last()
-        if replace_order:
+        if replace_order and replace_order.order.active:
             if replace_order.approved and replace_order.action == 'Return':
                 replace_order = 'Approved'
             elif replace_order.approved and replace_order.action == 'Replace':
