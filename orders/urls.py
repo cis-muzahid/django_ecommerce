@@ -2,7 +2,7 @@
 
 from django.urls import path
 from .views import OrderView, ReturnAndReplaceView, ChangeOrderStatus, AdminOrderView, SupplierReturnAndReplaceView
-from .views import CancelRequest
+from .views import CancelRequest, OrderTracking
 
 urlpatterns = [
     path('orders/', ReturnAndReplaceView.as_view(), name='orders_list'),
@@ -14,5 +14,7 @@ urlpatterns = [
     path('replace_order/', SupplierReturnAndReplaceView.as_view(), name='admin_replace_request_list'),
     path('return_order/', SupplierReturnAndReplaceView.as_view(), name='admin_return_request_list'),
     path('cancle_request/', CancelRequest.as_view(), name='admin_orders_list'),
+    path('order_tracking/', OrderTracking.as_view(), name='order_tracking'),
+
 ]
 

@@ -32,6 +32,7 @@ class OrderView(View):
         if form.is_valid():    
             order = form.save(commit=False)
             order.payment_status = payment_intent 
+            order.tracking_number = create_order_tracking(order)
             order.save()
             order_cart_item(order, request.user.pk)
 
@@ -199,7 +200,6 @@ class AdminOrderView(View):
 
 class CancelRequest(View):
     def post(self, request):
-        breakpoint()
         cancel_request = ReturnAndReplaceOrder.objects.get(id=request.POST.get('request'))
         cancel_request.active = False
         cancel_request.save()
@@ -207,3 +207,12 @@ class CancelRequest(View):
             return redirect('admin_return_request_list')
         else:
             return redirect('admin_replace_request_list')
+
+class OrderTracking(View):
+    def post(self, request):
+        order = Order.objects.get(id=request.POST.get('order_id'))
+        try:
+            orders = OrderItem.objects.filter(order=order, active=True)
+        except:
+            messages.error(request, 'unable to track this order please try again.')
+        return render(request, 'orders/tracking.html', {'orders': orders})

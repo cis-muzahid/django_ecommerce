@@ -183,17 +183,17 @@
                 <li class="active dropdown"> <a href="/">Home</a> </li>
                 {% for category in ""|categories_all %}
                 <li class="dropdown yamm mega-menu"> <a href="home.html" data-hover="dropdown" 
-                  class="dropdown-toggle" data-toggle="dropdown">{{category.name}}</a>
+                  class="dropdown-toggle" data-toggle="dropdown">{{ category.name }}</a>
                     <ul class="dropdown-menu container">
                       <li>
                         <div class="yamm-content ">
                           <div class="row">
                             {% for subcategory in category|subcategories %}
                             <div class="col-xs-12 col-sm-6 col-md-2 col-menu">
-                              <h2 class="title">{{subcategory.name}}</h2>
+                              <h2 class="title"><a href="/category/{{ subcategory }}">{{ subcategory.name }}</a></h2>
                               <ul class="links">
                                 {% for sub in subcategory|subcategories %}
-                                <li><a href="/category/{{sub}}">{{sub}} </a></li>
+                                <li><a href="/category/{{ sub }}">{{ sub }} </a></li>
                                 {% endfor %}
                               </ul>
                             </div>

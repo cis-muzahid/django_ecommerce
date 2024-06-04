@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filter %}
+
+{% block body %}
+
+<div class="breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-inner">
+			<ul class="list-inline list-unstyled">
+				<li><a href="home.html">Home</a></li>
+				<li class='active'>Track your orders</li>
+			</ul>
+		</div><!-- /.breadcrumb-inner -->
+	</div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+
+<div class="body-content">
+	<div class="container">
+		<div class="my-wishlist-page">
+			<div class="row">
+				<div class="col-md-12 my-wishlist">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th colspan="5" class="heading-title">Track Order </th>
+								</tr>
+								<tr>
+									<th class="heading-title"> </th>
+								</tr>
+								<tr>
+									<th class="heading-title"> </th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for order in orders %}
+								<tr>
+									<td class="col-md-2 col-sm-6 col-xs-6">
+										<img src="/media/{{ order.cart.product.id|product_attributes }}" alt="imga"></td>
+									<td class="col-md-5 col-sm-6 col-xs-6">
+										<div class="product-name"><a href="#">{{ order.cart.product.name }}</a></div>
+										<div class="rating">
+											<i class="fa fa-star rate"></i>
+											<i class="fa fa-star rate"></i>
+											<i class="fa fa-star rate"></i>
+											<i class="fa fa-star rate"></i>
+											<i class="fa fa-star non-rate"></i>
+											<span class="review">( 06 Reviews )</span>
+										</div>
+									</td>
+									<td class="cart-product-quantity">
+										<span>{{ order.cart.quantity }}</span>
+									</td>
+									<td class="cart-product-sub-total"><span class="cart-sub-total-price">${{ order.cart.product.price }}</span></td>
+									<td class="cart-product-grand-total"><span class="cart-grand-total-price">
+									${{ order.cart|total_price }}</span></td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>			
+			</div><!-- /.row -->
+		</div><!-- /.sigin-in-->
+		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
+		<div id="brands-carousel" class="logo-slider wow fadeInUp">
+
+				<div class="logo-slider-inner">	
+					<div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
+					
+						<div class="item m-t-15">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item m-t-10">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand3.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand6.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#" class="image">
+								<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
+							</a>	
+						</div><!--/.item-->
+					</div><!-- /.owl-carousel #logo-slider -->
+				</div><!-- /.logo-slider-inner -->
+			
+		</div><!-- /.logo-slider -->
+	</div>
+<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
+</div><!-- /.body-content -->			</div><!-- /.row -->
+		</div><!-- /.sigin-in-->
+		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
+<div id="brands-carousel" class="logo-slider wow fadeInUp">
+
+		<div class="logo-slider-inner">	
+			<div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
+				<div class="item m-t-15">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item m-t-10">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand3.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand6.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+		    </div><!-- /.owl-carousel #logo-slider -->
+		</div><!-- /.logo-slider-inner -->
+	
+</div><!-- /.logo-slider -->
+<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
+</div><!-- /.body-content -->
+<!-- ============================================================= FOOTER ============================================================= -->
+
+        <!-- ============================================== INFO BOXES ============================================== -->
+        <div class="row our-features-box">
+     <div class="container">
+      <ul>
+        <li>
+          <div class="feature-box">
+            <div class="icon-truck"></div>
+            <div class="content-blocks">We ship worldwide</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-support"></div>
+            <div class="content-blocks">call 
+              +1 800 789 0000</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-money"></div>
+            <div class="content-blocks">Money Back Guarantee</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-return"></div>
+            <div class="content">30 days return</div>
+          </div>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+        <!-- /.info-boxes --> 
+        <!-- ============================================== INFO BOXES : END ============================================== --> 
+{% endblock body %}
