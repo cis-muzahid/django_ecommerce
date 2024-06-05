@@ -1,0 +1,30 @@
+.alert {
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #cce5ff;
+    border-radius: 0.25rem;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+    margin-top: -0.5rem;
+    margin-right: -0.75rem;
+    background-color: #f9f9f9;
+    border: 1px solid #cce5ff;
+    border-radius: 0.25rem;
+  }
+  
+  .close-btn:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+  }
+
+  .alert_items{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }

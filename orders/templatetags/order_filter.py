@@ -20,6 +20,15 @@ def current_user_cart_total_price(user):
         return carts
 
 @register.filter
+def current_user_cart_total_quantity(user):
+    try:
+        total_carts = Cart.objects.filter(user=user, active= True).count()       
+        return total_carts
+    except Cart.DoesNotExist:
+        carts = 0
+        return carts
+
+@register.filter
 def current_user_replace_request(user):
     try:
         current_time = timezone.now()

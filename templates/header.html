@@ -1,5 +1,6 @@
 {% load static %}
 {% load custom_filter %}
+{% load order_filter %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -46,14 +47,18 @@
       <div class="header-top-inner">
         <div class="cnt-account">
           <ul class="list-unstyled">
-            <li class="myaccount"><a href="#"><span>My Account</span></a></li>
+            {% if user.is_authenticated %}
+            <li class="myaccount"><a href="{% url 'user_profile' %}"><span>My Account</span></a></li>
             <li class="wishlist"><a href="#" id='my_wishlist' ><span>Wishlist</span></a></li>
             <li class="header_cart hidden-xs"><a href="#" id='my_cart'><span>My Cart</span></a></li>
             <li class="check"><a href="#" id="checkoutLink"><span>Checkout</span></a></li>
-            {% if user.is_authenticated %}
+            
               <li class="logout"><a href="{% url 'logout_user' %}"><span>Logout</span></a></li>
             {% else %}
               <li class="login"><a href="{% url 'login_user' %}"><span>Login</span></a></li>
+              <li class="signup_user"><a href="{% url 'signup_user' %}"><span>Sign up</span></a></li>
+
+
             {% endif %}
           </ul>
         </div>
@@ -61,18 +66,15 @@
         
         <div class="cnt-block">
           <ul class="list-unstyled list-inline">
-            <li class="dropdown dropdown-small"> <a href="#" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">INR </span><b class="caret"></b></a>
+            <li class="dropdown dropdown-small"> <a href="" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">INR </span><b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="#">INR</a></li>
-                <li><a href="#">USD</a></li>
-                <!-- <li><a href="#">GBP</a></li> -->
               </ul>
             </li>
-            <li class="dropdown dropdown-small lang"> <a href="#" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">English </span><b class="caret"></b></a>
+            <li class="dropdown dropdown-small lang"> <a href="" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">English </span><b class="caret"></b></a>
 
             </li>
           </ul>
-          <!-- /.list-unstyled --> 
         </div>
         <!-- /.cnt-cart -->
         <div class="clearfix"></div>
@@ -96,23 +98,25 @@
         <div class="col-lg-7 col-md-6 col-sm-8 col-xs-12 top-search-holder"> 
           <!-- /.contact-row --> 
           <!-- ============================================================= SEARCH AREA ============================================================= -->
+
           <div class="search-area">
-            <form>
-              <div class="control-group" style="padding:1px;">
-                <ul class="categories-filter animate-dropdown">
-                  <li class="dropdown"> <a class="dropdown-toggle"  data-toggle="dropdown" href="home/category.html">Categories <b class="caret"></b></a>
-                    <ul class="dropdown-menu" role="menu" >
-                      <li class="menu-header">Computer</li>
-                      {% for category in ""|categories_all %}
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/category/{{category.name}}">- {{category.name.capitalize}}</a></li>
-                      {% endfor %}
+            <form id="search-form">
+                <div class="control-group" style="padding:1px;">
+                    <ul class="categories-filter animate-dropdown">
+                      <li class="dropdown"> <a class="dropdown-toggle"  data-toggle="dropdown" href="home/category.html">Categories <b class="caret"></b></a>
+                        <ul class="dropdown-menu" role="menu" >
+                          {% for category in ""|categories_all %}
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/category/{{category.name}}">- {{category.name.capitalize}}</a></li>
+                          {% endfor %}
+                        </ul>
+                      </li>
                     </ul>
-                  </li>
-                </ul>
-                <input class="search-field" name='q' placeholder="Search here..." />
-                <button class="search-button" type='submit' href="#" style="padding:18px 25px;"></button> </div>
+                    <input class="search-field" name='q' id="search-input" placeholder="Search here..." />
+                    <button class="search-button" type='submit' style="padding:18px 25px;"></button>
+                </div>
             </form>
-          </div>
+        </div>
+          
           <!-- /.search-area --> 
           <!-- ============================================================= SEARCH AREA : END ============================================================= --> </div>
         <!-- /.top-search-holder -->
@@ -120,42 +124,30 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12 animate-dropdown top-cart-row"> 
           <!-- ============================================================= SHOPPING CART DROPDOWN ============================================================= -->
           
-          <div class="dropdown dropdown-cart"> <a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
-            <div class="items-cart-inner">
+         <div class="dropdown dropdown-cart"> <a id='my_cart_checkout' href="{% url 'cart_view' %}" class="dropdown-toggle lnk-cart header_cart hidden-xs"  data-toggle="dropdown">
+            <div class="items-cart-inner background-color-danger"  >
               <div class="basket">
-              <div class="basket-item-count"><span class="count">2</span></div>
-              <div class="total-price-basket"> <span class="lbl">Shopping Cart</span> <span class="value">$4580</span> </div>
+                <div class="basket-item-count">
+                  <span class="count">
+                    {% if user.is_authenticated %}
+                    {{ user|current_user_cart_total_quantity }}
+                    {% else %}
+                      0
+                    {% endif %}
+                  </span>
+                </div>
+                
+              <div class="total-price-basket"> <span class="lbl">Shopping Cart</span> <span class="value">
+                {% if user.is_authenticated %}
+                 {{ user|current_user_cart_total_price }}
+              {% else %}
+                0 INR
+              {% endif %}  
+              </span> </div>
               </div>
             </div>
             </a>
-            <ul class="dropdown-menu">
-              <li>
-                <div class="cart-item product-summary">
-                  <div class="row">
-                    <div class="col-xs-4">
-                      <div class="image"> <a href="/category/{{product.category}}/{{product}}/"><img src="{% static  'assets/images/products/p4.jpg' %}" alt=""></a> </div>
-                    </div>
-                    <div class="col-xs-7">
-                      <h3 class="name"><a href="index8a95.html?page-detail">Simple Product</a></h3>
-                      <div class="price">$600.00</div>
-                    </div>
-                    <div class="col-xs-1 action"> <a href="#"><i class="fa fa-trash"></i></a> </div>
-                  </div>
-                </div>
-                <!-- /.cart-item -->
-                <div class="clearfix"></div>
-                <hr>
-                <div class="clearfix cart-total">
-                  <div class="pull-right"> <span class="text">Sub Total :</span><span class='price'>$600.00</span> </div>
-                  <div class="clearfix"></div>
-                  <a href="checkout.html" class="btn btn-upper btn-primary btn-block m-t-20">Checkout</a> </div>
-                <!-- /.cart-total--> 
-                
-              </li>
-            </ul>
-            <!-- /.dropdown-menu--> 
           </div>
-          <!-- /.dropdown-cart --> 
           
           <!-- ============================================================= SHOPPING CART DROPDOWN : END============================================================= --> </div>
         <!-- /.top-cart-row --> 
@@ -227,3 +219,19 @@
 </header>
 
 <!-- ============================================== HEADER : END ============================================== -->
+<script>
+  document.getElementById('my_cart_checkout').addEventListener('click', function() {
+    // Redirect to the cart page
+    window.location.href = "{% url 'cart_view' %}";
+  });
+</script>
+
+<script>
+  document.getElementById('search-form').addEventListener('submit', function(event) {
+      var searchInput = document.getElementById('search-input');
+      if (searchInput.value.trim() === '') {
+          event.preventDefault();  // Prevent form submission
+          alert('Please enter a search query.');  // Show alert message
+      }
+  });
+</script>

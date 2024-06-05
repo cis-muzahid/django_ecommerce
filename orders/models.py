@@ -12,13 +12,21 @@ class Order(models.Model):
         ('return', 'Return'),
         ('cancelled', 'Cancle'),
     )
+
+    # PAYMENT_METHOD = (
+    #     ('stripe', 'Stripe'),
+    #     ('paypal', 'PayPal'),
+    #     ('none', 'Checkout Without Payment')
+    # )
+
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     status = models.CharField(max_length=255, choices=ORDER_STATUS, default='initial')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     address = models.CharField(max_length=255, default=None)
-    payment_status= models.CharField(max_length=255, null=True)
-    created_at = models.DateTimeField( auto_now_add = True)
+    # payment_method = models.CharField(max_length=255, choices=PAYMENT_METHOD, default='none')
+    payment_status = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

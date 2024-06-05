@@ -32,7 +32,6 @@ def tracking_header():
     return headers
 
 def create_order_tracking(order):
-    breakpoint()
     tracking_number = randint(1000, 10000)
     order_id = order.id
     conn = http.client.HTTPSConnection("api.aftership.com")

@@ -34,14 +34,17 @@
                         <td><span>{{ order.status }}</span></td>
                         <td>
                             <div class='d-flex justify-content-center'>
-                                <span class='ml-2 mr-2'> 
-                                    <a href='/category/{{ order.id }}/update/' style='font-weight:100; color:black;'>
+                                <!-- <span class='ml-2 mr-2'> 
+                                    <a href='/categories/{{ order.id }}/update/' style='font-weight:100; color:black;'>
                                         <i class='fa fa-pencil text-success'></i>
                                     </a>
-                                </span>
-                                <span class='ml-2 mr-2'>
-                                    <a href='/category/{{ order.id }}/delete/'><i class="fa fa-trash text-danger"></i></a>
-                                </span>
+                                </span> -->
+                                <td class="col-md-1 close-btn">
+                                    <form method='post' action='/order/cancel/'>{% csrf_token %}
+                                        <input type='hidden' name='order' value='{{ order.id }}'>
+                                        <button type="submit" class="btn btn-link"><i class="fa fa-times" style='color:#ff7878;'></i></button>
+                                    </form>
+                                </td>
                             </div>
                         </td>
                     </tr>

@@ -95,6 +95,7 @@
                       <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
                       title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
                     </form>
+                  
                     <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
                   </div>
                 </div>
@@ -459,8 +460,8 @@
               <div class="caption bg-color vertical-center text-left">
                 <div class="slider-header fadeInDown-1">Top Brands</div>
                 <div class="big-text fadeInDown-1"> New Collections </div>
-                <div class="excerpt fadeInDown-2 hidden-xs"> <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span> </div>
-                <div class="button-holder fadeInDown-3"> <a href="index6c11.html?page=single-product" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a> </div>
+                <div class="excerpt fadeInDown-2 hidden-xs"> <span>"Discover our captivating new collection, curated with the latest trends and timeless styles to elevate your wardrobe."</span> </div>
+                <div class="button-holder fadeInDown-3"> <a href="#" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a> </div>
               </div>
               <!-- /.caption --> 
             </div>
@@ -473,7 +474,8 @@
               <div class="caption bg-color vertical-center text-left">
                 <div class="slider-header fadeInDown-1">Spring 2018</div>
                 <div class="big-text fadeInDown-1"> Women Fashion </div>
-                <div class="excerpt fadeInDown-2 hidden-xs"> <span>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit</span> </div>
+                <div class="excerpt fadeInDown-2 hidden-xs"> <span>"Elevate your style with our exquisite women's fashion collection."
+                  </span> </div>
                 <div class="button-holder fadeInDown-3"> <a href="index6c11.html?page=single-product" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a> </div>
               </div>
               <!-- /.caption --> 
@@ -491,6 +493,7 @@
 
       <!-- ============================================== SCROLL TABS ============================================== -->
       <div id="product-tabs-slider" class="scroll-tabs outer-top-vs">
+        <!-- {% if user.is_authenticated %} -->
         <div class="more-info-tab clearfix ">
           <h3 class="new-product-title pull-left">New Products</h3>
           <ul class="nav nav-tabs nav-tab-line pull-right" id="new-products-1">
@@ -501,6 +504,10 @@
           </ul>
           <!-- /.nav-tabs --> 
         </div>
+
+        <!-- {% else %} -->
+        <!-- <li class="login"><a href="{% url 'login_user' %}"><span>Login</span></a></li> -->
+      <!-- {% endif %} -->
         <div class="tab-content outer-top-xs">
           <div class="tab-pane in active" id="all">
             <div class="product-slider">
@@ -510,11 +517,15 @@
                     <div class="products">
                       <div class="product">
                         <div class="product-image">
+                          
                           <div class="image"> 
                           <a href="/category/{{ product.category }}/{{ product }}/">
-                            <img src="/media/{{ product.id|product_attributes }}" alt=""> 
-                              <img src="/media/{{ product.id|product_attributes }}" alt="" class="hover-image">
+                            <img src="/media/{{ product.id|product_attributes }}" alt="">          
+                            <img src="/media/{{ product.id|product_attributes }}" alt="" class="hover-image">
                           </a> 
+
+                          
+
                       </div>
                           <!-- /.image -->
                           
@@ -553,7 +564,6 @@
                                   <i class="icon fa fa-heart"></i> </button> 
                                 </form>
                               </li>
-                              <li class="lnk"> <a data-toggle="tooltip" class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
                             </ul>
                           </div>
                           <!-- /.action --> 
@@ -1035,7 +1045,12 @@
   <!-- /.logo-slider --> 
   <!-- ============================================== BRANDS CAROUSEL : END ============================================== --> 
 
-
+<script>
+ function showLoginPopup() {
+    // Code to show your login popup, e.g., using Bootstrap modal or custom JavaScript
+    alert('Please log in to continue.'); // Replace this with your actual login popup code
+  }
+</script>
+ 
 
 {% endblock %}
-

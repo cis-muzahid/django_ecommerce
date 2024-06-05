@@ -29,23 +29,26 @@ class CartView(View):
             cart = None
             pass
 
-        if cart:
-            try:
-                cart.quantity += request.POST['quantity']
-            except:
-                cart.quantity += 1
-            cart.save()
-            messages.success(request,  f'{cart.product} updated successfully in cart.')
-            return redirect('cart_view')
-        else:
-            form = self.form_class(request.POST)
-            if form.is_valid():
-                cart = form.save()
-                messages.success(request,  f'{cart.product} added successfully in cart.')
+        if request.user.id:
+            if cart:
+                try:
+                    cart.quantity += request.POST['quantity']
+                except:
+                    cart.quantity += 1
+                cart.save()
+                messages.success(request,  f'{cart.product} updated successfully in cart.')
                 return redirect('cart_view')
             else:
-                messages.error(request, form.errors)
-                return render(request, 'cart/mycart.html')
+                form = self.form_class(request.POST)
+                if form.is_valid():
+                    cart = form.save()
+                    messages.success(request,  f'{cart.product} added successfully in cart.')
+                    return redirect('cart_view')
+                else:
+                    messages.error(request, form.errors)
+                    return render(request, 'cart/mycart.html')
+        else:
+            return redirect('login_user')
 
 class WishlistView(View):
     def get(self, request):
@@ -64,18 +67,21 @@ class WishlistView(View):
         except:
             wishlist = None
 
-        if wishlist:
-            return redirect('wishlist_view')
-        else:
-            form = WishlistForm(request.POST)
-            if form.is_valid():
-                wishlist = form.save()
-                messages.success(request,  f'{wishlist.product} added successfully in Wishlist.')
-                return redirect(reverse('product_details', kwargs={'product':wishlist.product,
-                                                                    'category': wishlist.product.category}))
+        if request.user.id:
+            if wishlist:
+                return redirect('wishlist_view')
             else:
-                messages.error(request, form.errors)
-                return render(request, 'cart/wishlist.html')
+                form = WishlistForm(request.POST)
+                if form.is_valid():
+                    wishlist = form.save()
+                    messages.success(request,  f'{wishlist.product} added successfully in Wishlist.')
+                    return redirect(reverse('product_details', kwargs={'product':wishlist.product,
+                                                                        'category': wishlist.product.category}))
+                else:
+                    messages.error(request, form.errors)
+                    return render(request, 'cart/wishlist.html')
+        else:
+            return redirect('login_user')
 
 
 class DeleteView(View):

@@ -17,22 +17,17 @@
     }
   </style>
 </head>
+<div class="breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-inner">
+			<ul class="list-inline list-unstyled">
+				<li><a href="/">Home</a></li>
+				<li class='active'>Checkout</li>
+			</ul>
+		</div><!-- /.breadcrumb-inner -->
+	</div><!-- /.container -->
+</div><!-- /.breadcrumb -->
 
-  <div class="breadcrumb">
-    <div class="container">
-      <div class="breadcrumb-inner">
-        <ul class="list-inline list-unstyled">
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li class='active'>Checkout</li>
-        </ul>
-      </div>
-      <!-- /.breadcrumb-inner -->
-    </div>
-    <!-- /.container -->
-  </div>
-  <!-- /.breadcrumb -->
   <div class="body-content">
     <div class="container">
       <div class="checkout-box ">
@@ -58,11 +53,113 @@
                   <div class="panel-body">
                     <div class="row">
                       <!-- already-registered-login -->
-                      <div class="col-md-6 col-sm-6 already-registered-login">
-                        
-                        
 
+                      <div class="col-md-6 col-sm-6 already-registered-login">
+                        <div class="alert alert-info">
+                          <p>You have a default address:</p>
+                          <p><strong>{{ default_address.street }}, {{ default_address.city }}, {{ default_address.state }}, {{ default_address.postal_code }}, {{ default_address.country }}</strong></p>
+                          <p>Would you like to use this address or add a new one?</p>
+                          <button class="btn btn-primary" id="use-default-address">Use Default Address</button>
+                          <button class="btn btn-secondary" id="add-new-address">Add New Address</button>
+                      </div>
+                      
+                          </div>
+
+
+                                       </div>
+<!-- 
+                        <div class="container">
+                          {% if default_address %}
+                              <div class="alert alert-info">
+                                  <p>You have a default address:</p>
+                                  <p><strong>{{ default_address.street }}, {{ default_address.city }}, {{ default_address.state }}, {{ default_address.postal_code }}, {{ default_address.country }}</strong></p>
+                                  <p>Would you like to use this address or add a new one?</p>
+                                  <button class="btn btn-primary" id="use-default-address">Use Default Address</button>
+                                  <button class="btn btn-secondary" id="add-new-address">Add New Address</button>
+                              </div>
+                          {% else %}
+                              <div class="" id="address-form-container">
+                                <form action="/add_address/" method="post" id="address-form">
+                                  {% csrf_token %}
+                                  <div class="form-group">
+                                      <h4 class="checkout-subtitle">Add Shipping Addressrrrrrrr</h4>
+                                      <label class="info-title" for="street">Street <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="street" name="street" required>
+                                      <label class="info-title" for="city">City <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="city" name="city" required>
+                                      <label class="info-title" for="state">State <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="state" name="state" required>
+                                      <label class="info-title" for="postal_code">Postal Code <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="postal_code" name="postal_code" required>
+                                      <label class="info-title" for="country">Country <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="country" name="country" required>
+                                      <button type="submit" class='btn-checkout btn-upper btn btn-primary'>Add Address</button>
+                                  </div>
+                              </form>
+                              </div>
+                          {% endif %}
+                      </div>
+                        -->
+
+                        <div class="container">
+                          {% if default_address %}
+                              <div class="alert alert-info">
+                                  <p>You have a default address:</p>
+                                  <p><strong>{{ default_address.street }}, {{ default_address.city }}, {{ default_address.state }}, {{ default_address.postal_code }}, {{ default_address.country }}</strong></p>
+                                  <p>Would you like to use this address or add a new one?</p>
+                                  <button class="btn btn-primary" id="use-default-address">Use Default Address</button>
+                                  <button class="btn btn-secondary" id="add-new-address">Add New Address</button>
+                              </div>
+                          {% else %}
+                              <form action="/add_address/" method="post" id="address-form">
+                                  {% csrf_token %}
+                                  <div class="form-group">
+                                      <h4 class="checkout-subtitle">Add Shipping Addressrrrrrrr</h4>
+                                      <label class="info-title" for="street">Street <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="street" name="street" required>
+                                      <label class="info-title" for="city">City <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="city" name="city" required>
+                                      <label class="info-title" for="state">State <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="state" name="state" required>
+                                      <label class="info-title" for="postal_code">Postal Code <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="postal_code" name="postal_code" required>
+                                      <label class="info-title" for="country">Country <span>*</span></label>
+                                      <input type="text" class="form-control unicase-form-control text-input" id="country" name="country" required>
+                                      <button type="submit" class='btn-checkout btn-upper btn btn-primary'>Add Address</button>
+                                  </div>
+                              </form>
+                          {% endif %}
+                      </div>
+                      
+                      <script>
+                          document.addEventListener('DOMContentLoaded', function() {
+                              var useDefaultAddressButton = document.getElementById('use-default-address');
+                              var addNewAddressButton = document.getElementById('add-new-address');
+                              var addressForm = document.getElementById('address-form');
+                      
+                              if (useDefaultAddressButton) {
+                                  useDefaultAddressButton.addEventListener('click', function() {
+                                      alert('Using default address for your order.');
+                                      window.location.href = '/checkout/';  // Redirect to the checkout page or handle as needed
+                                  });
+                              }
+                      
+                              if (addNewAddressButton) {
+                                  addNewAddressButton.addEventListener('click', function() {
+                                      addressForm.style.display = 'block';
+                                  });
+                              }
+                      
+                              if (addressForm) {
+                                  addressForm.style.display = 'none';
+                              }
+                          });
+                      </script>
+                      
 <!-- payments buttons here ================================ -->
+<div>
+  <h1>Proceed to checkout</h1>
+</div>
 
 <form action="/checkout/" method="post" id="payment-form">
   {% csrf_token %}

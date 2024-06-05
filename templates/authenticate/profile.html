@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filter %}
+{% load order_filter %}
+{% block body %}
+
+<div class="breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-inner">
+			<ul class="list-inline list-unstyled">
+				<li><a href="/">Home</a></li>
+				<li class='active'>My Profile</li>
+			</ul>
+		</div><!-- /.breadcrumb-inner -->
+	</div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+
+  <div class="body-content">
+    <div class="container">
+      <div class="checkout-box ">
+        <div class="row">
+          <div class="col-xs-12 col-sm-9 col-md-9 rht-col">
+            <div class="panel-group checkout-steps" id="accordion">
+              <!-- checkout-step-01  -->
+              <div class="panel panel-default checkout-step-01">
+                <!-- panel-heading -->
+                <div >
+                  <h2 class="unicase-checkout-title">
+                    User Details
+                  </h4>
+                </div>
+                <!-- panel-heading -->
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <!-- panel-body  -->
+                  <div class="panel-body">
+                    <div class="row">
+                      <!-- already-registered-login -->
+                      <div class="col-md-6 col-sm-6 already-registered-login">
+                        
+                        
+
+<!-- User details here ================================ -->
+
+<form action="" method="post" id="user-profile-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <h4 class="checkout-subtitle">User Profile</h4>
+      <label class="info-title" for="username">Username:</label>
+      <input type="text" class="form-control unicase-form-control text-input" id="username" name="username" value="{{ user.username }}" readonly>
+    </div>
+  
+    <div class="form-group">
+      <label class="info-title" for="first_name">First Name:</label>
+      <input type="text" class="form-control unicase-form-control text-input" id="first_name" name="first_name" value="{{ user.first_name }}" readonly>
+    </div>
+  
+    <div class="form-group">
+      <label class="info-title" for="last_name">Last Name:</label>
+      <input type="text" class="form-control unicase-form-control text-input" id="last_name" name="last_name" value="{{ user.last_name }}" readonly>
+    </div>
+  
+    <div class="form-group">
+      <label class="info-title" for="email">Email:</label>
+      <input type="email" class="form-control unicase-form-control text-input" id="email" name="email" value="{{ user.email }}" readonly>
+    </div>
+  
+    <div class="form-group">
+      <label class="info-title" for="mobile_no">Mobile Number:</label>
+      <input type="tel" class="form-control unicase-form-control text-input" id="mobile_no" name="mobile_no" value="{{ user.mobile_no }}" readonly>
+    </div>
+  
+    <div class="form-group">
+      <label class="info-title" for="address">Address:</label>
+      <textarea class="form-control unicase-form-control text-input" id="address" name="address" readonly>{{ user.address }}</textarea>
+    </div>
+  
+  </form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const stripeRadio = document.getElementById('stripe-radio');
+    const paypalRadio = document.getElementById('paypal-radio');
+    const noPaymentRadio = document.getElementById('no-payment-radio');
+
+    const stripeBtn = document.querySelector('.stripe-btn');
+    const paypalBtn = document.querySelector('.paypal-btn');
+    const noPaymentBtn = document.querySelector('.no-payment-btn');
+
+    function updateButtonVisibility() {
+      if (stripeRadio.checked) {
+        stripeBtn.style.display = 'inline-block';
+        paypalBtn.style.display = 'none';
+        noPaymentBtn.style.display = 'none';
+      } else if (paypalRadio.checked) {
+        stripeBtn.style.display = 'none';
+        paypalBtn.style.display = 'inline-block';
+        noPaymentBtn.style.display = 'none';
+      } else if (noPaymentRadio.checked) {
+        stripeBtn.style.display = 'none';
+        paypalBtn.style.display = 'none';
+        noPaymentBtn.style.display = 'block';
+      }
+    }
+
+    stripeRadio.addEventListener('change', updateButtonVisibility);
+    paypalRadio.addEventListener('change', updateButtonVisibility);
+    noPaymentRadio.addEventListener('change', updateButtonVisibility);
+
+    updateButtonVisibility(); // Initial call to set the correct visibility
+  });
+</script>
+
+
+
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.checkout-steps -->
+          </div>
+          <div class="col-xs-12 col-sm-3 col-md-3 sidebar">
+            <!-- checkout-progress-sidebar -->
+            <div class="checkout-progress-sidebar ">
+              <div class="panel-group">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="unicase-checkout-title">My Progress</h4>
+                  </div>
+                  <div class="">
+                    <ul class="nav nav-checkout-progress list-unstyled">
+                      <li>
+                        <a href="/orders/">My Orders</a>
+                      </li>
+                      <li>
+                        <a href="/my_wishlist/">My Wishlist</a>
+                      </li>
+                      <li>
+                        <a href="#">Reviews</a>
+                      </li>
+                      <li>
+                        <a href="#">Edit Profile</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- checkout-progress-sidebar -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.checkout-box -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+      <div id="brands-carousel" class="logo-slider wow fadeInUp">
+        <div class="logo-slider-inner">
+          <div id="brand-slider"
+               class="owl-carousel brand-slider custom-carousel owl-theme">
+            <div class="item m-t-15">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item m-t-10">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand3.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand6.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+          </div>
+          <!-- /.owl-carousel #logo-slider -->
+        </div>
+        <!-- /.logo-slider-inner -->
+      </div>
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.body-content -->
+  <!-- ============================================================= FOOTER ============================================================= -->
+  <!-- ============================================================= FOOTER ============================================================= -->
+  <!-- ============================================== INFO BOXES ============================================== -->
+  <div class="row our-features-box">
+    <div class="container">
+      <ul>
+        <li>
+          <div class="feature-box">
+            <div class="icon-truck"></div>
+            <div class="content-blocks">We ship worldwide</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-support"></div>
+            <div class="content-blocks">
+              call
+              +1 800 789 0000
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-money"></div>
+            <div class="content-blocks">Money Back Guarantee</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-return"></div>
+            <div class="content">30 days return</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+<!-- Add this to your template where you want the PayPal button to appear -->
+<script>
+  document.getElementById('paypalForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Submit the form using JavaScript
+      fetch(this.action, {
+          method: this.method,
+          body: new FormData(this), // Include form data in the request
+      })
+      .then(response => response.json())
+      .then(data => {
+          // Redirect to the PayPal approval URL
+          window.location.href = data.approval_url;
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          // Handle any errors
+      });
+  });
+</script>

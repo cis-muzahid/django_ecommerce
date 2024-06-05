@@ -38,7 +38,7 @@ class LoginView(View):
 
 
 class CustomAdminLoginView(View):
-    template_name = 'admin/admin_login.html'  # Replace with your admin login template
+    template_name = 'admin/admin_login.html'
 
     def get(self, request):
         return render(request,self.template_name )
@@ -76,6 +76,7 @@ class LogoutView(View):
         logout(request)
         return redirect('home')
 
+
 class SignupView(View):
     def get(self, request):
         try:
@@ -89,22 +90,24 @@ class SignupView(View):
     def post(self, request):
         form = CutomUserForm(request.POST)
         if form.is_valid():
-            role = form.cleaned_data['user_role']
+            role = Role.objects.get(name='user')
             user = CustomUser.objects.create_user(
-                username=form.cleaned_data['username'],
                 email=form.cleaned_data['email'],
-                password=form.cleaned_data['password']
+                password=form.cleaned_data['password'],
+                mobile_no=form.cleaned_data['mobile_no']
             )
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.user_role = role
             user.save()
 
-            messages.success(request, 'Your account has been successfully created.')
+            messages.success(request, 'Your account has been successfully created. Please login to continue!!')
             return redirect('login_user')
         else:
             messages.error(request, form.errors)
             return render(request, "authenticate/signup.html")
+
+
 class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'
     paginate_by = 10
@@ -155,6 +158,7 @@ class AddUserView(View):
         
         roles = Role.objects.all()  # Fetch all roles
         return render(request, self.template_name, {'form': form, 'roles': roles})
+
 class UserUpdateView(View):
     template_name = 'admin/user_management/update.html'  # Use the same template as AddUserView
 
@@ -203,6 +207,8 @@ class UserDeleteView(View):
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
+
+
 class RoleIndexView(View):
     template_name = 'admin/role_management/index.html'
     paginate_by = 5 
@@ -217,6 +223,8 @@ class RoleIndexView(View):
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
+
+
 class AddRoleView(View):
     template_name = 'admin/role_management/create.html'
 
@@ -382,3 +390,14 @@ class AdminDashboardView(View):
             return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
         else:
             return redirect('admin_login')
+
+class UserProfileView(View):
+    template_name = 'authenticate/profile.html'
+    def get(self, request):
+        if request.user.is_authenticated :
+            users = CustomUser.objects.get(id=request.user.id)
+
+            return render(request, self.template_name, {'users': users})
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('login_user')

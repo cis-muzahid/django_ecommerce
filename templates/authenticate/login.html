@@ -2,9 +2,60 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keywords" content="MediaCenter, Template, eCommerce">
+    <meta name="robots" content="all">
+    <title>Marazzo premium</title>
+  
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+  
+    <!-- Customizable CSS -->
+    <link rel="stylesheet" href="{% static 'css/alertbox.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/blue.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.transitions.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/rateit.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-select.min.css' %}">
+    
     <title>Login Page</title>
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" integrity="sha512-MA3wvg8Q5/U/4Jb+DgJqe5wT4/+jX8GqeKSEyXjXyWfv5Jv8t/NJ38W+/+k5eEHvxJz8QZiD6U/L5gDcG5Aw==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <link href="https://fonts.googleapis.com/css?family=Barlow:200,300,300i,400,400i,500,500i,600,700,800" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
 </head>
 <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4;">
+      <!-- <div class="body-content outer-top-vs text-left" id="top-banner-and-menu">
+        <div class="container">
+          {% if messages %}
+          <div class="messages">
+              {% for message in messages %}
+              <div class=" alert alert-success ">
+              <div class="alert_items">
+                <div class="">
+                    <span>{{message}}<span>                   
+                  </div>
+                  <div class="">
+                    <!-- <span class='close-btn float-right'><i class="fa-solid fa-xmark"></i></span> -->
+                  </div>
+              </div>
+            </div>
+             {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div> -->
+     
     <div style="margin: 0 auto; max-width: 300px; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
         <h2 style="color: #333;">Login</h2>
         <form action="" method="POST" style="margin-top: 20px;">
@@ -21,7 +72,7 @@
                 <button type="submit" style="background-color: #4CAF50; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">Login</button>
             </div>
         </form>
-        <p style="font-size: 12px; color: #888;">Don't have an account? <a href="/admin/signup_user/">Sign up</a></p>
+        <p style="font-size: 12px; color: #888;">Don't have an account? <a href="/signup_user/">Sign up</a></p>
     </div>
   </body>
 </html>

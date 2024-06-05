@@ -6,23 +6,28 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
 from .forms import ProductForm, ProductAttributeForm, ProductSpecificationForm
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 # Create your views here.
 
 class ProductView(View):
     def get(self, request, **kargs):
-        if kargs and kargs['category'] != None:
-            category = Category.objects.get(name=kargs['category'])
-            products = Product.objects.filter(category=category, is_delete=False)
-        elif request.GET.get('q'):
-            products = Product.objects.filter(name__icontains=request.GET['q'], is_delete=False)
+        if request.user.is_authenticated:
+            if kargs and kargs['category'] != None:
+                category = Category.objects.get(name=kargs['category'])
+                products = Product.objects.filter(category=category, is_delete=False)
+            elif request.GET.get('q'):
+                products = Product.objects.filter(name__icontains=request.GET['q'], is_delete=False)
+            else:
+                products = Product.objects.filter(is_delete=False)
+            
+            paginator = Paginator(products, 10)
+            page_number = request.GET.get("page")
+            products = paginator.get_page(page_number)
+            return render(request, 'admin/products/index.html', {'products': products})
         else:
-            products = Product.objects.filter(is_delete=False)
-        
-        paginator = Paginator(products, 10)
-        page_number = request.GET.get("page")
-        products = paginator.get_page(page_number)
-        return render(request, 'admin/products/index.html', {'products': products})
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('admin_login')
 
 class ProductRetrieve(View):
     def get(self, request, id, action):
