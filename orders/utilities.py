@@ -1,11 +1,17 @@
 from cart.models import Cart
 from .models import OrderItem
-from users.models import CustomUser
+from users.models import CustomUser, UserAddress
 from django.conf import settings
 from random import randint
 import http.client
 from datetime import date
 import json
+
+def check_default_address(user):
+    try:
+        return UserAddress.objects.get(user_id=user.id, is_default=True)
+    except UserAddress.DoesNotExist:
+        return None
 
 def order_cart_item(order, user):
     user = CustomUser.objects.get(id=user)
@@ -76,3 +82,10 @@ def update_tracking_status(tracking_number):
     data = res.read()
     data
     pass
+
+def fetch_user_address(user):
+    try:
+        addresses = UserAddress.objects.filter(user=user)
+    except:
+        addresses = None
+    return addresses

@@ -11,7 +11,6 @@ from .utilities import *
 from home.utilities import *
 from datetime import datetime, timedelta
 from django.utils import timezone
-from home.utilities import *
 import paypalrestsdk
 from django.views.generic.base import TemplateView
 from users.models import UserAddress
@@ -22,8 +21,11 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class OrderView(View):
     def get(self, request):
         """ Orders View for orders list """
+        default_address = check_default_address(request.user)
+        all_addresses = fetch_user_address(request.user) 
         publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-        return render(request, 'orders/checkout.html', {'publishable_key': publishable_key})
+        return render(request, 'orders/checkout.html', 
+                      {'publishable_key': publishable_key, 'default_address': default_address, 'all_addresses': all_addresses})
 
     def post(self, request, pk=None):
         """ Orders View for create orders """
@@ -31,13 +33,12 @@ class OrderView(View):
         if request.POST.get('stripeToken'):
             payment_intent = self.__payment_method(request)
         form = OrderForm(request.POST)
-        if form.is_valid():    
+        if form.is_valid():
             order = form.save(commit=False)
             order.payment_status = payment_intent 
             # order.tracking_number = create_order_tracking(order)
             order.save()
             order_cart_item(order, request.user.pk)
-
             messages.success(request,  f'order added successfully.')
             return redirect('home')
         else:
@@ -85,69 +86,36 @@ class OrderView(View):
 
 
 class UserAddressView(View):
-    def get_default_address(self, user_id):
-        try:
-            return UserAddress.objects.filter(user_id=user_id).first()
-        except UserAddress.DoesNotExist:
-            return None
-
     def get(self, request, pk=None):
-        breakpoint()
         form = AddressForm()
-        default_address = self.get_default_address(request.user.id)
-        print("default_address",default_address)
-        return render(request, 'orders/checkout.html', {'form': form, 'default_address': default_address})
+        default_address = check_default_address(request.user)
+        all_addresses = fetch_user_address(request.user) 
+        return render(request, 'orders/checkout.html', {'form': form, 'default_address': default_address, 'all_addresses': all_addresses })
 
     def post(self, request, pk=None):
+        if request.POST.get('is_default',None) == 'True':
+            try:
+                UserAddress.objects.filter(user=request.user).update(is_default=False)
+            except:
+                pass
+
         form = AddressForm(request.POST)
         if form.is_valid():
             address = form.save(commit=False)
             address.user = request.user
             address.save()
             
-            # Check if the user has more than 5 addresses, and if so, adjust the default flag
-            addresses_count = UserAddress.objects.filter(id=request.user.id).count()
-            if addresses_count > 5:
-                # Set the newly added address as default if user already has 5 addresses
+            addresses_count = UserAddress.objects.filter(user_id=request.user.id).count()
+
+            if addresses_count == 1 or request.POST.get("is_default", None):
                 address.is_default = True
                 address.save()
-            else:
-                # Set the address as default only if it's the first address for the user
-                if addresses_count == 1:
-                    address.is_default = True
-                    address.save()
-
+            
             messages.success(request, 'Address added successfully.')
-            return render(request, 'orders/checkout.html', {'form': form})
+            return redirect(request.META.get('HTTP_REFERER', 'default_url_name'))
         else:
             messages.error(request, 'Something went wrong. Try again.')
             return render(request, 'orders/checkout.html')
-
-
-# class UserAddressView(View):
-#     def post(self, request, pk=None):
-#         form = AddressForm(request.POST)
-#         if form.is_valid():
-#             address = form.save(commit=False)
-#             address.user = request.user
-#             address.save()
-#             messages.success(request, 'Address added successfully.')
-#             return render(request, 'orders/checkout.html', {'form': form})
-#         else:
-#             messages.error(request, 'something went wrong. Try again.')
-#             return render(request, 'orders/checkout.html')
-
-#     def get_default_address(self, id):
-#         try:
-#             return UserAddress.objects.get(id=id, is_default=True)
-#         except UserAddress.DoesNotExist:
-#             return None
-
-#     def get(self, request, pk=None):
-#         form = AddressForm()
-#         default_address = self.get_default_address(request.user.id)
-#         return render(request, 'orders/checkout.html', {'form': form, 'default_address': default_address})
-
 
 class ReturnAndReplaceView(View):
     """ orders list for user """
@@ -349,12 +317,3 @@ class OrderTracking(View):
         except:
             messages.error(request, 'unable to track this order please try again.')
         return render(request, 'orders/tracking.html', {'orders': orders})
-
-
-
-# class AdminOrderDelete(View):
-#     def get(self, request):
-#         return render()
-    
-#     def post(self, request):
-#         form = 

@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (LoginView, LogoutView, SignupView, UserIndexView, AddUserView, RoleIndexView, AddRoleView, 
 PermissionIndexView, AddPermissionView, UpdateRoleView, DeleteRoleView, UserDeleteView, 
 UserUpdateView, UpdatePermissionView, DeletePermissionView, CustomAdminLoginView, 
-CustomAdminLogoutView, AdminDashboardView, UserProfileView)
+CustomAdminLogoutView, AdminDashboardView, UserProfileView, UserUpdateAddressView, DeleteAddressView)
 
 urlpatterns = [
     path('admin_login/', CustomAdminLoginView.as_view(), name='admin_login'),
@@ -14,6 +14,8 @@ urlpatterns = [
     path('logout_user/', LogoutView.as_view(), name='logout_user'),
     path('signup_user/', SignupView.as_view(), name='signup_user'),
     path('user_profile/', UserProfileView.as_view(), name='user_profile'),
+    path('update_address/', UserUpdateAddressView.as_view(), name='update_address'),
+    path('delete_address/', DeleteAddressView.as_view(), name='delete_address'),
 
     path('admin/user/index/', UserIndexView.as_view(), name='user_index'),
     path('admin/user/add/', AddUserView.as_view(), name='add_user'),

@@ -3,7 +3,7 @@ from cart.models import Cart
 from orders.models import ReturnAndReplaceOrder, OrderItem, Order
 from datetime import datetime, timedelta
 from django.utils import timezone
-
+from users.models import UserAddress
 
 register = template.Library()
 
@@ -68,3 +68,12 @@ def is_last_seven_days_order(order_item):
     except Order.DoesNotExist:
         replace_order = False
     return replace_order
+
+
+@register.filter
+def user_address_count(user):
+    try:
+        count = UserAddress.objects.filter(user=user).count
+    except UserAddress.DoesNotExist:
+        count = None
+    return count

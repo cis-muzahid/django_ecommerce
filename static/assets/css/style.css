@@ -159,3 +159,18 @@ small {
     color: #8C9EFF;
     cursor: pointer;
 }
+
+.address-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.address-text {
+flex: 1;
+}
+
+.div-center{
+width:500px;
+margin: auto;
+}

@@ -57,8 +57,6 @@
             {% else %}
               <li class="login"><a href="{% url 'login_user' %}"><span>Login</span></a></li>
               <li class="signup_user"><a href="{% url 'signup_user' %}"><span>Sign up</span></a></li>
-
-
             {% endif %}
           </ul>
         </div>
@@ -139,7 +137,7 @@
                 
               <div class="total-price-basket"> <span class="lbl">Shopping Cart</span> <span class="value">
                 {% if user.is_authenticated %}
-                 {{ user|current_user_cart_total_price }}
+                 {{ user.id|current_user_cart_total_price }}
               {% else %}
                 0 INR
               {% endif %}  

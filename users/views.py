@@ -5,10 +5,12 @@ from django.views import View, generic
 from .models import CustomUser, Role, Permission
 from products.models import Product
 from orders.models import Order
-from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm,LoginForm
+from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm, LoginForm, AddressForm
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
+from orders.utilities import fetch_user_address
+from users.models import UserAddress
 
 # Custom User model
 User = get_user_model()
@@ -138,7 +140,6 @@ class AddUserView(View):
 
     def post(self, request):
         form = CutomUserForm(request.POST)
-
         try:
             if form.is_valid():
                 role = form.cleaned_data['user_role']
@@ -380,13 +381,11 @@ class DeletePermissionView(View):
     
 class AdminDashboardView(View):
     template_name = 'admin/dashboard.html'
-
     def get(self, request):
         if request.user.is_authenticated and request.user.is_superuser:
             users = CustomUser.objects.all()
             products = Product.objects.all()
             orders = Order.objects.all()
-
             return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
         else:
             return redirect('admin_login')
@@ -394,10 +393,49 @@ class AdminDashboardView(View):
 class UserProfileView(View):
     template_name = 'authenticate/profile.html'
     def get(self, request):
-        if request.user.is_authenticated :
-            users = CustomUser.objects.get(id=request.user.id)
-
-            return render(request, self.template_name, {'users': users})
+        if request.user.is_authenticated:
+            addresses = fetch_user_address(request.user)
+            return render(request, self.template_name, {'addresses': addresses })
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('login_user')
+    
+    def post(self, request):
+        form = CutomUserForm(request.POST, instance=request.user)
+        addresses = fetch_user_address(request.user)
+        try:
+            if form.is_valid():
+                form.save()
+            return redirect('user_profile')
+        except:
+            return render(request, 'authenticate/profile.html', { 'addresses': addresses })
+
+class UserUpdateAddressView(View):
+    def post(self, request):
+        addresses = fetch_user_address(request.user)
+        try:
+            address = UserAddress.objects.get(id=request.POST.get('address', 'None'))
+        except UserAddress.DoesNotExist:
+            return render(request, 'authenticate/profile.html', { 'addresses': addresses })
+        
+        form = AddressForm(request.POST, instance=address)
+        try:
+            if form.is_valid():
+                if request.POST.get('is_default',None) == 'True':
+                    UserAddress.objects.filter(user=request.user).update(is_default=False)
+                form.save()
+
+            return redirect('user_profile')
+        except:
+            return render(request, 'authenticate/profile.html', {'form': form, 'addresses': addresses })
+
+class DeleteAddressView(View):
+    def post(self, request):
+        try:
+            address = UserAddress.objects.get(id=request.POST.get('address', 'None'))
+            address.delete()
+            return redirect('user_profile')
+        except:
+            addresses = fetch_user_address(request.user)
+            messages.error(request, f'Error Address deleting')
+            return render(request, 'authenticate/profile.html', { 'addresses': addresses })

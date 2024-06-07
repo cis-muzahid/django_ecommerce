@@ -42,4 +42,4 @@ class LoginForm(forms.Form):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = UserAddress
-        fields = ['street', 'city', 'state', 'postal_code', 'country']
+        fields = ['street', 'city', 'state', 'postal_code', 'country', 'is_default']

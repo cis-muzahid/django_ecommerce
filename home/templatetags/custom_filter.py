@@ -2,6 +2,7 @@ from django import template
 from django.shortcuts import get_object_or_404
 from products.models import ProductAttribute, Product, Category
 from cart.models import Cart
+from users.models import Role
 
 register = template.Library()
 
@@ -94,3 +95,16 @@ def categories_all(a):
         categories = None
         pass
     return categories
+
+@register.filter
+def check_user_role(user):
+    try:
+        admin_role = Role.objects.get(name="admin")
+        user_role = Role.objects.get(name="user")
+        if user.user_role == None:
+            if user.is_superuser:
+                return admin_role.id
+            else:
+                return user_role.id
+    except Role.DoesNotExist:
+        return None 

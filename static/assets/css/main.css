@@ -5066,7 +5066,7 @@ font-family: FontAwesome;
   color: #666666;
   text-decoration: underline;
 }
-.checkout-box .checkout-steps .checkout-step-01 .already-registered-login button {
+.checkout-box .checkout-steps .checkout-step-01 .already-registered-login {
   margin-top: 15px;
 }
 
