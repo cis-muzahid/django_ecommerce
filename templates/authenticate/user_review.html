@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filter %}
+{% load order_filter %}
+
+{% block body %}
+<div class="breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-inner">
+			<ul class="list-inline list-unstyled">
+				<li><a href="/">Home</a></li>
+				<li class='active'>Your Reviews</li>
+			</ul>
+		</div><!-- /.breadcrumb-inner -->
+	</div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+
+<div class="body-content outer-top-xs">
+	<div class="container">
+		<div class="row ">
+			<div class="shopping-cart">
+				<div class="shopping-cart-table ">
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<th class="cart-description item">Image</th>
+					<th class="cart-product-name item text-left">Product Name</th>
+					<th class="cart-edit item">Edit</th>
+                    <th class="cart-review item">Review</th>
+					<th class="cart-romove item">Remove</th>
+				</tr>
+			</thead><!-- /thead -->
+			<tbody>
+				{% for review in reviews %}
+				<tr>
+					<td class="cart-image">
+						<a class="entry-thumbnail" href="/category/{{ review.product.category }}/{{ review.product }}/">
+						    <img src='/media/{{ review.product.id|product_attributes }}' alt="">
+						</a>
+					</td>
+					<td class="cart-product-name-info text-center">
+						<h4 class='cart-product-description'>
+							<a href="/category/{{ review.product.category }}/{{ review.product }}/">
+								{{ review.product.name }}</a></h4>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="">
+									{% for star in 5|range_filter %}
+										{% if star < review.review %}
+											<span class="star_{{ review.review }}">★</span>
+										{% else %}
+											<span class="empty-star">★</span>
+										{% endif %}
+									{% endfor %}
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="reviews">
+									({{ review.product|product_review_users_count }} Reviews)
+								</div>
+							</div>
+						</div><!-- /.row -->
+						<div class="cart-product-info">
+											<span class="product-color">COLOR:<span>Blue</span></span>
+						</div>
+					</td>
+					<td class="cart-product-edit">
+                        <button type="button" onclick="review({{ review.review }}, {{ review.id }})" class="btn-link" data-toggle="modal" data-target="#productReview_{{ review.id }}">
+                          Update Review
+                        </button>
+                        <div class="modal fade" id="productReview_{{ review.id }}" tabindex="-1" role="dialog" aria-labelledby="productReviewLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header text-center">
+                                <h3 class="modal-title" id="productReviewLabel">Update your review</h3>
+                              </div>
+                                <form method="post" action="/update_delete_review/" id="review-form_{{ review.id }}">
+                                    <div class="modal-body">
+                                        {% csrf_token %}
+                                        <input type='hidden' name='review_id' value='{{ review.id }}'>
+                                        <input type='hidden' name='user' value='{{ user.id }}'>
+                                        <input type='hidden' name='product' value='{{ review.product.id }}'>
+                                        <input type='hidden' name='action' value='update'>
+                                        <div class="form-group text-center">
+                                            <h4 for="staticEmail" class="form-label">How much you like this product </h4>
+                                            <div class="star-rating">
+                                                <span onclick="review(1, {{ review.id }})" class="star review_{{ review.id }}">★</span>
+                                                <span onclick="review(2, {{ review.id }})" class="star review_{{ review.id }}">★</span>
+                                                <span onclick="review(3, {{ review.id }})" class="star review_{{ review.id }}">★</span>
+                                                <span onclick="review(4, {{ review.id }})" class="star review_{{ review.id }}">★</span>
+                                                <span onclick="review(5, {{ review.id }})" class="star review_{{ review.id }}">★</span>
+                                                <input type="hidden" id="output_{{ review.id }}" name="review" class="output" value="{{ review.review }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="staticEmail" class="col-sm-2 col-form-label">Title : </label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="title" value="{{ review.title }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="staticEmail" class="col-sm-2 col-form-label">Comment : </label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="comment" value="{{ review.comment }}">
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-info">Update Review</button>
+                                    </div>
+                                </form>
+                            </div>
+                          </div>
+                        </div>
+                    </td>
+					<td class="cart-product-sub-total"><h4 class="cart-sub-total-price">{{ review.title }}</h4>
+                    <p class="review-title">{{ review.comment }}</p>
+                    </td>
+					<td class="romove-item">
+                    <form action='/update_delete_review/' method='post'>{% csrf_token %}
+                        <input type='hidden' name='review_id' value='{{ review.id }}'>
+                        <input type='hidden' name='action' value='delete'>
+                        <button type='submit' data-toggle="tooltip" class="btn-upper btn btn-link">
+                            <i class="fa fa-trash-o"></i> </button>
+                    </form>
+				</tr>
+				{% endfor %}
+			</tbody><!-- /tbody -->
+		</table><!-- /table -->
+	</div>
+</div><!-- /.shopping-cart-table -->
+</div><!-- /.shopping-cart -->
+		</div> <!-- /.row -->
+		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
+<div id="brands-carousel" class="logo-slider wow fadeInUp">
+
+		<div class="logo-slider-inner">	
+			<div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
+				<div class="item m-t-15">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item m-t-10">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand3.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand6.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+
+				<div class="item">
+					<a href="#" class="image">
+						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
+					</a>	
+				</div><!--/.item-->
+		    </div><!-- /.owl-carousel #logo-slider -->
+		</div><!-- /.logo-slider-inner -->
+	
+</div><!-- /.logo-slider -->
+<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
+</div><!-- /.body-content -->
+
+<!-- ============================================================= FOOTER ============================================================= -->
+
+        <!-- ============================================== INFO BOXES ============================================== -->
+        <div class="row our-features-box">
+     <div class="container">
+      <ul>
+        <li>
+          <div class="feature-box">
+            <div class="icon-truck"></div>
+            <div class="content-blocks">We ship worldwide</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-support"></div>
+            <div class="content-blocks">call 
+              +1 800 789 0000</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-money"></div>
+            <div class="content-blocks">Money Back Guarantee</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-return"></div>
+            <div class="content">30 days return</div>
+          </div>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+        <!-- /.info-boxes --> 
+        <!-- ============================================== INFO BOXES : END ============================================== --> 
+
+		
+
+{% endblock %}

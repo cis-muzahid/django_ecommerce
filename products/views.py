@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from products.models import Product, ProductAttribute, ProductSpecification, Category
+from products.models import Product, ProductAttribute, ProductSpecification, Category, ProductReview
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
-from .forms import ProductForm, ProductAttributeForm, ProductSpecificationForm
+from .forms import ProductForm, ProductAttributeForm, ProductSpecificationForm, ProductReviewForm
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 
@@ -155,4 +155,47 @@ class ProductAttributeView(View):
         else:
             return render(request, self.template_name, {'form': form, 'product_id': product_id})
 
+class ProductReviewView(View):
+    def get(self, request):
+        reviews = ProductReview.objects.filter(user= request.user)
+        return render(request, "authenticate/user_review.html", {'reviews': reviews} )
 
+    def post(self, request):
+        product = Product.objects.get(id = request.POST.get("product"))
+        try:
+            review = ProductReview.objects.filter(product=product.id, user= request.POST.get("user"))
+        except:
+            review = None
+        if review.count() == 0:
+            try:
+                form = ProductReviewForm(request.POST)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, "Your review for this product is added successfully. Thank You for your precious time.")
+                else:
+                    messages.error(request, form.errors)
+            except Exception as e:
+                messages.error(request, "An error occurred while adding your review for this product.")
+            
+            return redirect('product_details', product.category.name, product.name)
+        else:
+            messages.info(request, "Your review is already added.")
+            return redirect('product_details', product.category.name, product.name)
+
+class ProductUpdateDeleteView(View):
+    def post(self, request):
+        try:
+            review = ProductReview.objects.get(id=request.POST.get("review_id"))
+            if request.POST.get("action") == "update":
+                form = ProductReviewForm(request.POST, instance=review)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, "Your review for this product is updated successfully.")
+                else:
+                    messages.error(request, form.errors)
+            else:
+                review.delete()
+                messages.success(request, "Your review for this product is deleted successfully.")
+        except Exception as e:
+            messages.info(request, "An error occure while performing this action : ", e)
+        return redirect('review') 

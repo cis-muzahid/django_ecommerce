@@ -174,3 +174,28 @@ flex: 1;
 width:500px;
 margin: auto;
 }
+
+.star {
+    font-size: 5vh;
+    cursor: pointer;
+}
+
+.one, .star_1 {
+color: rgb(255, 0, 0);
+}
+
+.two, .star_2 {
+color: rgb(255, 106, 0);
+}
+
+.three, .star_3 {
+color: rgb(242, 199, 6);
+}
+
+.four, .star_4 {
+color: yellowgreen;
+}
+
+.five, .star_5 {
+color: #0ba10b;
+}

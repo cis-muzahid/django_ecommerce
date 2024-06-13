@@ -32,7 +32,10 @@ class HomeView(View):
         else:
             """ View for Client Home page """
             return render(request, 'home.html', {'latest_products': products, 'categories': categories,
-                                                 'special_offer_products':products[:3], 'hot_deals': hot_deals[:3] })
+                                                 'special_offer_products':products[:3],
+                                                 'special_offer_products_2':products[3:6],
+                                                 'special_offer_products_3':products[6:9], 
+                                                 'hot_deals': hot_deals[:3] })
         
     def post(self, request, category):
         """ fetch product with price filter """

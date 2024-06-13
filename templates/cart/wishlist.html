@@ -34,14 +34,16 @@
 					<td class="col-md-2 col-sm-6 col-xs-6"><img src="/media/{{ wishlist.product.id|product_attributes }}" alt="imga"></td>
 					<td class="col-md-7 col-sm-6 col-xs-6">
 						<div class="product-name"><a href="#">{{ wishlist.product.name }}</a></div>
-						<div class="rating">
-							<i class="fa fa-star rate"></i>
-							<i class="fa fa-star rate"></i>
-							<i class="fa fa-star rate"></i>
-							<i class="fa fa-star rate"></i>
-							<i class="fa fa-star non-rate"></i>
-							<span class="review">( 06 Reviews )</span>
+						<div class="p-0">
+							{% for star in 5|range_filter %}
+								{% if star < wishlist.product|product_rating %}
+									<span class="star_{{ wishlist.product|product_rating }}">★</span>
+								{% else %}
+									<span class="empty-star">★</span>
+								{% endif %}
+							{% endfor %}
 						</div>
+						<span class="review">( {{ wishlist.product|product_review_users_count }} Reviews )</span>
 						<div class="price">
 							{{ wishlist.product.price }}
 							<span>$900.00</span>

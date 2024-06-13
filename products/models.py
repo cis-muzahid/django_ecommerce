@@ -31,6 +31,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+class ProductReview(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    review = models.IntegerField()
+    title = models.CharField(max_length=255)
+    comment = models.CharField(max_length=255,blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class ProductAttribute(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

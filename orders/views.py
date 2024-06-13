@@ -32,10 +32,15 @@ class OrderView(View):
         payment_intent = ''
         if request.POST.get('stripeToken'):
             payment_intent = self.__payment_method(request)
+            payment_intent = stripe.PaymentIntent.retrieve(payment_intent)
+
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
-            order.payment_status = payment_intent 
+            if payment_intent != '' and payment_intent['status'] == 'succeeded':
+                order.payment_method = "stripe"
+                order.payment_id = payment_intent.id
+                order.payment_status = payment_intent['status'] if payment_intent['status'] == 'succeeded' else 'failed'
             # order.tracking_number = create_order_tracking(order)
             order.save()
             order_cart_item(order, request.user.pk)
@@ -52,6 +57,7 @@ class OrderView(View):
                 type='card',
                 token=token
             )
+
         customer = None
         for cus in stripe.Customer.list()['data']:
             if cus.email==request.user:
@@ -71,14 +77,9 @@ class OrderView(View):
 
             stripe.PaymentIntent.confirm(
                 payment_intent.id,
-                payment_method="pm_card_visa",
                 )
 
-            if payment_intent.status == 'successful':
-                return payment_intent.id
-            else:
-                messages.error(request, 'Payment is not completed by this method. please try again.')
-                return render(request, 'orders/checkout.html')
+            return payment_intent.id
 
         except stripe.error.CardError as e:
             error_msg = e.error.message
