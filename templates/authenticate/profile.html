@@ -1,0 +1,448 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filter %}
+{% load order_filter %}
+{% block body %}
+
+<div class="breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-inner">
+			<ul class="list-inline list-unstyled">
+				<li><a href="/">Home</a></li>
+				<li class='active'>My Profile</li>
+			</ul>
+		</div><!-- /.breadcrumb-inner -->
+	</div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+
+  <div class="body-content">
+    <div class="container">
+      <div class="checkout-box ">
+        <div class="row">
+          <div class="col-xs-12 col-sm-9 col-md-9 rht-col">
+            <div class="panel-group checkout-steps" id="accordion">
+              <!-- checkout-step-01  -->
+              <div class="panel panel-default checkout-step-01">
+                <!-- panel-heading -->
+                <div >
+                  <h2 class="unicase-checkout-title">
+                    User Details
+                  </h4>
+                </div>
+                <!-- panel-heading -->
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <!-- panel-body  -->
+                  <div class="panel-body">
+                    <div class="row">
+                      <!-- already-registered-login -->
+                      <div class="col-md-6 col-sm-6 already-registered-login">
+                        <div class="form-group">
+                          <h4 class="checkout-subtitle">User Profile</h4>
+                          <label class="info-title" for="username">Username:</label>
+                          <input type="text" class="form-control unicase-form-control text-input" id="username" name="username" value="{{ user.username }}" readonly>
+                        </div>
+                        <div class="form-group">
+                          <label class="info-title" for="first_name">First Name:</label>
+                          <input type="text" class="form-control unicase-form-control text-input" id="first_name" name="first_name" value="{{ user.first_name }}" readonly>
+                        </div>
+                        <div class="form-group">
+                          <label class="info-title" for="last_name">Last Name:</label>
+                          <input type="text" class="form-control unicase-form-control text-input" id="last_name" name="last_name" value="{{ user.last_name }}" readonly>
+                        </div>
+                        <div class="form-group">
+                          <label class="info-title" for="email">Email:</label>
+                          <input type="email" class="form-control unicase-form-control text-input" id="email" name="email" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="form-group">
+                          <label class="info-title" for="mobile_no">Mobile Number:</label>
+                          <input type="tel" class="form-control unicase-form-control text-input" id="mobile_no" name="mobile_no" value="{{ user.mobile_no }}" readonly>
+                        </div>
+                        <div class="form-group">
+                          <label class="info-title" for="address">Addresses: </label>
+                          {% for address in addresses %}
+                            <div class="address-container form-control unicase-form-control text-input" style='margin-top: 10px;'>
+                              <span class="address-text" id="address">{% if address.is_default %}
+                              <b>Default : </b>
+                              {% endif %}
+                              {{ address }}
+                              </span>
+                              <button type="button" class="btn-link" data-toggle="modal" 
+                                data-target="#edit_address_{{ address.id }}" style='margin-right: 10px'><i class='fa fa-pencil text-success fa-lg'></i></button>
+                              <form action='/delete_address/' method='post'>{% csrf_token %}
+                                <input type='hidden' name='address' value='{{ address.id }}'>
+                                <button type='submit' class="btn-link"><i class="fa fa-trash text-danger fa-lg"></i></button>
+                              </form>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade" id="edit_address_{{ address.id }}" tabindex="-1" role="dialog" aria-labelledby="editAddressTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title text-center" id="exampleModalLongTitle">Update Your Adress</h4>
+                                  </div>
+                                  <form action='/update_address/' method='post'>{% csrf_token %}
+                                  <div class="modal-body">
+                                    <label class="info-title" for="street">
+                                      Street <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="street"
+                                            name="street"
+                                            value='{{ address.street }}'
+                                            required>
+                                    <label class="info-title" for="city">
+                                      City <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="city"
+                                            name="city"
+                                            value='{{ address.city }}'
+                                            required>
+                                    <label class="info-title" for="state">
+                                      State <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="state"
+                                            name="state"
+                                            value='{{ address.state }}'
+                                            required>
+                                    <label class="info-title" for="postal_code">
+                                      Postal Code <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="postal_code"
+                                            name="postal_code"
+                                            value='{{ address.postal_code }}'
+                                            required>
+                                    <label class="info-title" for="country">
+                                      Country <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="country"
+                                            name="country"
+                                            value='{{ address.country }}'
+                                            required>
+
+                                    <label>Do you want to add this addess as default address?</label>
+                                    <br>
+                                    Yes<input type="radio" name="is_default" value="True" required>
+                                    No<input type="radio" name="is_default" value="False">
+                                    <input type='hidden' name='address' value='{{ address.id }}'>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success">Update</button>
+                                  </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                        {% if addresses.count < 5 %}
+                          <button type="button" data-toggle="modal" data-target="#New_address" class="btn btn-info" id="add_new_address_btn">Add New Address</button>
+                          <div class="modal fade" id="New_address" tabindex="-1" role="dialog" aria-labelledby="AddressTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h4 class="modal-title text-center" id="exampleModalLongTitle">Update Your Adress</h4>
+                                </div>
+                                <form action="/add_address/" method="post" id="address-form">
+                                  <div class="modal-body">
+                                  {% csrf_token %}
+                                  <div class="form-group">
+                                    <h4 class="checkout-subtitle">Add New Address</h4>
+                                    <label class="info-title" for="street">
+                                      Street <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="street"
+                                            name="street"
+                                            required>
+                                    <label class="info-title" for="city">
+                                      City <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="city"
+                                            name="city"
+                                            required>
+                                    <label class="info-title" for="state">
+                                      State <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="state"
+                                            name="state"
+                                            required>
+                                    <label class="info-title" for="postal_code">
+                                      Postal Code <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="postal_code"
+                                            name="postal_code"
+                                            required>
+                                    <label class="info-title" for="country">
+                                      Country <span>*</span>
+                                    </label>
+                                    <input type="text"
+                                            class="form-control unicase-form-control text-input"
+                                            id="country"
+                                            name="country"
+                                            required>
+                                    <label>Do you want to add this addess as default address?</label>
+                                          <br>
+                                    Yes<input type="radio" name="is_default" value="True" required>
+                                    No<input type="radio" name="is_default" value="False">
+                                  </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success">Add Address</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.checkout-steps -->
+          </div>
+          <div class="col-xs-12 col-sm-3 col-md-3 sidebar">
+            <!-- checkout-progress-sidebar -->
+            <div class="checkout-progress-sidebar ">
+              <div class="panel-group">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="unicase-checkout-title">My Progress</h4>
+                  </div>
+                  <div class="">
+                    <ul class="nav nav-checkout-progress list-unstyled">
+                                            <li>
+                        <a type='button' data-toggle="modal" data-target="#edit_profile" class="btn-link">Edit Profile</a>
+                        <div class="modal fade" id="edit_profile" tabindex="-1" role="dialog" aria-labelledby="AddressTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title text-center" id="exampleModalLongTitle">Update Your Adress</h4>
+                              </div>
+                              <form action="/user_profile/" method="post" id="profile-update-form">
+                                <div class="modal-body">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                  <h4 class="checkout-subtitle">Add New Address</h4>
+                                  <label class="info-title" for="username">
+                                    Username <span>*</span>
+                                  </label>
+                                  <input type="text"
+                                          class="form-control unicase-form-control text-input"
+                                          id="username"
+                                          name="username"
+                                          value='{{ user.username }}'
+                                          required>
+                                  <label class="info-title" for="first_name">
+                                    First Name <span>*</span>
+                                  </label>
+                                  <input type="text"
+                                          class="form-control unicase-form-control text-input"
+                                          id="first_name"
+                                          name="first_name"
+                                          value='{{ user.first_name }}'
+                                          required>
+                                  <label class="info-title" for="last_name">
+                                    Last Name <span>*</span>
+                                  </label>
+                                  <input type="text"
+                                          class="form-control unicase-form-control text-input"
+                                          id="last_name"
+                                          name="last_name"
+                                          value='{{ user.last_name }}'
+                                          required>
+                                  <label class="info-title" for="mobile_no">
+                                    Mobile Number <span>*</span>
+                                  </label>
+                                  <input type="number"
+                                          class="form-control unicase-form-control text-input"
+                                          id="mobile_number"
+                                          name="mobile_no"
+                                          value='{{ user.mobile_no }}'
+                                          required>
+                                  <input type='hidden' name='password' value='{{ user.password }}'>
+                                  <input type='hidden' name='email' value='{{ user.email }}'>
+                                  <input type='hidden' name='user_role' value='{{ user|check_user_role }}'>
+                                </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="submit" id='update_profile_button' class="btn btn-success">Update</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <a href="/orders/">My Orders</a>
+                      </li>
+                      <li>
+                        <a href="/my_wishlist/">My Wishlist</a>
+                      </li>
+                      <li>
+                        <a href="/user_review/">Reviews</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- checkout-progress-sidebar -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.checkout-box -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+      <div id="brands-carousel" class="logo-slider wow fadeInUp">
+        <div class="logo-slider-inner">
+          <div id="brand-slider"
+               class="owl-carousel brand-slider custom-carousel owl-theme">
+            <div class="item m-t-15">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item m-t-10">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand3.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand6.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+          </div>
+          <!-- /.owl-carousel #logo-slider -->
+        </div>
+        <!-- /.logo-slider-inner -->
+      </div>
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.body-content -->
+  <!-- ============================================================= FOOTER ============================================================= -->
+  <!-- ============================================================= FOOTER ============================================================= -->
+  <!-- ============================================== INFO BOXES ============================================== -->
+  <div class="row our-features-box">
+    <div class="container">
+      <ul>
+        <li>
+          <div class="feature-box">
+            <div class="icon-truck"></div>
+            <div class="content-blocks">We ship worldwide</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-support"></div>
+            <div class="content-blocks">
+              call
+              +1 800 789 0000
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-money"></div>
+            <div class="content-blocks">Money Back Guarantee</div>
+          </div>
+        </li>
+        <li>
+          <div class="feature-box">
+            <div class="icon-return"></div>
+            <div class="content">30 days return</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}

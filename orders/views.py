@@ -5,16 +5,15 @@ from django.conf import settings
 from django.shortcuts import redirect
 from .models import Order, ReturnAndReplaceOrder
 from cart.models import Cart
-from .forms import OrderForm, ReturnAndReplaceOrderForm
+from .forms import OrderForm, ReturnAndReplaceOrderForm, AddressForm
 from django.contrib import messages
 from .utilities import *
 from home.utilities import *
 from datetime import datetime, timedelta
 from django.utils import timezone
-from home.utilities import *
 import paypalrestsdk
 from django.views.generic.base import TemplateView
-
+from users.models import UserAddress
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -22,22 +21,29 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class OrderView(View):
     def get(self, request):
         """ Orders View for orders list """
+        default_address = check_default_address(request.user)
+        all_addresses = fetch_user_address(request.user) 
         publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-        return render(request, 'orders/checkout.html', {'publishable_key': publishable_key})
+        return render(request, 'orders/checkout.html', 
+                      {'publishable_key': publishable_key, 'default_address': default_address, 'all_addresses': all_addresses})
 
     def post(self, request, pk=None):
         """ Orders View for create orders """
         payment_intent = ''
         if request.POST.get('stripeToken'):
             payment_intent = self.__payment_method(request)
+            payment_intent = stripe.PaymentIntent.retrieve(payment_intent)
+
         form = OrderForm(request.POST)
-        if form.is_valid():    
+        if form.is_valid():
             order = form.save(commit=False)
-            order.payment_status = payment_intent 
-            order.tracking_number = create_order_tracking(order)
+            if payment_intent != '' and payment_intent['status'] == 'succeeded':
+                order.payment_method = "stripe"
+                order.payment_id = payment_intent.id
+                order.payment_status = payment_intent['status'] if payment_intent['status'] == 'succeeded' else 'failed'
+            # order.tracking_number = create_order_tracking(order)
             order.save()
             order_cart_item(order, request.user.pk)
-
             messages.success(request,  f'order added successfully.')
             return redirect('home')
         else:
@@ -51,6 +57,7 @@ class OrderView(View):
                 type='card',
                 token=token
             )
+
         customer = None
         for cus in stripe.Customer.list()['data']:
             if cus.email==request.user:
@@ -70,17 +77,45 @@ class OrderView(View):
 
             stripe.PaymentIntent.confirm(
                 payment_intent.id,
-                payment_method="pm_card_visa",
                 )
 
-            if payment_intent.status == 'successful':
-                return payment_intent.id
-            else:
-                messages.error(request, 'Payment is not completed by this method. please try again.')
-                return render(request, 'orders/checkout.html')
+            return payment_intent.id
 
         except stripe.error.CardError as e:
             error_msg = e.error.message
+            return render(request, 'orders/checkout.html')
+
+
+class UserAddressView(View):
+    def get(self, request, pk=None):
+        form = AddressForm()
+        default_address = check_default_address(request.user)
+        all_addresses = fetch_user_address(request.user) 
+        return render(request, 'orders/checkout.html', {'form': form, 'default_address': default_address, 'all_addresses': all_addresses })
+
+    def post(self, request, pk=None):
+        if request.POST.get('is_default',None) == 'True':
+            try:
+                UserAddress.objects.filter(user=request.user).update(is_default=False)
+            except:
+                pass
+
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+            
+            addresses_count = UserAddress.objects.filter(user_id=request.user.id).count()
+
+            if addresses_count == 1 or request.POST.get("is_default", None):
+                address.is_default = True
+                address.save()
+            
+            messages.success(request, 'Address added successfully.')
+            return redirect(request.META.get('HTTP_REFERER', 'default_url_name'))
+        else:
+            messages.error(request, 'Something went wrong. Try again.')
             return render(request, 'orders/checkout.html')
 
 class ReturnAndReplaceView(View):
@@ -233,7 +268,7 @@ class CreatePaymentView(View):
             "transactions": [
                 {
                     "amount": {
-                        "total": "10.00",  # Total amount in USD
+                        "total": "10.00",
                         "currency": "USD",
                     },
                     "description": "Payment for Product/Service",

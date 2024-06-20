@@ -5,10 +5,12 @@ from django.views import View, generic
 from .models import CustomUser, Role, Permission
 from products.models import Product
 from orders.models import Order
-from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm,LoginForm
+from users.forms import CutomUserForm, UserRoleForm, UserPermissionForm, LoginForm, AddressForm
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
+from orders.utilities import fetch_user_address
+from users.models import UserAddress
 
 # Custom User model
 User = get_user_model()
@@ -38,7 +40,7 @@ class LoginView(View):
 
 
 class CustomAdminLoginView(View):
-    template_name = 'admin/admin_login.html'  # Replace with your admin login template
+    template_name = 'admin/admin_login.html'
 
     def get(self, request):
         return render(request,self.template_name )
@@ -76,6 +78,7 @@ class LogoutView(View):
         logout(request)
         return redirect('home')
 
+
 class SignupView(View):
     def get(self, request):
         try:
@@ -89,22 +92,24 @@ class SignupView(View):
     def post(self, request):
         form = CutomUserForm(request.POST)
         if form.is_valid():
-            role = form.cleaned_data['user_role']
+            role = Role.objects.get(name='user')
             user = CustomUser.objects.create_user(
-                username=form.cleaned_data['username'],
                 email=form.cleaned_data['email'],
-                password=form.cleaned_data['password']
+                password=form.cleaned_data['password'],
+                mobile_no=form.cleaned_data['mobile_no']
             )
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.user_role = role
             user.save()
 
-            messages.success(request, 'Your account has been successfully created.')
+            messages.success(request, 'Your account has been successfully created. Please login to continue!!')
             return redirect('login_user')
         else:
             messages.error(request, form.errors)
             return render(request, "authenticate/signup.html")
+
+
 class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'
     paginate_by = 10
@@ -135,7 +140,6 @@ class AddUserView(View):
 
     def post(self, request):
         form = CutomUserForm(request.POST)
-
         try:
             if form.is_valid():
                 role = form.cleaned_data['user_role']
@@ -155,6 +159,7 @@ class AddUserView(View):
         
         roles = Role.objects.all()  # Fetch all roles
         return render(request, self.template_name, {'form': form, 'roles': roles})
+
 class UserUpdateView(View):
     template_name = 'admin/user_management/update.html'  # Use the same template as AddUserView
 
@@ -203,6 +208,8 @@ class UserDeleteView(View):
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
+
+
 class RoleIndexView(View):
     template_name = 'admin/role_management/index.html'
     paginate_by = 5 
@@ -217,6 +224,8 @@ class RoleIndexView(View):
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
+
+
 class AddRoleView(View):
     template_name = 'admin/role_management/create.html'
 
@@ -372,13 +381,61 @@ class DeletePermissionView(View):
     
 class AdminDashboardView(View):
     template_name = 'admin/dashboard.html'
-
     def get(self, request):
         if request.user.is_authenticated and request.user.is_superuser:
             users = CustomUser.objects.all()
             products = Product.objects.all()
             orders = Order.objects.all()
-
             return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
         else:
             return redirect('admin_login')
+
+class UserProfileView(View):
+    template_name = 'authenticate/profile.html'
+    def get(self, request):
+        if request.user.is_authenticated:
+            addresses = fetch_user_address(request.user)
+            return render(request, self.template_name, {'addresses': addresses })
+        else:
+            messages.error(request, 'Sorry, you are not authorized to access this page.')
+            return redirect('login_user')
+    
+    def post(self, request):
+        form = CutomUserForm(request.POST, instance=request.user)
+        addresses = fetch_user_address(request.user)
+        try:
+            if form.is_valid():
+                form.save()
+            return redirect('user_profile')
+        except:
+            return render(request, 'authenticate/profile.html', { 'addresses': addresses })
+
+class UserUpdateAddressView(View):
+    def post(self, request):
+        addresses = fetch_user_address(request.user)
+        try:
+            address = UserAddress.objects.get(id=request.POST.get('address', 'None'))
+        except UserAddress.DoesNotExist:
+            return render(request, 'authenticate/profile.html', { 'addresses': addresses })
+        
+        form = AddressForm(request.POST, instance=address)
+        try:
+            if form.is_valid():
+                if request.POST.get('is_default',None) == 'True':
+                    UserAddress.objects.filter(user=request.user).update(is_default=False)
+                form.save()
+
+            return redirect('user_profile')
+        except:
+            return render(request, 'authenticate/profile.html', {'form': form, 'addresses': addresses })
+
+class DeleteAddressView(View):
+    def post(self, request):
+        try:
+            address = UserAddress.objects.get(id=request.POST.get('address', 'None'))
+            address.delete()
+            return redirect('user_profile')
+        except:
+            addresses = fetch_user_address(request.user)
+            messages.error(request, f'Error Address deleting')
+            return render(request, 'authenticate/profile.html', { 'addresses': addresses })

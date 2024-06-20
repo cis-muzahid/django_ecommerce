@@ -3,8 +3,7 @@
 {% load custom_filter %}
 {% load order_filter %}
 {% block body %}
-<head>
-  <style>
+    <style>
     .stripe-button-el {
       background-color: #007bff; /* Change this to your desired background color */
       border-color: #007bff; /* Change this to match the background color */
@@ -15,18 +14,14 @@
       background-color: #0056b3; /* Change this to your desired hover background color */
       border-color: #0056b3; /* Change this to match the hover background color */
     }
-  </style>
-</head>
-
+    </style>
   <div class="breadcrumb">
     <div class="container">
       <div class="breadcrumb-inner">
         <ul class="list-inline list-unstyled">
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li class='active'>Checkout</li>
-        </ul>
+				<li><a href="/">Home</a></li>
+				<li class='active'>Checkout</li>
+			  </ul>
       </div>
       <!-- /.breadcrumb-inner -->
     </div>
@@ -56,333 +51,403 @@
                 <div id="collapseOne" class="panel-collapse collapse in">
                   <!-- panel-body  -->
                   <div class="panel-body">
-                    <div class="row">
-                      <!-- already-registered-login -->
-                      <div class="col-md-6 col-sm-6 already-registered-login">
-                        
-                        
+                    <div class="container">
+                      {% if default_address %}
+                        <div class="alert alert-info" id ='default-address-div'>
+                          <p>You have a default address:</p>
+                          <p>
+                            <strong>{{ default_address.street }}, {{ default_address.city }}, {{ default_address.state }}, {{ default_address.postal_code }}, {{ default_address.country }}</strong>
+                          </p>
+                          <p>Would you like to use this address or add a new one?</p>
+                          <button class="btn btn-primary" id="use-default-address">Use Default Address</button>
+                          <button class="btn btn-secondary" id="add-new-address">Use other Address</button>
+                        </div>
+                      {% else %}
+                        <div class="div-center">
+                        <form action="/add_address/" method="post" id="address-form">
+                          {% csrf_token %}
+                          <div class="form-group">
+                            <h4 class="checkout-subtitle">Add Shipping Address</h4>
+                            <label class="info-title" for="street">
+                              Street <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="street"
+                                   name="street"
+                                   required>
+                            <label class="info-title" for="city">
+                              City <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="city"
+                                   name="city"
+                                   required>
+                            <label class="info-title" for="state">
+                              State <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="state"
+                                   name="state"
+                                   required>
+                            <label class="info-title" for="postal_code">
+                              Postal Code <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="postal_code"
+                                   name="postal_code"
+                                   required>
+                            <label class="info-title" for="country">
+                              Country <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="country"
+                                   name="country"
+                                   required>
+                            <input type="hidden" name="is_default" value="Yes">
+                            <button type="submit" class='btn-checkout btn-upper btn btn-primary' style="margin-top: 15px; margin-left: 200px;">Add Address</button>
+                          </div>
+                        </form>
+                        </div>
+                      {% endif %}
+                      <div id="address-div" class="div-center">
+                        <div id='address_form_div'>
+                          {% for address in all_addresses %}
+                            <div class="alert alert-info">
+                              <p>
+                                <strong>{{ address.street }}, {{ address.city }}, {{ address.state }}, {{ address.postal_code }}, {{ address.country }}</strong>
+                              </p>
+                              <button class="btn btn-info mt-1" onclick='change_address({
+                                "street": "{{ address.street|escapejs }}",
+                                "city": "{{ address.city|escapejs }}",
+                                "state": "{{ address.state|escapejs }}",
+                                "postal_code": "{{ address.postal_code|escapejs }}",
+                                "country": "{{ address.country|escapejs }}"
+                              })'>Use this address for this order.</button>
+                            </div>
 
-<!-- payments buttons here ================================ -->
+                          {% endfor %}
+                          <button class="btn btn-secondary" id="new-address">Use New Address</button>
+                        </div>
+                        <div id='new_address_div'>
+                          <form>
+                          {% csrf_token %}
+                          <div class="form-group">
+                            <h4 class="checkout-subtitle">Add Shipping Address</h4>
+                            <label class="info-title" for="street">
+                              Street <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="street"
+                                   name="street"
+                                   required>
+                            <label class="info-title" for="city">
+                              City <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="city"
+                                   name="city"
+                                   required>
+                            <label class="info-title" for="state">
+                              State <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="state"
+                                   name="state"
+                                   required>
+                            <label class="info-title" for="postal_code">
+                              Postal Code <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="postal_code"
+                                   name="postal_code"
+                                   required>
+                            <label class="info-title" for="country">
+                              Country <span>*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control unicase-form-control text-input"
+                                   id="country"
+                                   name="country"
+                                   required>
 
-<form action="/checkout/" method="post" id="payment-form">
-  {% csrf_token %}
-  <div class="form-group">
-    <h4 class="checkout-subtitle">Add Shipping Address</h4>
-    <label class="info-title" for="exampleInputEmail1">Shipping Address <span>*</span></label>
-    <input type='hidden' name='total_amount' value="{{ user|current_user_cart_total_price }}">
-    <input type='hidden' name='user' value="{{ user.id }}">
-    <input type='hidden' name='status' value='initial'>
-    <textarea class="form-control unicase-form-control text-input" id="address_textarea" name='address' required
-    
-    ></textarea>
-    <p class="This field is required ">Please add address in this field</p>
-  </div><br><br>
-
-  <h4>Select your account method to continue</h4>
-  <div class="payment-methods">
-    <label for="stripe-radio">
-      <input type="radio" id="stripe-radio" name="payment_method" value="stripe" checked>
-      Stripe
-    </label>
-    <label for="paypal-radio">
-      <input type="radio" id="paypal-radio" name="payment_method" value="paypal">
-      PayPal
-    </label>
-    <label for="no-payment-radio">
-      <input type="radio" id="no-payment-radio" name="payment_method" value="none">
-      Checkout Without Payment
-    </label>
-  </div><br><br>
-
-  <div class="payment-btns-container">
-    <!-- Stripe Payment Button -->
-    <div class='payment_btn_div stripe-btn' style="display: inline-block;">
-      <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-              data-key="{{ publishable_key }}"
-              data-name="Ecommerce payment"
-              data-description="Payment">
-      </script>
-    </div>
-
-    <!-- PayPal Payment Button (Hidden by default) -->
-    <div class="payment_btn_div paypal-btn" style="display: none; margin-left: 10px;">
-      <script>
-        const YOUR_PAYPAL_CLIENT_ID = 'ASJv0B8HmmX94iHHDTbcC-2UUVbrn0IbJHv343F4komsUbZigK3AteePFizjoyTvODKRhGrxB4OtsW-3';
-        const PAYPAL_SCRIPT_URL = `https://www.paypal.com/sdk/js?client-id=${YOUR_PAYPAL_CLIENT_ID}&currency=USD`;
-        const script = document.createElement('script');
-        script.src = PAYPAL_SCRIPT_URL;
-        script.setAttribute('data-sdk-integration-source', 'button-factory');
-        document.head.appendChild(script);
-
-        script.onload = function() {
-          paypal.Buttons({
-            createOrder: function(data, actions) {
-              // Set up the transaction details
-              return actions.order.create({
-                purchase_units: [{
-                  amount: {
-                    // value: '10.00', // Total amount in USD
-                    value: '{{ user|current_user_cart_total_price }}', // Use the total_amount variable here
-                    currency_code: 'USD',
-                  },
-                  description: 'Payment for Product/Service',
-                }],
-              });
-            },
-            onApprove: function(data, actions) {
-              // Capture the payment when the customer approves the transaction
-              return actions.order.capture().then(function(details) {
-                // Redirect or show success message
-                window.location.href = 'http://127.0.0.1:8000/';
-              });
-            },
-            onError: function(error) {
-              console.error('PayPal error:', error);
-              // Handle errors
-              alert('Payment error occurred. Please try again later.');
-            }
-          }).render('.paypal-btn');
-        };
-      </script>
-    </div>
-
-    <!-- Checkout Without Payment Button (Hidden by default) -->
-    <button type="submit" class='btn-checkout btn-upper btn btn-primary no-payment-btn' style="display: none; margin-top: 20px;">
-      Cash Payment
-    </button>
-  </div>
-</form>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const stripeRadio = document.getElementById('stripe-radio');
-    const paypalRadio = document.getElementById('paypal-radio');
-    const noPaymentRadio = document.getElementById('no-payment-radio');
-
-    const stripeBtn = document.querySelector('.stripe-btn');
-    const paypalBtn = document.querySelector('.paypal-btn');
-    const noPaymentBtn = document.querySelector('.no-payment-btn');
-
-    function updateButtonVisibility() {
-      if (stripeRadio.checked) {
-        stripeBtn.style.display = 'inline-block';
-        paypalBtn.style.display = 'none';
-        noPaymentBtn.style.display = 'none';
-      } else if (paypalRadio.checked) {
-        stripeBtn.style.display = 'none';
-        paypalBtn.style.display = 'inline-block';
-        noPaymentBtn.style.display = 'none';
-      } else if (noPaymentRadio.checked) {
-        stripeBtn.style.display = 'none';
-        paypalBtn.style.display = 'none';
-        noPaymentBtn.style.display = 'block';
-      }
-    }
-
-    stripeRadio.addEventListener('change', updateButtonVisibility);
-    paypalRadio.addEventListener('change', updateButtonVisibility);
-    noPaymentRadio.addEventListener('change', updateButtonVisibility);
-
-    updateButtonVisibility(); // Initial call to set the correct visibility
-  });
-</script>
-
-
-
-                        
+                            <input type='hidden' name='is_default' value='True'>
+                          </div>
+                        </form>
+                        </div>
                       </div>
                     </div>
                   </div>
+
+                  <!-- payments buttons here ================================ -->
+                  <div class='container text-center'>
+                  <div>
+                    <h1>Proceed to checkout</h1>
+                  </div>
+                  <div class="div-center">
+                    <form action="/checkout/" method="post" id="payment-form">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <h4 class="checkout-subtitle">Add Shipping Address</h4>
+                        <label class="info-title" for="exampleInputEmail1">
+                          Shipping Address <span>*</span>
+                        </label>
+                        <input type='hidden'
+                              name='total_amount'
+                              value="{{ user.id|current_user_cart_total_price }}">
+                        <input type='hidden' name='user' value="{{ user.id }}">
+                        <input type='hidden' name='status' value='initial'>
+                        {% if default_address.is_default %}
+                        <input class="form-control unicase-form-control text-input"
+                                  id="address_input"
+                                  type='hidden'
+                                  name='address'
+                                  value='{{ default_address }}'>
+                        {% else %}
+                        <input class="form-control unicase-form-control text-input"
+                                  id="address_input"
+                                  type='hidden'
+                                  name='address'
+                                  value=''>
+                        {% endif %}
+                      </div>
+                      <br>
+                      <br>
+                      <h4>Select your account method to continue</h4>
+                      <div class="payment-methods">
+                        <label for="stripe-radio">
+                          <input type="radio"
+                                id="stripe-radio"
+                                name="payment_method"
+                                value="stripe"
+                                checked>
+                          Stripe
+                        </label>
+                        <label for="paypal-radio">
+                          <input type="radio" id="paypal-radio" name="payment_method" value="paypal">
+                          PayPal
+                        </label>
+                        <label for="no-payment-radio">
+                          <input type="radio" id="no-payment-radio" name="payment_method" value="none">
+                          Checkout Without Payment
+                        </label>
+                      </div>
+                      <br>
+                      <br>
+                      <div class="payment-btns-container">
+                        <!-- Stripe Payment Button -->
+                        <div class='payment_btn_div stripe-btn' style="display: inline-block;">
+                          <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="{{ publishable_key }}" data-name="Ecommerce payment" data-description="Payment">
+                          </script>
+                        </div>
+                        <!-- PayPal Payment Button (Hidden by default) -->
+                        <div class="payment_btn_div paypal-btn"
+                            style="display: none;
+                                    margin-left: 10px">
+                          <script>
+                            const YOUR_PAYPAL_CLIENT_ID = 'ASJv0B8HmmX94iHHDTbcC-2UUVbrn0IbJHv343F4komsUbZigK3AteePFizjoyTvODKRhGrxB4OtsW-3';
+                            const PAYPAL_SCRIPT_URL = `https://www.paypal.com/sdk/js?client-id=${YOUR_PAYPAL_CLIENT_ID}&currency=USD`;
+                            const script = document.createElement('script');
+                            script.src = PAYPAL_SCRIPT_URL;
+                            script.setAttribute('data-sdk-integration-source', 'button-factory');
+                            document.head.appendChild(script);
+
+                            script.onload = function() {
+                              paypal.Buttons({
+                                createOrder: function(data, actions) {
+                                  // Set up the transaction details
+                                  return actions.order.create({
+                                    purchase_units: [{
+                                      amount: {
+                                        // value: '10.00', // Total amount in USD
+                                        value: '{{ user.id|current_user_cart_total_price }}', // Use the total_amount variable here
+                                        currency_code: 'USD',
+                                      },
+                                      description: 'Payment for Product/Service',
+                                    }],
+                                  });
+                                },
+                                onApprove: function(data, actions) {
+                                  // Capture the payment when the customer approves the transaction
+                                  return actions.order.capture().then(function(details) {
+                                    // Redirect or show success message
+                                    window.location.href = 'http://127.0.0.1:8000/';
+                                  });
+                                },
+                                onError: function(error) {
+                                  console.error('PayPal error:', error);
+                                  // Handle errors
+                                  alert('Payment error occurred. Please try again later.');
+                                }
+                              }).render('.paypal-btn');
+                            };
+                          </script>
+                        </div>
+                        <!-- Checkout Without Payment Button (Hidden by default) -->
+                        <div class='payment_btn_div' style="display: inline-block;">
+                        <button type="submit"
+                                class='btn-checkout btn-upper btn btn-primary no-payment-btn'
+                                style="display: none;">Cash Payment</button>
+                                      </div>
+                      </div>
+                    </form>
+                  </div>
+                  </div>
+                 
                 </div>
               </div>
             </div>
-            <!-- /.checkout-steps -->
           </div>
-          <div class="col-xs-12 col-sm-3 col-md-3 sidebar">
-            <!-- checkout-progress-sidebar -->
-            <div class="checkout-progress-sidebar ">
-              <div class="panel-group">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h4 class="unicase-checkout-title">Your Checkout Progress</h4>
-                  </div>
-                  <div class="">
-                    <ul class="nav nav-checkout-progress list-unstyled">
-                      <li>
-                        <a href="#">Billing Address</a>
-                      </li>
-                      <li>
-                        <a href="#">Shipping Address</a>
-                      </li>
-                      <li>
-                        <a href="#">Shipping Method</a>
-                      </li>
-                      <li>
-                        <a href="#">Payment Method</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- checkout-progress-sidebar -->
+              <div class="col-xs-12 col-sm-3 col-md-3 sidebar">
+    </div>
+        </div>
+      </div>
+      <!-- /.checkout-steps -->
+    </div>
+
+  </div>
+  <!-- /.row -->
+</div>
+<!-- /.checkout-box -->
+<!-- ============================================== BRANDS CAROUSEL ============================================== -->
+<div id="brands-carousel" class="logo-slider wow fadeInUp">
+  <div class="logo-slider-inner">
+    <div id="brand-slider"
+         class="owl-carousel brand-slider custom-carousel owl-theme">
+      <div class="item m-t-15">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand1.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item m-t-10">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand2.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand3.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand4.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand5.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand6.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand2.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand4.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand1.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+      <div class="item">
+        <a href="#" class="image">
+          <img data-echo="assets/images/brands/brand5.png"
+               src="assets/images/blank.gif"
+               alt="">
+        </a>
+      </div>
+      <!--/.item-->
+    </div>
+    <!-- /.owl-carousel #logo-slider -->
+  </div>
+  <!-- /.logo-slider-inner -->
+</div>
+<!-- /.logo-slider -->
+<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+</div>
+<!-- /.container -->
+</div>
+<!-- /.body-content -->
+<!-- ============================================================= FOOTER ============================================================= -->
+<!-- ============================================================= FOOTER ============================================================= -->
+<!-- ============================================== INFO BOXES ============================================== -->
+<div class="row our-features-box">
+  <div class="container">
+    <ul>
+      <li>
+        <div class="feature-box">
+          <div class="icon-truck"></div>
+          <div class="content-blocks">We ship worldwide</div>
+        </div>
+      </li>
+      <li>
+        <div class="feature-box">
+          <div class="icon-support"></div>
+          <div class="content-blocks">
+            call
+            +1 800 789 0000
           </div>
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.checkout-box -->
-      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
-      <div id="brands-carousel" class="logo-slider wow fadeInUp">
-        <div class="logo-slider-inner">
-          <div id="brand-slider"
-               class="owl-carousel brand-slider custom-carousel owl-theme">
-            <div class="item m-t-15">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand1.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item m-t-10">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand2.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand3.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand4.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand5.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand6.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand2.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand4.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand1.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-            <div class="item">
-              <a href="#" class="image">
-                <img data-echo="assets/images/brands/brand5.png"
-                     src="assets/images/blank.gif"
-                     alt="">
-              </a>
-            </div>
-            <!--/.item-->
-          </div>
-          <!-- /.owl-carousel #logo-slider -->
+      </li>
+      <li>
+        <div class="feature-box">
+          <div class="icon-money"></div>
+          <div class="content-blocks">Money Back Guarantee</div>
         </div>
-        <!-- /.logo-slider-inner -->
-      </div>
-      <!-- /.logo-slider -->
-      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
-    </div>
-    <!-- /.container -->
+      </li>
+      <li>
+        <div class="feature-box">
+          <div class="icon-return"></div>
+          <div class="content">30 days return</div>
+        </div>
+      </li>
+    </ul>
   </div>
-  <!-- /.body-content -->
-  <!-- ============================================================= FOOTER ============================================================= -->
-  <!-- ============================================================= FOOTER ============================================================= -->
-  <!-- ============================================== INFO BOXES ============================================== -->
-  <div class="row our-features-box">
-    <div class="container">
-      <ul>
-        <li>
-          <div class="feature-box">
-            <div class="icon-truck"></div>
-            <div class="content-blocks">We ship worldwide</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-support"></div>
-            <div class="content-blocks">
-              call
-              +1 800 789 0000
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-money"></div>
-            <div class="content-blocks">Money Back Guarantee</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-return"></div>
-            <div class="content">30 days return</div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
+</div>
 {% endblock %}
-
 <!-- Add this to your template where you want the PayPal button to appear -->
-<script>
-  document.getElementById('paypalForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent the default form submission
-
-      // Submit the form using JavaScript
-      fetch(this.action, {
-          method: this.method,
-          body: new FormData(this), // Include form data in the request
-      })
-      .then(response => response.json())
-      .then(data => {
-          // Redirect to the PayPal approval URL
-          window.location.href = data.approval_url;
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          // Handle any errors
-      });
-  });
-</script>

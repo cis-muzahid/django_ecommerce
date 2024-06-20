@@ -1,5 +1,5 @@
 from django import forms
-from users.models import CustomUser, Role, Permission
+from users.models import CustomUser, Role, Permission, UserAddress
 
 
 class CutomUserForm(forms.ModelForm):
@@ -9,9 +9,7 @@ class CutomUserForm(forms.ModelForm):
     )
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'user_role']
-    # role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES)
-
+        fields = ['mobile_no', 'email', 'first_name', 'last_name', 'user_role', 'password']
 
 
 class UserRoleForm(forms.ModelForm):
@@ -40,3 +38,8 @@ class LoginForm(forms.Form):
         if not CustomUser.objects.filter(email=email):
             raise forms.ValidationError('Email does not exists!')
         return email
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = UserAddress
+        fields = ['street', 'city', 'state', 'postal_code', 'country', 'is_default']

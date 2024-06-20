@@ -56,7 +56,6 @@
                 </p>
               </a>
             </li>
-          {% endif %}
           <li class="nav-item">
             <a href="/categories/" class="nav-link {% if 'category' in request.path %}active{% endif %}">
               <i class="nav-icon fas fa-table"></i>
@@ -81,6 +80,7 @@
               </p>
             </a>
           </li>
+        {% endif %}
         </ul>
       </nav>
     </div>

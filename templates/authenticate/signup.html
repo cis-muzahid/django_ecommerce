@@ -18,16 +18,8 @@
             <h2 style="color: #333;">Sign Up</h2>
           </div>
           <div class="card-body m-3 justify-content-center">
-            <form action="" method="POST">
+            <form action="" method="POST" id="signup-form">
               {% csrf_token %}
-              <div class="row g-3 align-items-center my-1">
-                <div class="col-4">
-                  <label for="username" class="col-form-label">User Name :</label>
-                </div>
-                <div class="col-8">
-                  <input type="text" id="username" name="username" class="form-control" required>
-                </div>
-              </div>
               <div class="row g-3 align-items-center mt-1">
                 <div class="col-4">
                   <label for="email" class="col-form-label">Email :</label>
@@ -36,7 +28,16 @@
                   <input type="email" id="email" name="email" class="form-control" required>
                 </div>
               </div>
-							<div class="row g-3 align-items-center mt-1">
+              <div class="row g-3 align-items-center my-1">
+                <div class="col-4">
+                  <label for="mobile_no" class="col-form-label">Mobile Number :</label>
+                </div>
+                <div class="col-8">
+                  <input type="text" id="mobile_no" name="mobile_no" class="form-control" required>
+                </div>
+              </div>
+             
+              <div class="row g-3 align-items-center mt-1">
                 <div class="col-4">
                   <label for="first" class="col-form-label">First Name :</label>
                 </div>
@@ -44,7 +45,7 @@
                   <input type="text" id="first_name" name="first_name" class="form-control" required>
                 </div>
               </div>
-							<div class="row g-3 align-items-center mt-1">
+              <div class="row g-3 align-items-center mt-1">
                 <div class="col-4">
                   <label for="last_name" class="col-form-label">Last Name :</label>
                 </div>
@@ -61,7 +62,9 @@
                          id="password"
                          name="password"
                          class="form-control"
-                         required>
+                         required
+                         pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                         title="Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character">
                 </div>
               </div>
               <div class="row g-3 align-items-center my-1">
@@ -73,11 +76,13 @@
                          id="confirm_password"
                          name="confirm_password"
                          class="form-control"
-                         required>
+                         required
+                         pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                         title="Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character">
                 </div>
               </div>
               <div style="margin-bottom: 15px;" class='my-1'>
-								<input type='hidden' name='user_role' value="{{ user_role.id }}">
+                <input type='hidden' name='user_role' value="{{ user_role.id }}">
                 <button type="submit" class='btn btn-primary sign-btn'>Sign Up</button>
               </div>
             </form>
@@ -85,6 +90,19 @@
               Already have an account? <a href="/login_user/">Log in</a>
             </p>
           </div>
+          
+          <script>
+            const form = document.getElementById('signup-form');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+          
+            form.addEventListener('submit', (e) => {
+              if (passwordInput.value!== confirmPasswordInput.value) {
+                e.preventDefault();
+                alert('password and confirm password should be same');
+              }
+            });
+          </script>
         </div>
       </div>
     </div>

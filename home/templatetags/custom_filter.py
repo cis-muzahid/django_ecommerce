@@ -1,7 +1,9 @@
 from django import template
 from django.shortcuts import get_object_or_404
-from products.models import ProductAttribute, Product, Category
+from products.models import ProductAttribute, Product, Category, ProductReview
 from cart.models import Cart
+from users.models import Role
+from django.db.models import Avg
 
 register = template.Library()
 
@@ -29,7 +31,10 @@ def product_attributes(product_id):
 def product_filter(category):
     categories = Category.objects.filter(parent_category=category).values_list('id', flat=True)
     subcategory = Category.objects.filter(parent_category__in=categories).values_list('id', flat=True)
-    products = Product.objects.filter(category__in=subcategory).order_by('-id')
+    category = Category.objects.filter(id=category)
+    categories = subcategory.union(categories).union(category)
+    products = Product.objects.filter(category__in=categories).order_by('-id')
+
     return products
 
 @register.filter
@@ -68,6 +73,23 @@ def total_price(cart):
     return cart.product.price * cart.quantity
 
 @register.filter
+def product_review(product):
+    return ProductReview.objects.filter(product=product)
+
+@register.filter
+def product_rating(product):
+    average = int(ProductReview.objects.filter(product=product).aggregate(Avg('review'))['review__avg'])
+    return average if average else 0
+
+@register.filter
+def range_filter(value):
+    return range(value)
+
+@register.filter
+def product_review_users_count(product):
+    return int(ProductReview.objects.filter(product=product).count())
+
+@register.filter
 def cart_total_price(carts):
     sub_total = 0
     grand_total = 0
@@ -94,3 +116,16 @@ def categories_all(a):
         categories = None
         pass
     return categories
+
+@register.filter
+def check_user_role(user):
+    try:
+        admin_role = Role.objects.get(name="admin")
+        user_role = Role.objects.get(name="user")
+        if user.user_role == None:
+            if user.is_superuser:
+                return admin_role.id
+            else:
+                return user_role.id
+    except Role.DoesNotExist:
+        return None 

@@ -1,6 +1,6 @@
 from typing import Any
 from django import forms
-from .models import Product, ProductAttribute, ProductSpecification
+from .models import Product, ProductAttribute, ProductSpecification, ProductReview
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -59,3 +59,10 @@ class ProductSpecificationForm(forms.ModelForm):
         
         self.fields['product'].initial = product
         self.fields['product'].widget = forms.HiddenInput()
+
+
+class ProductReviewForm(forms.ModelForm):
+    class Meta:
+        """Form for user review"""
+        model = ProductReview
+        fields = ['review', 'title', 'comment', 'user', 'product']

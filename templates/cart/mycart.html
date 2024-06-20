@@ -8,7 +8,7 @@
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="#">Home</a></li>
+				<li><a href="/">Home</a></li>
 				<li class='active'>Shopping Cart</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
@@ -48,11 +48,19 @@
 								{{cart.product.name}}</a></h4>
 						<div class="row">
 							<div class="col-sm-12">
-								<div class="rating rateit-small"></div>
+								<div class="">
+									{% for star in 5|range_filter %}
+										{% if star < cart.product|product_rating %}
+											<span class="star_{{ cart.product|product_rating }}">★</span>
+										{% else %}
+											<span class="empty-star">★</span>
+										{% endif %}
+									{% endfor %}
+								</div>
 							</div>
 							<div class="col-sm-12">
 								<div class="reviews">
-									(06 Reviews)
+									({{ cart.product|product_review_users_count }} Reviews)
 								</div>
 							</div>
 						</div><!-- /.row -->
@@ -115,14 +123,23 @@
 					{% endwith %}
 				</th>
 			</tr>
-		</thead><!-- /thead -->
+		</thead>
 		<tbody>
 				<tr>
 					<td>
 						<div class="cart-checkout-btn pull-right">
-							<a href='/checkout/' class="btn btn-primary checkout-btn">PROCCED TO CHEKOUT</a>
-							<span class="">Checkout with multiples address!</span>
+							<!-- {% if total.grand_total > 0 %} -->
+								<a href='/checkout/' class="btn btn-primary checkout-btn">PROCEED TO CHECKOUT</a>
+								<span>Checkout with multiple addresses!</span>
+							<!-- {% endif %}
+							<h6 class="text text-danger">You have no items in cart please add items in cart to proceed</h4>
+							<a href='/' class="btn btn-primary checkout-btn"><span>${{ total.grand_total }}</span></a> -->
 						</div>
+						<div class="cart-checkout-btn pull-right">
+								<a href='/checkout/' class="btn btn-primary checkout-btn">PROCEED TO CHECKOUT</a>
+								<span>Checkout with multiple addresses!</span>
+						</div>
+						
 					</td>
 				</tr>
 		</tbody><!-- /tbody -->
@@ -237,5 +254,7 @@
   </div>
         <!-- /.info-boxes --> 
         <!-- ============================================== INFO BOXES : END ============================================== --> 
+
+		
 
 {% endblock %}

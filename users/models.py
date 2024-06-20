@@ -2,9 +2,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-# class CustomUserManager(BaseUserManager):
-
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
 
@@ -38,20 +35,45 @@ class Role(models.Model):
 
 	def __str__(self):
 			return self.name
+
 class CustomUser(AbstractUser):
+    username = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    mobile_no = models.CharField(max_length=30,blank=True, null=True)
+    user_role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
+
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.generate_username()
+        super().save(*args, **kwargs)
+
+    def generate_username(self):
+        # Generate a unique username based on the email address
+        username = self.email.split('@')[0]
+        username = username.replace('.', '_')
+        username = username[:30]  # truncate to 30 characters
+        return username
+
+class UserAddress(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='addresses')    
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    country = models.CharField(max_length=100)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.street}, {self.city}, {self.state}, {self.postal_code}, {self.country}"
 	
-	username = models.CharField(max_length=100, null=True, blank=True)
-	email = models.EmailField(unique=True)
-	first_name = models.CharField(max_length=30)
-	last_name = models.CharField(max_length=30)
-	# user_role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=customer)
-	user_role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
 
-	objects = UserManager()
-
-	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = []
-
-	def __str__(self):
-			return self.email
-	
