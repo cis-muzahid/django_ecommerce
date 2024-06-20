@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from users.models import CustomUser  # Import your CustomUser model
 from products.models import Product  # Import your Product model
-from home.models import SomeModel  # Import a model from the home app
+
 
 class RoleManager:
     @staticmethod

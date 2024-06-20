@@ -21,6 +21,9 @@ class ProductView(View):
             else:
                 products = Product.objects.filter(is_delete=False)
             
+            if request.user.user_role.name == 'supplier':
+                products = products.filter(user = request.user.id)
+            
             paginator = Paginator(products, 10)
             page_number = request.GET.get("page")
             products = paginator.get_page(page_number)
@@ -198,4 +201,5 @@ class ProductUpdateDeleteView(View):
                 messages.success(request, "Your review for this product is deleted successfully.")
         except Exception as e:
             messages.info(request, "An error occure while performing this action : ", e)
-        return redirect('review') 
+        return redirect('review')
+

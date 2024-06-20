@@ -38,6 +38,6 @@ def fetch_banner(category):
     if banner:
         return banner 
     else:
-        categories = Category.objects.filter(pk=category.id).values_list('id', flat=True)
+        categories = Category.objects.filter(id=category.parent_category.id).values_list('id', flat=True)
         banner = Banner.objects.filter(category__in=categories, type="wide banner large").last()
     return banner

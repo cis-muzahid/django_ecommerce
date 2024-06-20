@@ -29,8 +29,15 @@ class LoginView(View):
             print('user', user)
             if user is not None:
                 login(request, user)
-                messages.success(request, 'Welcome, you are now logged in.')
-                return redirect('home')
+                if user.user_role.name == 'admin':
+                    messages.success(request, 'Welcome, you are now logged in as Admin.')
+                    return redirect('/admin')
+                elif user.user_role.name == 'supplier':
+                    messages.success(request, 'Welcome, you are now logged in as Supplier.')
+                    return redirect('/products')
+                else:
+                    messages.success(request, 'Welcome, you are now logged.')
+                    return redirect('home')
             else:
                 messages.error(request, 'Invalid login credentials.')
                 return redirect('login_user')
@@ -38,13 +45,11 @@ class LoginView(View):
             messages.error(request, 'Invalid login credentials.')
             return redirect('login_user')
 
-
 class CustomAdminLoginView(View):
     template_name = 'admin/admin_login.html'
 
     def get(self, request):
         return render(request,self.template_name )
-
 
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
@@ -54,12 +59,13 @@ class CustomAdminLoginView(View):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(request, email=email, password=password)
+
             print('user', user)
             if user.is_superuser:
                 login(request, user)
-                messages.error(request, 'Welcome, you are now logged in as admin.')
+                messages.success(request, 'Welcome, you are now logged in as admin.')
                 return redirect('user_index')  # Redirect superusers to user index
-            elif user.user_role.name == 'Supplier':
+            elif user.user_role.name == 'supplier':
                 login(request, user)
                 messages.success(request, 'Welcome, you are now logged in as Supplier.')
                 return redirect('/products')
@@ -73,17 +79,17 @@ class CustomAdminLogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('admin_login')
+
 class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('home')
 
-
 class SignupView(View):
     def get(self, request):
         try:
-            role = Role.objects.get(name='user')
-            return render(request, "authenticate/signup.html", {'user_role':role})
+            roles = Role.objects.exclude(name='admin')
+            return render(request, "authenticate/signup.html", {'user_roles':roles})
         except ObjectDoesNotExist:
             return HttpResponse("User role does not exist. Please check your database setup or create the 'user' role.")
         except Exception as e:
@@ -92,7 +98,6 @@ class SignupView(View):
     def post(self, request):
         form = CutomUserForm(request.POST)
         if form.is_valid():
-            role = Role.objects.get(name='user')
             user = CustomUser.objects.create_user(
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password'],
@@ -100,15 +105,14 @@ class SignupView(View):
             )
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
-            user.user_role = role
+            user.user_role = form.cleaned_data['user_role']
             user.save()
 
             messages.success(request, 'Your account has been successfully created. Please login to continue!!')
             return redirect('login_user')
         else:
-            messages.error(request, form.errors)
-            return render(request, "authenticate/signup.html")
-
+            roles = Role.objects.exclude(name='admin')
+            return render(request, "authenticate/signup.html", { 'errors': form.errors, 'user_roles': user_role })
 
 class UserIndexView(generic.TemplateView):
     template_name = 'admin/user_management/index.html'
@@ -124,7 +128,7 @@ class UserIndexView(generic.TemplateView):
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
-    
+
 class AddUserView(View):        
     template_name = 'admin/user_management/create.html'  # Adjust the template name
 
@@ -192,7 +196,6 @@ class UserUpdateView(View):
 
         return redirect('user_index')
 
-
 class UserDeleteView(View):
 
     def post(self, request, user_id):
@@ -209,7 +212,6 @@ class UserDeleteView(View):
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
 
-
 class RoleIndexView(View):
     template_name = 'admin/role_management/index.html'
     paginate_by = 5 
@@ -225,10 +227,8 @@ class RoleIndexView(View):
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
 
-
 class AddRoleView(View):
     template_name = 'admin/role_management/create.html'
-
     def get(self, request):
         if request.user.is_authenticated:
             all_permissions = Permission.objects.all()
@@ -239,7 +239,7 @@ class AddRoleView(View):
 
     def post(self, request):
         try:
-            role_name = request.POST.get('role_name')
+            role_name = request.POST.get('role_name').lower
             selected_permissions = request.POST.getlist('permissions')
 
             new_role = Role.objects.create(name=role_name)
@@ -252,6 +252,7 @@ class AddRoleView(View):
 
         all_permissions = Permission.objects.all()
         return render(request, self.template_name, {'all_permissions': all_permissions})
+
 class UpdateRoleView(View):
     template_name = 'admin/role_management/update.html'
 
@@ -361,7 +362,7 @@ class UpdatePermissionView(View):
             messages.error(request, f'Error updating permission: {str(e)}')
 
         return render(request, self.template_name, {'form': form, 'permission': permission})
-    
+
 class DeletePermissionView(View):
     template_name = 'admin/permission/delete.html'  # Adjust the template name
 
@@ -378,7 +379,7 @@ class DeletePermissionView(View):
         else:
             messages.error(request, 'Sorry, you are not authorized to access this page.')
             return redirect('admin_login')
-    
+
 class AdminDashboardView(View):
     template_name = 'admin/dashboard.html'
     def get(self, request):

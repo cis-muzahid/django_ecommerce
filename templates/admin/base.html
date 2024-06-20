@@ -8,23 +8,25 @@
     <div class="container">
       {% if messages %}
       <div class="messages">
+        <div class="categorie_main">
           {% for message in messages %}
            {% if message.tags == 'error' %}
                 <div class="alert alert-danger">
                     {{ message }}
                 </div>
-            {% elif message.tags == 'success' %}
-                <div class="alert alert-success">
+            {% else %}
+                <div class="alert alert-{{ message.tags }}">
                     {{ message }}
                 </div>
             {% endif %}
           {% endfor %}
+        </div>
       </div>
       {% endif %}
     </div>
     <!-- /.container --> 
 </div>
-{% block body %} {% endblock %}
+{% block body %} {% endblock body %}
 
 {% include "admin/footer.html" %}
   

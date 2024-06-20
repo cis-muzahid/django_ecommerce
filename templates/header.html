@@ -48,15 +48,21 @@
         <div class="cnt-account">
           <ul class="list-unstyled">
             {% if user.is_authenticated %}
-            <li class="myaccount"><a href="{% url 'user_profile' %}"><span>My Account</span></a></li>
-            <li class="wishlist"><a href="#" id='my_wishlist' ><span>Wishlist</span></a></li>
-            <li class="header_cart hidden-xs"><a href="#" id='my_cart'><span>My Cart</span></a></li>
-            <li class="check"><a href="#" id="checkoutLink"><span>Checkout</span></a></li>
+            <li class="myaccount">
+              <a href="{% url 'user_profile' %}" class="{% if 'profile' in request.path %}active_header{% endif %}">My Account</a></li>
+            <li class="wishlist">
+              <a href="#" id='my_wishlist' class="{% if 'wishlist' in request.path %}active_header{% endif %}">Wishlist</a></li>
+            <li class="header_cart hidden-xs">
+              <a href="#" id='my_cart' class="{% if 'cart' in request.path %}active_header{% endif %}">My Cart</a></li>
+            <li class="check">
+              <a href="#" id="checkoutLink" class="{% if 'order' in request.path %}active_header{% endif %}">My Orders</a></li>
             
-              <li class="logout"><a href="{% url 'logout_user' %}"><span>Logout</span></a></li>
+              <li class="logout"><a href="{% url 'logout_user' %}">Logout</a></li>
             {% else %}
-              <li class="login"><a href="{% url 'login_user' %}"><span>Login</span></a></li>
-              <li class="signup_user"><a href="{% url 'signup_user' %}"><span>Sign up</span></a></li>
+              <li class="login">
+                <a href="{% url 'login_user' %}" class="{% if '' in request.path %}active_header{% endif %}">Login</a></li>
+              <li class="signup_user">
+                <a href="{% url 'signup_user' %}" class="{% if '' in request.path %}active_header{% endif %}">Sign up</a></li>
             {% endif %}
           </ul>
         </div>
@@ -65,12 +71,8 @@
         <div class="cnt-block">
           <ul class="list-unstyled list-inline">
             <li class="dropdown dropdown-small"> <a href="" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">INR </span><b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">INR</a></li>
-              </ul>
             </li>
             <li class="dropdown dropdown-small lang"> <a href="" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><span class="value">English </span><b class="caret"></b></a>
-
             </li>
           </ul>
         </div>
@@ -170,28 +172,29 @@
           <div class="navbar-collapse collapse" id="mc-horizontal-menu-collapse">
             <div class="nav-outer">
               <ul class="nav navbar-nav">
-                <li class="active dropdown"> <a href="/">Home</a> </li>
+                <li class="dropdown {% if 'categor' not in request.path %} active {% endif %}"> <a href="/">Home</a> </li>
                 {% for category in ""|categories_all %}
-                <li class="dropdown yamm mega-menu"> <a href="home.html" data-hover="dropdown" 
-                  class="dropdown-toggle" data-toggle="dropdown">{{ category.name }}</a>
-                    <ul class="dropdown-menu container">
-                      <li>
-                        <div class="yamm-content ">
-                          <div class="row">
-                            {% for subcategory in category|subcategories %}
-                            <div class="col-xs-12 col-sm-6 col-md-2 col-menu">
-                              <h2 class="title"><a href="/category/{{ subcategory }}">{{ subcategory.name }}</a></h2>
-                              <ul class="links">
-                                {% for sub in subcategory|subcategories %}
-                                <li><a href="/category/{{ sub }}">{{ sub }} </a></li>
-                                {% endfor %}
-                              </ul>
-                            </div>
-                            {% endfor %}
+                <li class="dropdown yamm mega-menu {% if category.name == request.path|active_header_category %} active {% endif %}"> 
+                  <a href="/category/{{category.name}}" data-hover="dropdown" 
+                    class="dropdown-toggle" data-toggle="dropdown">{{ category.name }}</a>
+                  <ul class="dropdown-menu container">
+                    <li>
+                      <div class="yamm-content ">
+                        <div class="row">
+                          {% for subcategory in category|subcategories %}
+                          <div class="col-xs-12 col-sm-6 col-md-2 col-menu">
+                            <h2 class="title"><a href="/category/{{ subcategory }}">{{ subcategory.name }}</a></h2>
+                            <ul class="links">
+                              {% for sub in subcategory|subcategories %}
+                              <li><a href="/category/{{ sub }}">{{ sub }} </a></li>
+                              {% endfor %}
+                            </ul>
                           </div>
+                          {% endfor %}
                         </div>
-                      </li>
-                    </ul>
+                      </div>
+                    </li>
+                  </ul>
                 </li>
                 {% endfor %}
                 <li class="dropdown  navbar-right special-menu"> <a href="#">Get 30% off on selected items</a> </li>
