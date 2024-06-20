@@ -35,13 +35,13 @@
 				{% for review in reviews %}
 				<tr>
 					<td class="cart-image">
-						<a class="entry-thumbnail" href="/category/{{ review.product.category }}/{{ review.product }}/">
+						<a class="entry-thumbnail" href="/category/{{ review.product.category }}/{{ review.product.slug }}/">
 						    <img src='/media/{{ review.product.id|product_attributes }}' alt="">
 						</a>
 					</td>
 					<td class="cart-product-name-info text-center">
 						<h4 class='cart-product-description'>
-							<a href="/category/{{ review.product.category }}/{{ review.product }}/">
+							<a href="/category/{{ review.product.category }}/{{ review.product.slug }}/">
 								{{ review.product.name }}</a></h4>
 						<div class="row">
 							<div class="col-sm-12">

@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import CustomUser
 from djmoney.models.fields import MoneyField
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -10,7 +11,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -23,13 +23,14 @@ class Product(models.Model):
     tag = models.TextField(null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    slug = models.CharField(max_length=255, unique=True, null=True, help_text="Slug is a unique name for your product.")
     is_delete = models.BooleanField(default=False)
     created_at = models.DateTimeField( auto_now_add = True)
     updated_at = models.DateTimeField(auto_now=True)
-    # product_price = MoneyField(max_digits=10, decimal_places=2, default_currency='INR')
 
     def __str__(self):
         return self.name
+
 
 class ProductReview(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

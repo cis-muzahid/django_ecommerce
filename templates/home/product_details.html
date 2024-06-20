@@ -75,7 +75,7 @@
                       <!-- /.hot-deal-wrapper -->
                       <div class="product-info text-left m-t-20">
                         <h3 class="name">
-                          <a href="/category/{{ product.category }}/{{ product }}/">{{ product.name }}</a>
+                          <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
                         </h3>
                         <div class="">
                             {% for star in 5|range_filter %}
@@ -673,7 +673,7 @@
                         <div class="product">
                           <div class="product-image">
                             <div class="image">
-                              <a href="/category/{{ product.category }}/{{ product }}/">
+                              <a href="/category/{{ product.category }}/{{ product.slug }}/">
                                 <img src="/media/{{ product.id|product_attributes }}" alt="">
                               </a>
                             </div>
@@ -687,7 +687,7 @@
                           <!-- /.product-image -->
                           <div class="product-info text-left">
                             <h3 class="name">
-                              <a href="/category/{{ product.category }}/{{ product }}/">{{ product.name }}</a>
+                              <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
                             </h3>
                             <div class="">
   
@@ -740,7 +740,7 @@
                                 </li>
                                 <li class="lnk">
                                   <a class="add-to-cart"
-                                     href="/category/{{ product.category }}/{{ product }}/"
+                                     href="/category/{{ product.category }}/{{ product.slug }}/"
                                      title="Compare">
                                     <i class="fa fa-signal"></i>
                                   </a>
@@ -864,43 +864,6 @@
     </div>
     <!-- /.container -->
   </div>
-  <!-- /.body-content -->
-  <!-- ============================================================= FOOTER ============================================================= -->
-  <!-- ============================================== INFO BOXES ============================================== -->
-  <div class="row our-features-box">
-    <div class="container">
-      <ul>
-        <li>
-          <div class="feature-box">
-            <div class="icon-truck"></div>
-            <div class="content-blocks">We ship worldwide</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-support"></div>
-            <div class="content-blocks">
-              call
-              +1 800 789 0000
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-money"></div>
-            <div class="content-blocks">Money Back Guarantee</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-return"></div>
-            <div class="content">30 days return</div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <!-- /.info-boxes -->
   <!-- ============================================== INFO BOXES : END ============================================== -->
   <!-- ============================================================= FOOTER ============================================================= -->
 {% endblock %}

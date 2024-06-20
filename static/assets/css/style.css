@@ -199,3 +199,13 @@ color: yellowgreen;
 .five, .star_5 {
 color: #0ba10b;
 }
+
+.header_text_div{
+    background: rgba(52, 59, 59, 0.598);
+    padding: 20px;
+}
+
+.active_header{
+    color: white !important;
+    font-weight: bolder !important;
+}
