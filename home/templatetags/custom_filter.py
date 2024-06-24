@@ -142,4 +142,8 @@ def active_header_category(request):
         else:
             return None
     else:
-            return None
+        return None
+    
+@register.filter
+def truncate_description(description):
+    return description[:100]

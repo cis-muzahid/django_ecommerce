@@ -172,9 +172,10 @@
           <div class="navbar-collapse collapse" id="mc-horizontal-menu-collapse">
             <div class="nav-outer">
               <ul class="nav navbar-nav">
-                <li class="dropdown {% if 'categor' not in request.path %} active {% endif %}"> <a href="/">Home</a> </li>
+                <li class="dropdown yamm mega-menu">
+                  <a href="/" data-hover="dropdown" class="dropdown-toggle" data-toggle="dropdown">Home</a> </li>
                 {% for category in ""|categories_all %}
-                <li class="dropdown yamm mega-menu {% if category.name == request.path|active_header_category %} active {% endif %}"> 
+                <li class="dropdown yamm mega-menu"> 
                   <a href="/category/{{category.name}}" data-hover="dropdown" 
                     class="dropdown-toggle" data-toggle="dropdown">{{ category.name }}</a>
                   <ul class="dropdown-menu container">

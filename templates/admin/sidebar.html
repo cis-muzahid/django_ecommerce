@@ -66,7 +66,7 @@
             </li>
             <li class="nav-item">
               <a href="/products" class="nav-link {% if 'product' in request.path %} active{% endif %}">
-                <i class="nav-icon 	fas fa-boxes"></i>
+                <i class="nav-icon fas fa-boxes"></i>
                 <p>
                   Products Management
                 </p>
@@ -96,10 +96,18 @@
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="/admin/blog" class="nav-link {% if "blog" in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-blog"></i>
+                <p>
+                  Blog Management
+                </p>
+              </a>
+            </li>
           {% elif request.user.user_role.name == 'supplier' %}
             <li class="nav-item">
               <a href="/products" class="nav-link {% if 'product' in request.path %}active{% endif %}">
-                <i class="nav-icon fas fa-table"></i>
+                <i class="nav-icon fas fa-boxes"></i>
                 <p>
                   Products Management
                 </p>
@@ -107,7 +115,7 @@
             </li>
             <li class="nav-item">
               <a href="/admin_orders" class="nav-link {% if "order" in request.path %}active{% endif %}">
-                <i class="nav-icon fas fa-table"></i>
+                <i class="nav-icon fas fa-clipboard-check"></i>
                 <p>
                   Orders Management
                 </p>
@@ -115,9 +123,17 @@
             </li>
             <li class="nav-item">
               <a href="/admin/banner" class="nav-link {% if "banner" in request.path %}active{% endif %}">
-                <i class="nav-icon fas fa-table"></i>
+                <i class="nav-icon fa fa-window-restore"></i>
                 <p>
                   Banners Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/blog" class="nav-link {% if "blog" in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-blog"></i>
+                <p>
+                  Blog Management
                 </p>
               </a>
             </li>

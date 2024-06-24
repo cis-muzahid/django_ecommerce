@@ -3,6 +3,7 @@ from django.views import View
 from products.models import Product, Category
 from .utilities import *
 from .models import Banner, Facility
+from blog.models import Blog
 from .forms import BannerForm, FacilityForm
 from django.contrib import messages
 
@@ -47,7 +48,8 @@ class HomeView(View):
                                                  'banners': banners.filter(type='header banner'),
                                                  'wide_banner_large': banners.filter(type='wide banner large').first(),
                                                  'wide_banner_small': banners.filter(type='wide banner small').first(),
-                                                 'middle_banner': banners.filter(type='middle banner')[:3]
+                                                 'middle_banner': banners.filter(type='middle banner')[:3],
+                                                 'blogs': Blog.objects.filter(active=True)[:5]
                                                     } )
         
     def post(self, request, category):
@@ -71,6 +73,7 @@ class AdminBannerView(View):
         try: 
             if form.is_valid():
                 form.save()
+                messages.success(request, "Banner added successfully.")
                 return redirect('admin_banner_view')
             else:
                 messages.error(request, "An error occurred while adding banner : ", form.errors)
@@ -103,6 +106,7 @@ class AdminBannerUpdateDeleteView(View):
             try: 
                 if form.is_valid():
                     form.save()
+                    messages.success(request, "Banner updated successfully.")
                     return redirect('admin_banner_view')
                 else:
                     messages.error(request, "An error occurred while adding banner : ", form.errors)
@@ -112,7 +116,7 @@ class AdminBannerUpdateDeleteView(View):
             try:
                 banner.active = False
                 banner.save()
-                messages.success(request, "Banner updated Successfully.")
+                messages.error(request, "Banner deleted successfully.")
                 return redirect('admin_banner_view')
             except Exception as e:
                 messages.success(request, "An error occurred while adding banner : ", e)
@@ -152,7 +156,7 @@ class AdminFacilityDeleteView(View):
             facility = Facility.objects.get(id=request.POST.get("facility"))
             facility.active = False
             facility.save()
-            messages.success(request, f" Facility deleted successfully.")
+            messages.error(request, f" Facility deleted successfully.")
             return redirect('admin_facility_view')
         except Exception as e:
             facilities = Facility.objects.filter(active=True)

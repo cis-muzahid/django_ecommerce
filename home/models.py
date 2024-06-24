@@ -6,7 +6,7 @@ from products.models import Category
 class Banner(models.Model):
     title=models.CharField(max_length=255, unique=True)
     subtitle=models.CharField(max_length=255)
-    description=models.CharField(max_length=255)
+    description=models.CharField(max_length=1000)
     image=models.ImageField(upload_to='banner/images/')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
