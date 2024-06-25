@@ -173,7 +173,7 @@
             <div class="nav-outer">
               <ul class="nav navbar-nav">
                 <li class="dropdown yamm mega-menu">
-                  <a href="/" data-hover="dropdown" class="dropdown-toggle" data-toggle="dropdown">Home</a> </li>
+                  <a href="/" data-hover="dropdown">Home</a> </li>
                 {% for category in ""|categories_all %}
                 <li class="dropdown yamm mega-menu"> 
                   <a href="/category/{{category.name}}" data-hover="dropdown" 
@@ -198,6 +198,8 @@
                   </ul>
                 </li>
                 {% endfor %}
+                <li class="dropdown yamm mega-menu">
+                  <a href="/user/blogs" data-hover="dropdown">Blog</a> </li>
                 <li class="dropdown  navbar-right special-menu"> <a href="#">Get 30% off on selected items</a> </li>
               </ul>
               <!-- /.navbar-nav -->

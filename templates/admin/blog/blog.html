@@ -2,47 +2,61 @@
 {% load static %}
 {% load custom_filter %}
 {% block body %}
-<div class='container'>
-  <div class='row categorie_main'>
-    <div class="col-12 card">
-        <div class="card-header"> 
-            <h3 class='card-title font-weight-bold mt-2'>Blogs</h3>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <form action='/blogs/' class="d-flex mr-4">
-                    <input name='q' class="form-control me-2 mr-4" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-info" type="submit">Search</button>
-                </form>
-                <button type="button"
-                        class="btn btn-info me-md-2 mr-5"
-                        data-toggle="modal"
-                        data-target="#blogModal">Add Blog</button>
-            </div>
+  <div class='container'>
+    <div class='row categorie_main'>
+      <div class="col-12 card">
+        <div class="card-header">
+          <h3 class='card-title font-weight-bold mt-2'>Blogs</h3>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <form action='/blogs/' class="d-flex mr-4">
+              <input name='q'
+                     class="form-control me-2 mr-4"
+                     type="search"
+                     placeholder="Search"
+                     aria-label="Search">
+              <button class="btn btn-outline-info" type="submit">Search</button>
+            </form>
+            <button type="button"
+                    class="btn btn-info me-md-2 mr-5"
+                    data-toggle="modal"
+                    data-target="#blogModal">Add Blog</button>
+          </div>
         </div>
         <div class="card-body">
           <div class="row">
             {% for blog in blogs %}
               <div class="col col-lg-6 col-md-12 col-sm-12 p-0">
-               <div class="thumbnail border border-dark m-1">
+                <div class="thumbnail border border-dark m-1">
                   <a href="/admin/blog/{{ blog.id }}">
-                    <img src="/media/{{ blog.image }}" alt="Lights" style="width:100%; height: 325px;"></a>
+                    <img src="/media/{{ blog.image }}"
+                         alt="Lights"
+                         style="width:100%;
+                                height: 325px">
+                  </a>
                   <div class="caption p-3">
-                  <a href="/admin/blog/{{ blog.id }}">
-                    <div class="blog-post-info text-left">
-                      <h3 class="name"><a href="#">{{ blog.title }}</a></h3>
-                      <span class="info">By {{ blog.user.first_name }} {{ blog.user.last_name }} &nbsp;|&nbsp; 21 March 2016 </span>
-                      <p class="text">{{ blog.description|truncate_description }}</p>
-                    </div></a>
+                    <a href="/admin/blog/{{ blog.id }}">
+                      <div class="blog-post-info text-left">
+                        <h3 class="name">
+                          <a href="#">{{ blog.title }}</a>
+                        </h3>
+                        <span class="info">By {{ blog.user.first_name }} {{ blog.user.last_name }} &nbsp;|&nbsp; 21 March 2016</span>
+                        <p class="text">{{ blog.description|truncate_description|safe  }}</p>
+                      </div>
+                    </a>
                     <div class='d-flex' style="margin-top:-10px;">
                       <button type="button"
-                        class="btn btn-info me-md-2 m-2"
-                        data-toggle="modal"
-                        data-target="#blogModal_{{ blog.id }}">Edit</button>
+                              class="btn btn-info me-md-2 m-2"
+                              data-toggle="modal"
+                              data-target="#blogModal_{{ blog.id }}">Edit</button>
                       <form action="/admin/blog/delete" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="blog" value="{{ blog.id }}">
-                        <button type="submit" class='btn btn-danger my-2' style='position:absolute; right:15px;'>Delete</button>
+                        <button type="submit"
+                                class='btn btn-danger my-2'
+                                style='position:absolute;
+                                       right:15px'>Delete</button>
                       </form>
-									</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -51,91 +65,150 @@
         </div>
         <hr>
         <div class="card-footer clearfix bg-white justify-content-md-start">
-            <ul class="pagination pagination-sm m-0 float-right">
-                {% if blogs.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ blogs.previous_page_number }}">&laquo;</a></li>
-                {% endif %}
-                {% for page_num in blogs.paginator.page_range %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
-                {% endfor %}
-                {% if blogs.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ blogs.next_page_number }}">&raquo;</a></li>
-                {% endif %}
-            </ul>
+          <ul class="pagination pagination-sm m-0 float-right">
+            {% if blogs.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ blogs.previous_page_number }}">&laquo;</a>
+              </li>
+            {% endif %}
+            {% for page_num in blogs.paginator.page_range %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+              </li>
+            {% endfor %}
+            {% if blogs.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ blogs.next_page_number }}">&raquo;</a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade"
+       id="blogModal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="blogModalTitle"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Add blogs</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action='/admin/blog/' method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Title :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" name="title" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Description :</label>
+              <div class="col-sm-8">
+                <input id="blog_description"
+                       class="form-control"
+                       name="description"
+                       style="display:none"
+                       required>
+                {{ blog.description|safe }}
+              </input>
+              <div id="editor" clsss="blog_editor"
+                   contenteditable="true"
+                   onmouseout="syncEditorContent('blog_description', 'editor')"></div>
+              <div id="errorDiv" class="text-red"></div>
+              <div class="text-center editor-toolbar">
+                <button type="button" class="editor-button" onclick="execCmd('bold')">
+                  <i class="fas fa-bold"></i>
+                </button>
+                <button type="button" class="editor-button" onclick="execCmd('italic')">
+                  <i class="fas fa-italic"></i>
+                </button>
+                <button type="button" class="editor-button" onclick="execCmd('underline')">
+                  <i class="fas fa-underline"></i>
+                </button>
+                <button type="button"
+                        class="editor-button"
+                        onclick="execCmd('strikeThrough')">
+                  <i class="fas fa-strikethrough"></i>
+                </button>
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="editor-button" onclick="execCmd('justifyLeft')">
+                  <i class="fa fa-solid fa-align-left"></i>
+                </button>
+                <button type="button"
+                        class="editor-button"
+                        onclick="execCmd('justifyCenter')">
+                  <i class="fa fa-solid fa-align-center"></i>
+                </button>
+                <button type="button" class="editor-button" onclick="execCmd('justifyRight')">
+                  <i class="fa fa-solid fa-align-right"></i>
+                </button>
+                <br>
+                <button type="button"
+                        class="editor-button"
+                        onclick="execCmd('insertUnorderedList')">
+                  <i class="fa fa-solid fa-list-ul"></i>
+                </button>
+                <button type="button"
+                        class="editor-button"
+                        onclick="execCmd('insertOrderedList')">
+                  <i class="fa fa-solid fa-list-ol"></i>
+                </button>
+                &nbsp; &nbsp; &nbsp;
+                <button type="button"
+                        class="editor-button"
+                        onclick="execCmd('createLink', prompt('Enter URL:', 'http://'))">
+                  <i class="fas fa-link"></i>
+                </button>
+                <button type="button" class="editor-button" onclick="execCmd('unlink')">
+                  <i class="fas fa-unlink"></i>
+                </button>
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="editor-button" onclick="execCmd('undo')">
+                  <i class="fa fa-solid fa-rotate-left"></i>
+                </button>
+                <button type="button" class="editor-button" onclick="execCmd('redo')">
+                  <i class="fa fa-solid fa-rotate-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Slug :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="slug" required>
+              <span>Slug is a unique name for your blog.</span>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Image :</label>
+            <div class="col-sm-8">
+              <input type="file"
+                     class="form-control"
+                     name="image"
+                     accept="image/*"
+                     required />
+            </div>
+          </div>
+          <input type='hidden' name="user" value="{{ user.id }}">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit"
+                  class="btn btn-primary"
+                  onclick="checkField('blog_description', 'errorDiv')">Add Blog</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
-<div class="modal fade"
-    id="blogModal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="blogModalTitle"
-    aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Add blogs</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <form action='/admin/blog/' method='post' enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="modal-body">
-        <div class="form-group row">
-            <label class="col-sm-4 col-form-label">Title :</label>
-            <div class="col-sm-8">
-            <input type="text" class="form-control" name="title" required>
-            </div>
-        </div>
-        <div id="editor-toolbar">
-        <button class="editor-button" onclick="execCmd('bold')"><b>B</b></button>
-        <button class="editor-button" onclick="execCmd('italic')"><i>I</i></button>
-        <button class="editor-button" onclick="execCmd('underline')"><u>U</u></button>
-        <button class="editor-button" onclick="execCmd('strikeThrough')"><s>S</s></button>
-        <button class="editor-button" onclick="execCmd('justifyLeft')">Left</button>
-        <button class="editor-button" onclick="execCmd('justifyCenter')">Center</button>
-        <button class="editor-button" onclick="execCmd('justifyRight')">Right</button>
-        <button class="editor-button" onclick="execCmd('insertUnorderedList')">• List</button>
-        <button class="editor-button" onclick="execCmd('insertOrderedList')">1. List</button>
-        <button class="editor-button" onclick="execCmd('createLink', prompt('Enter URL:', 'http://'))">Link</button>
-        <button class="editor-button" onclick="execCmd('unlink')">Unlink</button>
-    </div>
-        <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Description :</label>
-          <div class="col-sm-8">
-          <textarea class="form-control" id="description" name="description" rows="10" cols="50" maxlength="1000" required></textarea>
-          </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-4 col-form-label">Slug :</label>
-            <div class="col-sm-8">
-            <input type="text" class="form-control" name="slug" required>
-            <span>Slug is a unique name for your blog.</span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-4 col-form-label">Image :</label>
-            <div class="col-sm-8">
-            <input type="file"
-                    class="form-control"
-                    name="image"
-                    accept="image/*"
-                    required />
-            </div>
-        </div>
-        <input type='hidden' name="user" value="{{ user.id }}">
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Add Blog</button>
-        </div>
-    </form>
-    </div>
-</div>
-</div>
-
 {% for blog in blogs %}
   <div class="modal fade"
        id="blogModal_{{ blog.id }}"
@@ -157,19 +230,92 @@
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Title :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" name="title" value="{{ blog.title }}" required>
+                <input type="text"
+                       class="form-control"
+                       name="title"
+                       value="{{ blog.title }}"
+                       required>
               </div>
             </div>
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Description :</label>
               <div class="col-sm-8">
-                <textarea id="blog_description" class="form-control" name="description" rows="10" cols="50" maxlength="1000" required></textarea>
+                <input id="blog_description_{{ blog.id }}"
+                       class="form-control"
+                       name="description"
+                       style="display:none"
+                       value="{{ blog.description }}"
+                       required>
+                <div id="editor_{{ blog.id }}"
+                     class="blog_editor"
+                     contenteditable="true"
+                     onmouseout="syncEditorContent('blog_description_{{ blog.id }}', 'editor_{{ blog.id }}' )">{{ blog.description|safe }}</div>
+                <div id="errorDiv_{{ blog.id }}" class="text-red"></div>
+                <div class="text-center editor-toolbar">
+                  <button type="button" class="editor-button" onclick="execCmd('bold')">
+                    <i class="fas fa-bold"></i>
+                  </button>
+                  <button type="button" class="editor-button" onclick="execCmd('italic')">
+                    <i class="fas fa-italic"></i>
+                  </button>
+                  <button type="button" class="editor-button" onclick="execCmd('underline')">
+                    <i class="fas fa-underline"></i>
+                  </button>
+                  <button type="button"
+                          class="editor-button"
+                          onclick="execCmd('strikeThrough')">
+                    <i class="fas fa-strikethrough"></i>
+                  </button>
+                  &nbsp; &nbsp; &nbsp;
+                  <button type="button" class="editor-button" onclick="execCmd('justifyLeft')">
+                    <i class="fa fa-solid fa-align-left"></i>
+                  </button>
+                  <button type="button"
+                          class="editor-button"
+                          onclick="execCmd('justifyCenter')">
+                    <i class="fa fa-solid fa-align-center"></i>
+                  </button>
+                  <button type="button" class="editor-button" onclick="execCmd('justifyRight')">
+                    <i class="fa fa-solid fa-align-right"></i>
+                  </button>
+                  <br>
+                  <button type="button"
+                          class="editor-button"
+                          onclick="execCmd('insertUnorderedList')">
+                    <i class="fa fa-solid fa-list-ul"></i>
+                  </button>
+                  <button type="button"
+                          class="editor-button"
+                          onclick="execCmd('insertOrderedList')">
+                    <i class="fa fa-solid fa-list-ol"></i>
+                  </button>
+                  &nbsp; &nbsp; &nbsp;
+                  <button type="button"
+                          class="editor-button"
+                          onclick="execCmd('createLink', prompt('Enter URL:', 'http://'))">
+                    <i class="fas fa-link"></i>
+                  </button>
+                  <button type="button" class="editor-button" onclick="execCmd('unlink')">
+                    <i class="fas fa-unlink"></i>
+                  </button>
+                  &nbsp; &nbsp; &nbsp;
+                  <button type="button" class="editor-button" onclick="execCmd('undo')">
+                    <i class="fa fa-solid fa-rotate-left"></i>
+                  </button>
+                  <button type="button" class="editor-button" onclick="execCmd('redo')">
+                    <i class="fa fa-solid fa-rotate-right"></i>
+                  </button>
+                </div>
               </div>
             </div>
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Slug :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" name="slug" value="{{ blog.slug }}" required>
+                <input type="text"
+                       class="form-control"
+                       name="slug"
+                       value="{{ blog.slug }}"
+                       required>
               </div>
             </div>
             <div class="form-group row">
@@ -188,19 +334,34 @@
           </div>
           <div class="modal-footer">
             <a href="/admin/blog/" class="btn btn-secondary">Close</a>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit"
+                    class="btn btn-primary"
+                    onclick="checkField(blog_description_{{ blog.id }}, )">Update</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 {% endfor %}
-
 <script>
-        function execCmd(command, value = null) {
-            document.execCommand(command, false, value);
-        }
-    </script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Execute command for text formatting
+    function execCmd(command, value = null) {
+        document.execCommand(command, false, value);
+    }
+    // Expose functions to global scope
+    window.execCmd = execCmd;
+  });
+  function syncEditorContent(description, editor) {
+    textarea = document.getElementById(description);
+    textarea.value = document.getElementById(editor).innerHTML
+  }
 
+  function checkField(id, errorDiv){
+    element = document.getElementById(id)
+    if (element.value == ''){
+      document.getElementById(errorDiv).innerText = 'This field is required.';
+    }
+  }
+</script>
 {% endblock %}
-  

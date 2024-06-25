@@ -27,7 +27,7 @@
           <span class="author">{{ blog.user.first_name }} {{ blog.user.last_name }}</span>
           <span class="review">7 Comments</span>
           <span class="date-time">18/06/2016 11.30AM</span>
-          <p>{{ blog.description }}</p>
+          <p>{{ blog.description|safe }}</p>
           <div class="social-media">
             <span>share post:</span>
             <a href="#"><i class="fa fa-facebook"></i></a>
