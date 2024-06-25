@@ -236,30 +236,34 @@
         <!-- /.sidebar-module-container --> 
       </div>
       <!-- /.sidebar -->
-      <div class="col-xs-12 col-sm-12 col-md-9 rht-col"> 
+      <div class="col-xs-12 col-sm-12 col-md-9 rht-col">
         <!-- ========================================== SECTION – HERO ========================================= -->
-        
-        {% comment %} <div id="category" class="category-carousel hidden-xs">
-          <div class="item">
-            <div class="image"> <img src="assets/images/banners/cat-banner-1.jpg" alt="" class="img-responsive"> </div>
-            <div class="container-fluid">
-              <div class="caption vertical-top text-left">
-                <div class="big-text"> Big Sale </div>
-                <div class="excerpt hidden-sm hidden-md"> Save up to 49% off </div>
-                <div class="excerpt-normal hidden-sm hidden-md"> Lorem ipsum dolor sit amet, consectetur adipiscing elit </div>
-                <div class="buy-btn"><a href="#" class="lnk btn btn-primary">Show Now</a></div>
-              </div>
-              <!-- /.caption --> 
-            </div>
-            <!-- /.container-fluid --> 
-          </div>
-        </div> {% endcomment %}
-        
-     
-
         <div class="search-result-container ">
           <div id="myTabContent" class="tab-content category-list">
             <div class="tab-pane active " id="grid-container">
+              {% if banner %}
+                <div class=""
+                    style=" background: url('/media/{{ banner.image }}');
+                            background-size: cover;">
+                  <div class="card-body">
+                    <div class="text-left mx-3" style="margin-bottom: 20px;padding: 20vh;">
+                      <div class="slider-header fadeInDown-1"
+                          style="color: white;
+                                  font-weight: 400;
+                                  font-size: large;">{{ banner.subtitle }}</div>
+                      <div class=""
+                          style="color: white;
+                                  font-size: xx-large;
+                                  font-weight: 600;">{{ banner.title }}</div>
+                      <div class="excerpt fadeInDown-2 hidden-xs"
+                          style="color: white;
+                                  font-weight: 400;">
+                        <span>"{{ banner.description }}"</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
               <div class="category-product">
                 <div class="row">
                   {% for product in products %}
@@ -269,7 +273,7 @@
                         <div class="product">
                           <div class="product-image">
                             <div class="image"> 
-                            <a href="/category/{{product.category}}/{{product}}/">
+                            <a href="/category/{{product.category}}/{{product.slug}}/">
                               <img src="/media/{{product.id|product_attributes}}" alt=""> 
                                 <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
                             </a> 
@@ -283,8 +287,16 @@
                           <!-- /.product-image -->
                           
                           <div class="product-info text-left">
-                            <h3 class="name"><a href="{{product.category}}/{{product}}/">{{product.name}}</a></h3>
-                            <div class="rating rateit-small"></div>
+                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
+                            <div class="">
+                              {% for star in 5|range_filter %}
+                                {% if star < product|product_rating %}
+                                    <span class="star_{{ product|product_rating }}">★</span>
+                                {% else %}
+                                    <span class="empty-star">★</span>
+                                {% endif %}
+                              {% endfor %}
+                            </div>
                             <div class="description"></div>
                             <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
                             
@@ -310,7 +322,7 @@
                                   <i class="icon fa fa-heart"></i> </button>
                                 </form>
                               </li>
-                              <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Compare"> <i class="fa fa-signal"></i> </a> </li>
+                              <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal"></i> </a> </li>
                               </ul>
                             </div>
                             <!-- /.action --> 
@@ -346,7 +358,7 @@
                         <!-- /.col -->
                         <div class="col col-sm-9 col-lg-9">
                           <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product}}/">{{product.name}}</a></h3>
+                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
                             <div class="rating rateit-small"></div>
                             <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
                             <!-- /.product-price -->
@@ -371,7 +383,7 @@
                                       <i class="icon fa fa-heart"></i> </button>
                                     </form>
                                   </li>
-                                  <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Compare"> <i class="fa fa-signal"></i> </a> </li>
+                                  <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal"></i> </a> </li>
                                 </ul>
                               </div>
                               <!-- /.action --> 
@@ -475,41 +487,4 @@
   
 </div>
 <!-- /.body-content --> 
-<!-- ============================================================= FOOTER ============================================================= -->
-
-        <!-- ============================================== INFO BOXES ============================================== -->
-        <div class="row our-features-box">
-     <div class="container">
-      <ul>
-        <li>
-          <div class="feature-box">
-            <div class="icon-truck"></div>
-            <div class="content-blocks">We ship worldwide</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-support"></div>
-            <div class="content-blocks">call 
-              +1 800 789 0000</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-money"></div>
-            <div class="content-blocks">Money Back Guarantee</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-return"></div>
-            <div class="content">30 days return</div>
-          </div>
-        </li>
-        
-      </ul>
-    </div>
-  </div>
-        <!-- /.info-boxes --> 
-        <!-- ============================================== INFO BOXES : END ============================================== --> 
 {% endblock %}

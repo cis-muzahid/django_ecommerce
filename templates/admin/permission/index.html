@@ -1,75 +1,66 @@
 {% extends 'admin/base.html' %}
 {% load static %}
-
 {% block body %}
-	<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-		<section class="content-header">
-			
-		</section>
-		<section class="content">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-12">
-						<div class="card">
-							<div class="card-header">
-								<h3 class='card-title font-weight-bold mt-2'>Permissions</h3>
-								<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-									<form class="d-flex mr-4">
-										<input name='q' class="form-control me-2 mr-4" type="search" placeholder="Search" aria-label="Search">
-										<button class="btn btn-outline-info" type="submit">Search</button>
-									</form>
-									<a href="{% url 'add_permission' %}"><button type="button" class="btn btn-info me-md-2 mr-5">Add Permission</button></a>
-								</div>
-							</div>
-							<div class="card-body">
-								<table id="example1" class="table table-bordered table-striped">
-									<thead>
-									<tr>
-										<th>Permissions</th>
-										<th>Actions</th>
-									</tr>
-									</thead>
-									<tbody>
-										{% for permission in permissions %}
-											<tr>
-												<td>{{ permission.name }}</td>
-												<td>
-													<div style="display: flex; align-items: center;">
-														<a href="{% url 'update_permission' perm_id=permission.id %}" style='font-weight:100; color:black;'>
-																<i class='fa fa-pencil text-success'></i>
-														</a>
-														<span style="margin: 0 5px;"> |</span> <!-- Adjust margin for spacing -->
-														<form method="POST" action="{% url 'delete_permission' perm_id=permission.id %}" onsubmit="return confirm('Are you sure you want to delete the role \'{{ permission.name }}\'?');">
-																{% csrf_token %}
-																<button type="submit" style="border: none; background-color: transparent; cursor: pointer;">
-																		<i class="fa fa-trash text-danger"></i>
-																</button>
-														</form>
-													</div>
-												</td>
-											</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
-							<div class="card-footer clearfix bg-white justify-content-md-start">
-								<ul class="pagination pagination-sm m-0 float-right">
-										{% if permissions.has_previous %}
-												<li class="page-item"><a class="page-link" href="?page={{ permissions.previous_page_number }}">&laquo;</a></li>
-										{% endif %}
-										{% for page_num in permissions.paginator.page_range %}
-												<li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
-										{% endfor %}
-										{% if permissions.has_next %}
-												<li class="page-item"><a class="page-link" href="?page={{ permissions.next_page_number }}">&raquo;</a></li>
-										{% endif %}
-								</ul>
-							</div>
+  <div class='container'>
+    <div class='row categorie_main'>
+      <div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class='card-title font-weight-bold mt-2'>Permissions</h3>
+						<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+							<form class="d-flex mr-4">
+								<input name='q' class="form-control me-2 mr-4" type="search" placeholder="Search" aria-label="Search">
+								<button class="btn btn-outline-info" type="submit">Search</button>
+							</form>
+							<a href="{% url 'add_permission' %}"><button type="button" class="btn btn-info me-md-2 mr-5">Add Permission</button></a>
 						</div>
+					</div>
+					<div class="card-body">
+						<table id="example1" class="table table-striped">
+							<thead>
+							<tr class="text-center">
+								<th>Permissions</th>
+								<th>Actions</th>
+							</tr>
+							</thead>
+							<tbody>
+								{% for permission in permissions %}
+									<tr class="text-center">
+										<td>{{ permission.name }}</td>
+										<td>
+											<div class='d-flex justify-content-center'>
+												<a href="{% url 'update_permission' perm_id=permission.id %}" style='font-weight:100; color:black;'>
+														<i class='fa fa-pencil text-success'></i>
+												</a>
+												<span style="margin: 0 5px;"> </span> <!-- Adjust margin for spacing -->
+												<form method="POST" action="{% url 'delete_permission' perm_id=permission.id %}" onsubmit="return confirm('Are you sure you want to delete the role \'{{ permission.name }}\'?');">
+														{% csrf_token %}
+														<button type="submit" style="border: none; background-color: transparent; cursor: pointer;">
+																<i class="fa fa-trash text-danger"></i>
+														</button>
+												</form>
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer clearfix bg-white justify-content-md-start">
+						<ul class="pagination pagination-sm m-0 float-right">
+								{% if permissions.has_previous %}
+										<li class="page-item"><a class="page-link" href="?page={{ permissions.previous_page_number }}">&laquo;</a></li>
+								{% endif %}
+								{% for page_num in permissions.paginator.page_range %}
+										<li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+								{% endfor %}
+								{% if permissions.has_next %}
+										<li class="page-item"><a class="page-link" href="?page={{ permissions.next_page_number }}">&raquo;</a></li>
+								{% endif %}
+						</ul>
 					</div>
 				</div>
 			</div>
-		</section>
-	</div>
+    </div>
+  </div>
 {% endblock %}

@@ -201,9 +201,13 @@ class SupplierReturnAndReplaceView(View):
     def get(self, request):
         if "return" in request.path:
             orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False, active=True)
+            if request.user.user_role.name =="supplier":
+                orders = orders.filter(user = request.user.id)
         else:
             orders = ReturnAndReplaceOrder.objects.filter(action='Replace', requested=True, approved=False, active=True)
             orders = orders.exclude(cart=None)
+            if request.user.user_role.name =="supplier":
+                orders = orders.filter(user = request.user.id)
         return render(request, 'admin/orders/return_replace.html', {'orders': orders})
 
     def post(self, request):
@@ -229,9 +233,13 @@ class AdminOrderView(View):
     def get(self, request, pk=None):
         if pk:
             orders = OrderItem.objects.filter(order=pk)
+            if request.user.user_role.name =="supplier":
+                orders = orders.filter(user = request.user.id)
             return render(request, 'admin/orders/order_items.html', {'orders': orders})
         else:
             orders = Order.objects.all()
+            if request.user.user_role.name =="supplier":
+                orders = orders.filter(user = request.user.id)
             orders = pagination(orders, request.GET.get("page"))
             return render(request, 'admin/orders/order.html', {'orders': orders})
 
@@ -287,9 +295,7 @@ class ExecutePaymentView(View):
     def get(self, request):
         payment_id = request.GET.get('paymentId')
         payer_id = request.GET.get('PayerID')
-
         payment = paypalrestsdk.Payment.find(payment_id)
-
         if payment.execute({"payer_id": payer_id}):
             return render(request, 'payment_success.html')
         return render(request, 'payment_failed.html')
@@ -302,7 +308,6 @@ class PaymentSuccessView(TemplateView):
         # You can add any additional context data here if needed
         return context
 
-
 class PaymentCheckoutView(View):
     def get(self, request):
         return render(request, 'checkout.html')
@@ -310,6 +315,7 @@ class PaymentCheckoutView(View):
 class PaymentFailedView(View):
     def get(self, request):
         return render(request, 'payment_failed.html')
+
 class OrderTracking(View):
     def post(self, request):
         order = Order.objects.get(id=request.POST.get('order_id'))

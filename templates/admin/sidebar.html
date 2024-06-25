@@ -24,63 +24,120 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           {% if user.is_superuser %}
-            <li class="  nav-item {% if request.path == '/admin' %}menu-open{% endif %}">
+            <li class="nav-item">
               <a href="{% url 'admin' %}" class="nav-link {% if request.path == '/admin/' %}active{% endif %}">
-                <i class="nav-icon fas fa-th"></i>
+                <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
                 </p>
               </a>
             </li>
-            <li class="  nav-item {% if request.path == '/admin/user/index/' %}menu-open{% endif %}">
-              <a href="{% url 'user_index' %}" class="nav-link {% if request.path == '/admin/user/index/' %}active{% endif %}">
-                <i class="nav-icon fas fa-th"></i>
+            <li class="nav-item">
+              <a href="{% url 'user_index' %}" class="nav-link {% if 'user' in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-users"></i>
                 <p>
                   User Management
                 </p>
               </a>
             </li>
-            <li class="  nav-item {% if request.path == '/admin/role/index' %}menu-open{% endif %}">
-              <a href="{% url 'role_index' %}" class="nav-link {% if request.path == '/admin/role/index' %}active{% endif %}">
-                <i class="nav-icon fas fa-th"></i>
+            <li class="nav-item">
+              <a href="{% url 'role_index' %}" class="nav-link {% if 'role' in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-user-shield"></i>
                 <p>
                   Role Management
                 </p>
               </a>
             </li>
-            <li class="  nav-item {% if request.path == 'admin/permission/index' %}menu-open{% endif %}">
-              <a href="{% url 'permission_index' %}" class="nav-link {% if request.path == '/admin/permission/index' %}active{% endif %}">
-                <i class="nav-icon fas fa-th"></i>
+            <li class="nav-item">
+              <a href="{% url 'permission_index' %}" class="nav-link {% if 'permission' in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-user-lock"></i>
                 <p>
                   Permission Management
                 </p>
               </a>
             </li>
-          <li class="nav-item">
-            <a href="/categories/" class="nav-link {% if 'category' in request.path %}active{% endif %}">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                Categories
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/products" class="nav-link {% if 'product' in request.path %}active{% endif %}">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                Products
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/admin_orders" class="nav-link {% if "order" in request.path %}active{% endif %}">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                Order Management
-              </p>
-            </a>
-          </li>
-        {% endif %}
+            <li class="nav-item">
+              <a href="/categories/" class="nav-link {% if 'categor' in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-table"></i>
+                <p>
+                  Categories Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/products" class="nav-link {% if 'product' in request.path %} active{% endif %}">
+                <i class="nav-icon fas fa-boxes"></i>
+                <p>
+                  Products Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin_orders" class="nav-link {% if "order" in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-clipboard-check"></i>
+                <p>
+                  Orders Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/banner" class="nav-link {% if "banner" in request.path %}active{% endif %}">
+                <i class="nav-icon fa fa-window-restore"></i>
+                <p>
+                  Banners Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/facilities/" class="nav-link {% if "facilit" in request.path %}active{% endif %}">
+                <i class="nav-icon	fas fa-truck "></i>
+                <p>
+                  Facilities Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/blog" class="nav-link {% if "blog" in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-blog"></i>
+                <p>
+                  Blog Management
+                </p>
+              </a>
+            </li>
+          {% elif request.user.user_role.name == 'supplier' %}
+            <li class="nav-item">
+              <a href="/products" class="nav-link {% if 'product' in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-boxes"></i>
+                <p>
+                  Products Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin_orders" class="nav-link {% if "order" in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-clipboard-check"></i>
+                <p>
+                  Orders Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/banner" class="nav-link {% if "banner" in request.path %}active{% endif %}">
+                <i class="nav-icon fa fa-window-restore"></i>
+                <p>
+                  Banners Management
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/blog" class="nav-link {% if "blog" in request.path %}active{% endif %}">
+                <i class="nav-icon fas fa-blog"></i>
+                <p>
+                  Blog Management
+                </p>
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </nav>
     </div>

@@ -8,6 +8,7 @@
     <div class="container">
       {% if messages %}
       <div class="messages">
+        <div class="categorie_main">
           {% for message in messages %}
            {% if message.tags == 'error' %}
                 <div class="alert alert-danger">
@@ -17,8 +18,13 @@
                 <div class="alert alert-success">
                     {{ message }}
                 </div>
+            {% elif message.tags == 'info' %}
+               <div class="alert alert-info">
+                    {{ message }}
+                </div>
             {% endif %}
           {% endfor %}
+        </div>
       </div>
       {% endif %}
     </div>

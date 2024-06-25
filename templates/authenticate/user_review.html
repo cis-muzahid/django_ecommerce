@@ -35,13 +35,13 @@
 				{% for review in reviews %}
 				<tr>
 					<td class="cart-image">
-						<a class="entry-thumbnail" href="/category/{{ review.product.category }}/{{ review.product }}/">
+						<a class="entry-thumbnail" href="/category/{{ review.product.category }}/{{ review.product.slug }}/">
 						    <img src='/media/{{ review.product.id|product_attributes }}' alt="">
 						</a>
 					</td>
 					<td class="cart-product-name-info text-center">
 						<h4 class='cart-product-description'>
-							<a href="/category/{{ review.product.category }}/{{ review.product }}/">
+							<a href="/category/{{ review.product.category }}/{{ review.product.slug }}/">
 								{{ review.product.name }}</a></h4>
 						<div class="row">
 							<div class="col-sm-12">
@@ -203,45 +203,4 @@
 </div><!-- /.logo-slider -->
 <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
 </div><!-- /.body-content -->
-
-<!-- ============================================================= FOOTER ============================================================= -->
-
-        <!-- ============================================== INFO BOXES ============================================== -->
-        <div class="row our-features-box">
-     <div class="container">
-      <ul>
-        <li>
-          <div class="feature-box">
-            <div class="icon-truck"></div>
-            <div class="content-blocks">We ship worldwide</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-support"></div>
-            <div class="content-blocks">call 
-              +1 800 789 0000</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-money"></div>
-            <div class="content-blocks">Money Back Guarantee</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-return"></div>
-            <div class="content">30 days return</div>
-          </div>
-        </li>
-        
-      </ul>
-    </div>
-  </div>
-        <!-- /.info-boxes --> 
-        <!-- ============================================== INFO BOXES : END ============================================== --> 
-
-		
-
 {% endblock %}

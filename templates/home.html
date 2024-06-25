@@ -17,23 +17,21 @@
             <li class="dropdown menu-item"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{category.name}}</a>
               <ul class="dropdown-menu mega-menu">
-                  <div class="row">
-                {% for subcategory in category|subcategories %}
+                <div class="row">
+                  {% for subcategory in category|subcategories %}
                     <div class="col-sm-12 col-md-3">
                       <ul class="links list-unstyled">
                         <li><a href="/category/{{subcategory.name}}"><b>{{subcategory.name}}</b></a></li>
                     {% for sub in subcategory|subcategories %}
                         <li><a href="/category/{{sub.name}}">{{sub.name}}</a></li>
-                    {% endfor %}                    <!-- /.col --> 
+                    {% endfor %}
                       </ul>
                     </div>
-                {% endfor %}
-                  </div>
-                  <!-- /.row --> 
-                </li>
+                  {% endfor %}
+                </div>
                 <!-- /.yamm-content -->
               </ul>
-              <!-- /.dropdown-menu --> </li>
+            </li>
             <!-- /.menu-item -->  
             {% endfor %}          
           </ul>
@@ -41,10 +39,6 @@
         </nav>
         <!-- /.megamenu-horizontal --> 
       </div>
-      <!-- /.side-menu --> 
-      <!-- ================================== TOP NAVIGATION : END ================================== --> 
-      
-      <!-- ============================================== HOT DEALS ============================================== -->
       <div class="sidebar-widget hot-deals outer-bottom-xs">
         <h3 class="section-title">Hot deals</h3>
         <div class="owl-carousel sidebar-carousel custom-carousel owl-theme outer-top-ss">
@@ -53,7 +47,7 @@
             <div class="products">
               <div class="hot-deal-wrapper">
                 <div class="image"> 
-                <a href="#">
+                <a href="/category/{{product.category}}/{{product.slug}}">
                 <img src="/media/{{product.id|product_attributes}}" alt=""> 
                 <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
                 </a>
@@ -78,7 +72,7 @@
               <!-- /.hot-deal-wrapper -->
               
               <div class="product-info text-left m-t-20">
-                <h3 class="name"><a href="/category/{{product.category}}/{{product}}/">{{product.name}}</a></h3>
+                <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
                 <div class="">
                     {% for star in 5|range_filter %}
                       {% if star < product|product_rating %}
@@ -101,10 +95,8 @@
                       <input type='hidden' name='product' value='{{ product.id }}'>
                       <input type='hidden' name='user' value='{{ user.id }}'>
                       <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                      title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                    </form>
-                  
-                    <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                      title="Add Cart"> <i class="fa fa-shopping-cart"></i> Add to cart</button>
+                    </form> 
                   </div>
                 </div>
                 <!-- /.action --> 
@@ -132,14 +124,15 @@
                     <div class="row product-micro-row">
                       <div class="col col-xs-5">
                         <div class="product-image">
-                          <div class="image"> <a href="#"> <img src="/media/{{product.id|product_attributes}}" alt=""> </a> </div>
+                          <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> 
+                          <img src="/media/{{product.id|product_attributes}}" alt=""></a> </div>
                         </div>
                         <!-- /.product-image --> 
                       </div>
                       <!-- /.col -->
                       <div class="col col-xs-7">
                         <div class="product-info">
-                          <h3 class="name"><a href="/category{{product.category}}/{{product}}">{{product.name}}</a></h3>
+                          <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
                           <div class="">
                               {% for star in 5|range_filter %}
                                 {% if star < product|product_rating %}
@@ -199,7 +192,7 @@
                       <div class="row product-micro-row">
                         <div class="col col-xs-5">
                           <div class="product-image">
-                            <div class="image"> <a href="/category/{{product.category}}/{{product}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
+                            <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
                             <!-- /.image --> 
                             
                           </div>
@@ -208,7 +201,7 @@
                         <!-- /.col -->
                         <div class="col col-xs-7">
                           <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product}}">{{product.name}}</a></h3>
+                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
                             <div class="">
                               {% for star in 5|range_filter %}
                                 {% if star < product|product_rating %}
@@ -241,7 +234,7 @@
                       <div class="row product-micro-row">
                         <div class="col col-xs-5">
                           <div class="product-image">
-                            <div class="image"> <a href="/category/{{product.category}}/{{product}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
+                            <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
                             <!-- /.image --> 
                             
                           </div>
@@ -250,7 +243,7 @@
                         <!-- /.col -->
                         <div class="col col-xs-7">
                           <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product}}">{{product.name}}</a></h3>
+                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
                             <div class="">
         
                               {% for star in 5|range_filter %}
@@ -285,7 +278,7 @@
                       <div class="row product-micro-row">
                         <div class="col col-xs-5">
                           <div class="product-image">
-                            <div class="image"> <a href="/category/{{product.category}}/{{product}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
+                            <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
                             <!-- /.image --> 
                             
                           </div>
@@ -294,7 +287,7 @@
                         <!-- /.col -->
                         <div class="col col-xs-7">
                           <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product}}">{{product.name}}</a></h3>
+                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
                             <div class="">
         
                               {% for star in 5|range_filter %}
@@ -389,34 +382,25 @@
       
       <div id="hero">
         <div id="owl-main" class="owl-carousel owl-inner-nav owl-ui-sm">
-          <div class="item" style="background-image: url(assets/images/sliders/01.jpg);">
-            <div class="container-fluid">
-              <div class="caption bg-color vertical-center text-left">
-                <div class="slider-header fadeInDown-1">Top Brands</div>
-                <div class="big-text fadeInDown-1"> New Collections </div>
-                <div class="excerpt fadeInDown-2 hidden-xs"> <span>"Discover our captivating new collection, curated with the latest trends and timeless styles to elevate your wardrobe."</span> </div>
-                <div class="button-holder fadeInDown-3"> <a href="#" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a> </div>
+          {% for banner in banners %}
+            <div class="item" style="background-image: url('/media/{{ banner.image }}');">
+              <div class="container-fluid">
+                <div class="caption bg-color vertical-center text-left header_text_div">
+                  <div class="slider-header fadeInDown-1" style="color: white; font-weight: 400;">{{ banner.subtitle }}</div>
+                  <div class="big-text fadeInDown-1" style="color:white;">{{ banner.title }}</div>
+                  <div class="excerpt fadeInDown-2 hidden-xs" style="color: white; font-weight: 400;">
+                    <span>"{{ banner.description }}"</span>
+                  </div>
+                  <div class="button-holder fadeInDown-3">
+                    <a href="/category/{{ banner.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                  </div>
+                </div>
+                <!-- /.caption -->
               </div>
-              <!-- /.caption --> 
+              <!-- /.container-fluid -->
             </div>
-            <!-- /.container-fluid --> 
-          </div>
-          <!-- /.item -->
-          
-          <div class="item" style="background-image: url(assets/images/sliders/02.jpg);">
-            <div class="container-fluid">
-              <div class="caption bg-color vertical-center text-left">
-                <div class="slider-header fadeInDown-1">Spring 2018</div>
-                <div class="big-text fadeInDown-1"> Women Fashion </div>
-                <div class="excerpt fadeInDown-2 hidden-xs"> <span>"Elevate your style with our exquisite women's fashion collection."
-                  </span> </div>
-                <div class="button-holder fadeInDown-3"> <a href="index6c11.html?page=single-product" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a> </div>
-              </div>
-              <!-- /.caption --> 
-            </div>
-            <!-- /.container-fluid --> 
-          </div>
-          <!-- /.item --> 
+            <!-- /.item -->
+          {% endfor %}
           
         </div>
         <!-- /.owl-carousel --> 
@@ -427,7 +411,6 @@
 
       <!-- ============================================== SCROLL TABS ============================================== -->
       <div id="product-tabs-slider" class="scroll-tabs outer-top-vs">
-        <!-- {% if user.is_authenticated %} -->
         <div class="more-info-tab clearfix ">
           <h3 class="new-product-title pull-left">New Products</h3>
           <ul class="nav nav-tabs nav-tab-line pull-right" id="new-products-1">
@@ -438,10 +421,6 @@
           </ul>
           <!-- /.nav-tabs --> 
         </div>
-
-        <!-- {% else %} -->
-        <!-- <li class="login"><a href="{% url 'login_user' %}"><span>Login</span></a></li> -->
-      <!-- {% endif %} -->
         <div class="tab-content outer-top-xs">
           <div class="tab-pane in active" id="all">
             <div class="product-slider">
@@ -451,15 +430,11 @@
                     <div class="products">
                       <div class="product">
                         <div class="product-image">
-                          
                           <div class="image"> 
-                          <a href="/category/{{ product.category }}/{{ product }}/">
+                          <a href="/category/{{ product.category }}/{{ product.slug }}/">
                             <img src="/media/{{ product.id|product_attributes }}" alt="">          
                             <img src="/media/{{ product.id|product_attributes }}" alt="" class="hover-image">
                           </a> 
-
-                          
-
                       </div>
                           <!-- /.image -->
                           
@@ -470,7 +445,7 @@
                         <!-- /.product-image -->
                         
                         <div class="product-info text-left">
-                          <h3 class="name"><a href="/category/{{product.category}}/{{product}}/">{{product.name}}</a></h3>
+                          <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
                           <div class="">
                               {% for star in 5|range_filter %}
                                 {% if star < product|product_rating %}
@@ -535,7 +510,7 @@
                           <div class="product">
                             <div class="product-image">
                               <div class="image"> 
-                              <a href="/category/{{product.category}}/{{product}}/">
+                              <a href="/category/{{product.category}}/{{product.slug}}/">
                                 <img src="/media/{{product.id|product_attributes}}" alt=""> 
                                   <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
                               </a>
@@ -550,7 +525,7 @@
                             <!-- /.product-image -->
                             
                             <div class="product-info text-left">
-                              <h3 class="name"><a href="/category/{{product.category}}/{{product}}/">{{product.name}}</a></h3>
+                              <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
                               <div class="">
                                   {% for star in 5|range_filter %}
                                     {% if star < product|product_rating %}
@@ -587,7 +562,7 @@
                                     <i class="icon fa fa-heart"></i> </button>
                                   </form>
                                 </li>
-                                  <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
+                                  <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
                                 </ul>
                               </div>
                               <!-- /.action --> 
@@ -615,27 +590,37 @@
       <!-- ============================================== WIDE PRODUCTS ============================================== -->
       <div class="wide-banners outer-bottom-xs">
         <div class="row">
-          <div class="col-md-4 col-sm-4">
-            <div class="wide-banner cnt-strip">
-              <div class="image"> <img class="img-responsive" src="{% static  'assets/images/banners/home-banner1.jpg' %}" alt=""> </div>
+          {% for banner in middle_banner %}
+            <div class="col-md-4">
+              <div class=""
+                  style="width: 440px;
+                          height: 230px;
+                          background: url('/media/{{ banner.image }}');
+                          background-size: cover;">
+                <div class="card-body">
+                  <div class="text-left mt-3" style="padding-left: 10%; padding-top: 12%;">
+                    <div class="slider-header fadeInDown-1"
+                        style="color: white;
+                                font-weight: 400;
+                                font-size: large;">{{ banner.subtitle }}</div>
+                    <div class=""
+                        style="color: white;
+                                font-size: xx-large;
+                                font-weight: 600;">{{ banner.title }}</div>
+                    <div class="excerpt fadeInDown-2 hidden-xs"
+                        style="color: white;
+                                font-weight: 400;">
+                      <span>"{{ banner.description }}"</span>
+                    </div>
+                    <br>
+                    <div class="button-holder fadeInDown-3">
+                      <a href="/category/{{ banner.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <!-- /.wide-banner --> 
-          </div>
-          
-          <div class="col-md-4 col-sm-4">
-            <div class="wide-banner cnt-strip">
-              <div class="image"> <img class="img-responsive" src="{% static  'assets/images/banners/home-banner3.jpg' %}" alt=""> </div>
-            </div>
-            <!-- /.wide-banner --> 
-          </div>
-          
-          <!-- /.col -->
-          <div class="col-md-4 col-sm-4">
-            <div class="wide-banner cnt-strip">
-              <div class="image"> <img class="img-responsive" src="{% static  'assets/images/banners/home-banner2.jpg' %}" alt=""> </div>
-            </div>
-            <!-- /.wide-banner --> 
-          </div>
+          {% endfor %}
           <!-- /.col --> 
         </div>
         <!-- /.row --> 
@@ -662,20 +647,19 @@
               <div class="product">
                 <div class="product-image">
                   <div class="image"> 
-                        <a href="/category/{{product.category}}/{{product}}/">
-                           <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                            <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
-                        </a>
-                        </div>
-                  
+                    <a href="/category/{{product.category}}/{{product.slug}}/">
+                        <img src="/media/{{product.id|product_attributes}}" alt=""> 
+                        <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
+                    </a>
+                  </div>
                   {% if product.tag is not None %}
                     <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
                   {% endif %}
                 </div>
                 <!-- /.product-image -->
-                
+
                 <div class="product-info text-left">
-                  <h3 class="name"><a href="/category/{{product.category}}/{{product}}/">{{product.name}}</a></h3>
+                  <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
                   <div class="">
 
                       {% for star in 5|range_filter %}
@@ -713,7 +697,7 @@
                           <i class="icon fa fa-heart"></i> </button>
                         </form>
                       </li>
-                      <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
+                      <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
                     </ul>
                   </div>
                   <!-- /.action --> 
@@ -739,33 +723,60 @@
         <div class="row">
           <div class="col-md-8">
             <div class="wide-banner1 cnt-strip">
-              <div class="image"> <img class="img-responsive" src="{% static  'assets/images/banners/home-banner.jpg' %}" alt=""> </div>
+              <div class="image">
+                <img class="img-responsive"
+                    src="media/{{ wide_banner_large.image }}"
+                    alt=""
+                    style="height: 230px;
+                            width: 100%">
+              </div>
               <div class="strip strip-text">
                 <div class="strip-inner">
-                  <h2 class="text-right">Amazing Sunglasses<br>
-                    <span class="shopping-needs">Get 40% off on selected items</span></h2>
+                  <h2 class="text-right">
+                    {{ wide_banner_large.title }}
+                    <br>
+                    <span class="shopping-needs">{{ wide_banner_large.description }}</span>
+                    <br>
+                    <div class="button-holder fadeInDown-3">
+                      <a href="/category/{{ wide_banner_large.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                    </div>
+                  </h2>
                 </div>
+
               </div>
               <div class="new-label">
                 <div class="text">NEW</div>
               </div>
-              <!-- /.new-label --> 
+              <!-- /.new-label -->
             </div>
-            <!-- /.wide-banner --> 
           </div>
-          <!-- /.col --> 
+          <!-- /.col -->
           <div class="col-md-4">
             <div class="wide-banner cnt-strip">
-              <div class="image"> <img class="img-responsive" src="{% static  'assets/images/banners/home-banner4.jpg' %}" alt=""> </div>
-              
-              
-              <!-- /.new-label --> 
-            </div>
-            <!-- /.wide-banner --> 
+              <div class="image">
+                <img class="img-responsive"
+                    src="media/{{ wide_banner_small.image }}"
+                    alt=""
+                    style="height:230px;
+                            width:100%">
+              </div>
+              <div class="strip strip-text">
+                <div class="strip-inner">
+                  <h2 class="text-right">
+                    {{ wide_banner_small.title }}
+                    <br>
+                    <span class="shopping-needs">{{ wide_banner_small.description }}</span>
+                    <br>
+                    <div class="button-holder fadeInDown-3">
+                      <a href="/category/{{ wide_banner_small.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                    </div>
+                  </h2>
+                </div>
+              </div>
+              <!-- /.wide-banner -->
+            </div>            
           </div>
-          
         </div>
-        <!-- /.row --> 
       </div>
       <!-- /.wide-banners --> 
       <!-- ============================================== WIDE PRODUCTS : END ============================================== --> 
@@ -780,17 +791,20 @@
         <h3 class="section-title">Latest form Blog</h3>
         <div class="blog-slider-container outer-top-xs">
           <div class="owl-carousel blog-slider custom-carousel">
+          {% for blog in blogs %}
             <div class="item">
               <div class="blog-post">
                 <div class="blog-post-image">
-                  <div class="image"> <a href="blog.html"><img src="{% static  'assets/images/blog-post/blog_big_01.jpg' %}" alt=""></a> </div>
+                  <div class="image"> <a href="/user/blog/{{ blog.id }}">
+                    <img src="/media/{{ blog.image }}" alt="blog.title image" style="height: 230px;"></a>
+                  </div>
                 </div>
                 <!-- /.blog-post-image -->
                 
                 <div class="blog-post-info text-left">
-                  <h3 class="name"><a href="#">Voluptatem accusantium doloremque laudantium</a></h3>
-                  <span class="info">By Jone Doe &nbsp;|&nbsp; 21 March 2016 </span>
-                  <p class="text">Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+                  <h3 class="name"><a href="#">{{ blog.title }}</a></h3>
+                  <span class="info">By {{ blog.user.first_name }} {{ blog.user.last_name }} &nbsp;|&nbsp; 21 March 2016 </span>
+                  <p class="text">{{ blog.description|truncate_description }}</p>
                  </div>
                 <!-- /.blog-post-info --> 
                 
@@ -798,85 +812,7 @@
               <!-- /.blog-post --> 
             </div>
             <!-- /.item -->
-            
-            <div class="item">
-              <div class="blog-post">
-                <div class="blog-post-image">
-                  <div class="image"> <a href="blog.html"><img src="{% static  'assets/images/blog-post/blog_big_02.jpg' %}" alt=""></a> </div>
-                </div>
-                <!-- /.blog-post-image -->
-                
-                <div class="blog-post-info text-left">
-                  <h3 class="name"><a href="#">Dolorem eum fugiat quo voluptas nulla pariatur</a></h3>
-                  <span class="info">By Saraha Smith &nbsp;|&nbsp; 21 March 2016 </span>
-                  <p class="text">Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
-                 </div>
-                <!-- /.blog-post-info --> 
-                
-              </div>
-              <!-- /.blog-post --> 
-            </div>
-            <!-- /.item --> 
-            
-            <!-- /.item -->
-            
-            <div class="item">
-              <div class="blog-post">
-                <div class="blog-post-image">
-                  <div class="image"> <a href="blog.html"><img src="{% static  'assets/images/blog-post/blog_big_03.jpg' %}" alt=""></a> </div>
-                </div>
-                <!-- /.blog-post-image -->
-                
-                <div class="blog-post-info text-left">
-                  <h3 class="name"><a href="#">Dolorem eum fugiat quo voluptas nulla pariatur</a></h3>
-                  <span class="info">By Saraha Smith &nbsp;|&nbsp; 21 March 2016 </span>
-                  <p class="text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium</p>
-                  </div>
-                <!-- /.blog-post-info --> 
-                
-              </div>
-              <!-- /.blog-post --> 
-            </div>
-            <!-- /.item -->
-            
-            <div class="item">
-              <div class="blog-post">
-                <div class="blog-post-image">
-                  <div class="image"> <a href="blog.html"><img src="{% static  'assets/images/blog-post/blog_big_01.jpg' %}" alt=""></a> </div>
-                </div>
-                <!-- /.blog-post-image -->
-                
-                <div class="blog-post-info text-left">
-                  <h3 class="name"><a href="#">Dolorem eum fugiat quo voluptas nulla pariatur</a></h3>
-                  <span class="info">By Saraha Smith &nbsp;|&nbsp; 21 March 2016 </span>
-                  <p class="text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium</p>
-                  </div>
-                <!-- /.blog-post-info --> 
-                
-              </div>
-              <!-- /.blog-post --> 
-            </div>
-            <!-- /.item -->
-            
-            <div class="item">
-              <div class="blog-post">
-                <div class="blog-post-image">
-                  <div class="image"> <a href="blog.html"><img src="{% static  'assets/images/blog-post/blog_big_02.jpg' %}" alt=""></a> </div>
-                </div>
-                <!-- /.blog-post-image -->
-                
-                <div class="blog-post-info text-left">
-                  <h3 class="name"><a href="#">Dolorem eum fugiat quo voluptas nulla pariatur</a></h3>
-                  <span class="info">By Saraha Smith &nbsp;|&nbsp; 21 March 2016 </span>
-                  <p class="text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium</p>
-                </div>
-                <!-- /.blog-post-info --> 
-                
-              </div>
-              <!-- /.blog-post --> 
-            </div>
-            <!-- /.item --> 
-            
+            {% endfor %}            
           </div>
           <!-- /.owl-carousel --> 
         </div>
@@ -895,7 +831,7 @@
               <div class="product">
                 <div class="product-image">
                   <div class="image"> 
-                        <a href="/category/{{product.category}}/{{product}}/">
+                        <a href="/category/{{product.category}}/{{product.slug}}/">
                            <img src="/media/{{product.id|product_attributes}}" alt=""> 
                             <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
                         </a>
@@ -909,7 +845,7 @@
                 <!-- /.product-image -->
                 
                 <div class="product-info text-left">
-                  <h3 class="name"><a href="/category/{{product.category}}/{{product}}/">{{product.name}}</a></h3>
+                  <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
                   <div class="">
 
                       {% for star in 5|range_filter %}
@@ -947,7 +883,7 @@
                           <i class="icon fa fa-heart"></i> </button>
                         </form>
                       </li>
-                      <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
+                      <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
                     </ul>
                   </div>
                   <!-- /.action --> 

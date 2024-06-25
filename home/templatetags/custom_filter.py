@@ -55,7 +55,6 @@ def electronics_sub_categories(category):
         categories = None
     return categories
 
-
 @register.filter
 def fetch_all_parent_category(category):
     categories = []
@@ -129,3 +128,22 @@ def check_user_role(user):
                 return user_role.id
     except Role.DoesNotExist:
         return None 
+    
+@register.filter
+def active_header_category(request):
+    if 'categor' in request:
+        category = Category.objects.get(name = request.split('/')[2])
+        if category:
+            categories = fetch_all_parent_category(category)
+            if categories:
+                return categories[0]
+            else:
+                return category.name
+        else:
+            return None
+    else:
+        return None
+    
+@register.filter
+def truncate_description(description):
+    return description[:100]

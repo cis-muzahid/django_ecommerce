@@ -21,55 +21,55 @@
 		<div class="my-wishlist-page">
 			<div class="row">
 				<div class="col-md-12 my-wishlist">
-	<div class="table-responsive">
-		<table class="table">
-			<thead>
-				<tr>
-					<th colspan="4" class="heading-title">My Wishlist</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for wishlist in wishlists %}
-				<tr>
-					<td class="col-md-2 col-sm-6 col-xs-6"><img src="/media/{{ wishlist.product.id|product_attributes }}" alt="imga"></td>
-					<td class="col-md-7 col-sm-6 col-xs-6">
-						<div class="product-name"><a href="#">{{ wishlist.product.name }}</a></div>
-						<div class="p-0">
-							{% for star in 5|range_filter %}
-								{% if star < wishlist.product|product_rating %}
-									<span class="star_{{ wishlist.product|product_rating }}">★</span>
-								{% else %}
-									<span class="empty-star">★</span>
-								{% endif %}
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th colspan="4" class="heading-title">My Wishlist</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for wishlist in wishlists %}
+							<tr>
+								<td class="col-md-2 col-sm-6 col-xs-6"><img src="/media/{{ wishlist.product.id|product_attributes }}" alt="imga"></td>
+								<td class="col-md-7 col-sm-6 col-xs-6">
+									<div class="product-name"><a href="#">{{ wishlist.product.name }}</a></div>
+									<div class="p-0">
+										{% for star in 5|range_filter %}
+											{% if star < wishlist.product|product_rating %}
+												<span class="star_{{ wishlist.product|product_rating }}">★</span>
+											{% else %}
+												<span class="empty-star">★</span>
+											{% endif %}
+										{% endfor %}
+									</div>
+									<span class="review">( {{ wishlist.product|product_review_users_count }} Reviews )</span>
+									<div class="price">
+										{{ wishlist.product.price }}
+										<span>$900.00</span>
+									</div>
+								</td>
+								<td class="col-md-2 ">
+									<form action='/add_cart/' method='post'>{% csrf_token %}
+										<input type='hidden' name='product' value='{{ wishlist.product.id }}'>
+										<input type='hidden' name='user' value='{{ wishlist.user.id }}'>
+										<button type='submit' data-toggle="tooltip" class="btn-upper btn btn-primary" title="Wishlist">
+											Add to cart </button>
+									</form>
+								</td>
+								<td class="col-md-1 close-btn">
+									<a href="/remove_product/wishlist/{{ wishlist.id }}/" class=""><i class="fa fa-times"></i></a>
+								</td>
+							</tr>
 							{% endfor %}
-						</div>
-						<span class="review">( {{ wishlist.product|product_review_users_count }} Reviews )</span>
-						<div class="price">
-							{{ wishlist.product.price }}
-							<span>$900.00</span>
-						</div>
-					</td>
-					<td class="col-md-2 ">
-						<form action='/add_cart/' method='post'>{% csrf_token %}
-							<input type='hidden' name='product' value='{{ wishlist.product.id }}'>
-							<input type='hidden' name='user' value='{{ wishlist.user.id }}'>
-							<button type='submit' data-toggle="tooltip" class="btn-upper btn btn-primary" title="Wishlist">
-								Add to cart </button>
-						</form>
-					</td>
-					<td class="col-md-1 close-btn">
-						<a href="/remove_product/wishlist/{{ wishlist.id }}/" class=""><i class="fa fa-times"></i></a>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-</div>			</div><!-- /.row -->
-		</div><!-- /.sigin-in-->
-		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
-<div id="brands-carousel" class="logo-slider wow fadeInUp">
-
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div><!-- /.row -->
+	</div><!-- /.sigin-in-->
+	<!-- ============================================== BRANDS CAROUSEL ============================================== -->
+	<div id="brands-carousel" class="logo-slider wow fadeInUp">
 		<div class="logo-slider-inner">	
 			<div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
 				<div class="item m-t-15">
@@ -138,41 +138,4 @@
 <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
 </div><!-- /.body-content -->
 <!-- ============================================================= FOOTER ============================================================= -->
-
-        <!-- ============================================== INFO BOXES ============================================== -->
-        <div class="row our-features-box">
-     <div class="container">
-      <ul>
-        <li>
-          <div class="feature-box">
-            <div class="icon-truck"></div>
-            <div class="content-blocks">We ship worldwide</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-support"></div>
-            <div class="content-blocks">call 
-              +1 800 789 0000</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-money"></div>
-            <div class="content-blocks">Money Back Guarantee</div>
-          </div>
-        </li>
-        <li>
-          <div class="feature-box">
-            <div class="icon-return"></div>
-            <div class="content">30 days return</div>
-          </div>
-        </li>
-        
-      </ul>
-    </div>
-  </div>
-        <!-- /.info-boxes --> 
-        <!-- ============================================== INFO BOXES : END ============================================== --> 
-
 {% endblock %}
