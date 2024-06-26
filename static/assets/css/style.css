@@ -210,19 +210,23 @@ color: #0ba10b;
     font-weight: bolder !important;
 }
 
-#editor-toolbar {
+
+.editor-toolbar {
     background-color: #f3f3f3;
     border: 1px solid #ccc;
-    padding: 5px;
+    margin-bottom: 10px;
 }
-#blog_description {
+
+.blog_editor, #editor {
     border: 1px solid #ccc;
-    min-height: 300px;
+    min-height: 150px;
     padding: 10px;
+    overflow-y: auto;
 }
 .editor-button {
     background: none;
     border: none;
     cursor: pointer;
     padding: 5px;
+    margin-right: 10px;
 }

@@ -55,11 +55,15 @@ class AdminBlogView(View):
         return render(request, "admin/blog/blog-description.html", {'blog': blog})
 
 class UserBlogView(View):
-    def get(self, request, pk):
+    def get(self, request, pk=None):
         try:
-            blog = Blog.objects.get(id=pk)
+            if pk == None:
+                blogs = Blog.objects.filter(active=True)
+                return render(request, "home/blogs.html", {'blogs': blogs})
+            else:
+                blog = Blog.objects.get(id=pk)
+                return render(request, "home/blog-details.html", {'blog': blog})
         except:
             messages.error(request, "blog is not available.")
-
-        return render(request, "home/blog-details.html", {'blog': blog})
+            return render(request, "home/blog-details.html", {'blog': blog})
         
