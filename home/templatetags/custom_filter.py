@@ -2,8 +2,10 @@ from django import template
 from django.shortcuts import get_object_or_404
 from products.models import ProductAttribute, Product, Category, ProductReview
 from cart.models import Cart
+from blog.models import Comment
 from users.models import Role
 from django.db.models import Avg
+from django.utils import timezone
 
 register = template.Library()
 
@@ -147,3 +149,27 @@ def active_header_category(request):
 @register.filter
 def truncate_description(description):
     return description[:100]
+
+@register.filter
+def reply_comments(comment):
+    return Comment.objects.filter(active=True, parent_comment=comment)
+
+@register.filter
+def comment_time(time):
+    now = timezone.now()
+    time_difference = now - time
+    days = time_difference.days
+    if days == 0:
+        seconds = time_difference.seconds
+        hours = seconds // 3600
+        if hours == 0:
+            minutes = (seconds % 3600) // 60
+            if minutes == 0:
+                return f'{ seconds } seconds'
+            return f'{ minutes } minutes'
+        return f'{ hours } hours'
+    return f'{ days } days'
+
+@register.filter
+def comments_counts(blog):
+    return Comment.objects.filter(active=True, blog=blog).count()

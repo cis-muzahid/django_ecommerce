@@ -1,34 +1,89 @@
 {% extends 'admin/base.html' %}
 {% load static %}
-
+{% load custom_filter %}
 {% block body %}
-<div class='container'>
-  <div class='row categorie_main'>
-    <div class="col-12 card">
+  <div class='container'>
+    <div class='row categorie_main'>
+      <div class="col-12 card">
         <div class="card-body">
           <div class="body-content">
-	<div class="container">
-		<div class="row">
-			<div class="blog-page">
-					<div class="blog-post wow fadeInUp">
-            <div class="text-center">
-                <img class="img-fluid" src="/media/{{ blog.image }}" alt="" >
+            <div class="container">
+              <div class="row">
+                <div class="blog-page">
+                  <div class="blog-post wow fadeInUp">
+                    <div class="text-center">
+                      <img class="img-fluid" src="/media/{{ blog.image }}" alt="">
+                    </div>
+                    <h1>{{ blog.title }}</h1>
+                    <span class="author">{{ blog.user.first_name }} {{ blog.user.last_name }}</span>
+                    <span class="review">7 Comments</span>
+                    <span class="date-time">18/06/2016 11.30AM</span>
+                    <p>{{ blog.description|safe }}</p>
+                    <div class="social-media">
+                      <span>share post:</span>
+                      <a href="#"><i class="fa fa-facebook"></i></a>
+                      <a href="#"><i class="fa fa-twitter"></i></a>
+                      <a href="#"><i class="fa fa-linkedin"></i></a>
+                      <a href="#"><i class="fa fa-rss"></i></a>
+                      <a href="#" class="hidden-xs"><i class="fa fa-pinterest"></i></a>
+                    </div>
+                  </div>
+                              <div class="blog-review wow fadeInUp">
+              <div class="row">
+                <div class="col-md-12">
+                  <h3 class="title-review-comments">{{ blog.id|comments_counts }} comments</h3>
                 </div>
-            <h1>{{ blog.title }}</h1>
-            <span class="author">{{ blog.user.first_name }} {{ blog.user.last_name }}</span>
-            <span class="review">7 Comments</span>
-            <span class="date-time">18/06/2016 11.30AM</span>
-            <p>{{ blog.description|safe }}</p>
-            <div class="social-media">
-                <span>share post:</span>
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-                <a href="#"><i class="fa fa-linkedin"></i></a>
-                <a href="#"><i class="fa fa-rss"></i></a>
-                <a href="#" class="hidden-xs"><i class="fa fa-pinterest"></i></a>
+                {% for comment in comments %}
+                  <div class="col-md-2 col-sm-2">
+                    <img src="assets/images/testimonials/member1.png"
+                         alt="Responsive image"
+                         class="img-rounded img-responsive">
+                  </div>
+                  <div class="col-md-10 col-sm-10 blog-comments outer-bottom-xs">
+                    <div class="blog-comments inner-bottom-xs">
+                      <h4 onclick="showDiv('reply_comments_{{ comment.id }}')">
+                        {{ comment.user.first_name }} {{ comment.user.last_name }}
+                      </h4>
+                      <span class="review-action pull-right">
+                        {{ comment.created_at|comment_time }} ago 
+                      </span>
+                      <p>{{ comment.description }}</p>
+                    </div>
+                    <div id="reply_comments_{{ comment.id }}"
+                         class="blog-comments-responce outer-top-xs"
+                         style="display:none">
+                      <div class="row">
+                        {% for reply in comment.id|reply_comments %}
+                          <div class="col-md-2 col-sm-2">
+                            <img src="assets/images/testimonials/member3.png"
+                                 alt="Responsive image"
+                                 class="img-rounded img-responsive">
+                          </div>
+                          <div class="col-md-10 col-sm-10">
+                            <div class=" inner-bottom-xs">
+                              <h4>{{ reply.user.first_name }} {{ reply.user.last_name }}</h4>
+                              <span class="review-action pull-right">
+                                {{ reply.created_at|comment_time }} ago
+                              </span>
+                              <p>{{ reply.description }}</p>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+                <div class="post-load-more col-md-12">
+                  <a class="btn btn-upper btn-primary" href="#">Load more</a>
+                </div>
+              </div>
             </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
   </div>
-</div>
 {% endblock body %}
