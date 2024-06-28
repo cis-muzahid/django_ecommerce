@@ -4,6 +4,7 @@ from users.models import CustomUser
 class BlogCategory(models.Model):
     name = models.CharField(max_length=500)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
