@@ -9,6 +9,7 @@ register = template.Library()
 
 @register.filter
 def current_user_cart_total_price(user):
+    """ filter to fetch total amount of login user carts """
     try:
         carts = Cart.objects.filter(user=user, active= True)
         grand_total = 0
@@ -21,6 +22,7 @@ def current_user_cart_total_price(user):
 
 @register.filter
 def current_user_cart_total_quantity(user):
+    """ filter to fetch total number of carts of login user """
     try:
         total_carts = Cart.objects.filter(user=user, active= True).count()       
         return total_carts
@@ -30,6 +32,7 @@ def current_user_cart_total_quantity(user):
 
 @register.filter
 def current_user_replace_request(user):
+    """ filter check login user request for return or replace product """
     try:
         current_time = timezone.now()
         date_before_seven_days = current_time - timedelta(days=7)
@@ -44,6 +47,7 @@ def current_user_replace_request(user):
 
 @register.filter
 def current_user_return_request(order_item):
+    """ filter to check login user request is approved or not for return or replace product """
     try:
         replace_order = ReturnAndReplaceOrder.objects.filter(order=order_item).last()
         if replace_order and replace_order.order.active:
@@ -59,6 +63,7 @@ def current_user_return_request(order_item):
 
 @register.filter
 def is_last_seven_days_order(order_item):
+    """ filter to check login user can create return or replace request or not """
     try:
         order_item = OrderItem.objects.get(id=order_item).order.id
         current_time = timezone.now()
@@ -72,6 +77,7 @@ def is_last_seven_days_order(order_item):
 
 @register.filter
 def user_address_count(user):
+    """ filter to check login user number of addresses """
     try:
         count = UserAddress.objects.filter(user=user).count
     except UserAddress.DoesNotExist:

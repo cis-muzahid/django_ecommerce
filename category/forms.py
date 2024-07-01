@@ -3,6 +3,7 @@ from products.models import Category
 
 class CategoryForm(forms.ModelForm):
     class Meta:
+        """ Form for Category """
         model = Category
         fields = ['name', 'parent_category', 'user']
         widgets = {

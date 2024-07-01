@@ -72,7 +72,8 @@ class OrderView(View):
                 description='Product payment',
                 customer= customer.id,
                 source=source,
-                setup_future_usage='off_session' 
+                setup_future_usage='off_session',
+                automatic_payment_methods={ 'enabled': True, 'allow_redirects': 'never' }
             )
 
             stripe.PaymentIntent.confirm(
@@ -175,9 +176,9 @@ class ReturnAndReplaceView(View):
                     messages.success(request,  f'Your request is completed. Wait sometime for approvment.')
                     return redirect('orders_list')
 
-
 class ChangeOrderStatus(View):
     def post(self, request):
+        """ cancle order view for user """
         try:
             order = OrderItem.objects.get(id= request.POST['order'])
         except OrderItem.DoesNotExist:
@@ -199,6 +200,7 @@ class ChangeOrderStatus(View):
 
 class SupplierReturnAndReplaceView(View):
     def get(self, request):
+        """ return and replace view for supplier """
         if "return" in request.path:
             orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False, active=True)
             if request.user.user_role.name =="supplier":
@@ -211,6 +213,7 @@ class SupplierReturnAndReplaceView(View):
         return render(request, 'admin/orders/return_replace.html', {'orders': orders})
 
     def post(self, request):
+        """ return and replace view that allow admin to approve the return and replace request. """
         if request.POST['request']:
             return_replace_request = ReturnAndReplaceOrder.objects.get(id=request.POST['request'])
             return_replace_request.approved = True
@@ -232,11 +235,13 @@ class SupplierReturnAndReplaceView(View):
 class AdminOrderView(View):
     def get(self, request, pk=None):
         if pk:
+            """ order view for admin """
             orders = OrderItem.objects.filter(order=pk)
             if request.user.user_role.name =="supplier":
                 orders = orders.filter(user = request.user.id)
             return render(request, 'admin/orders/order_items.html', {'orders': orders})
         else:
+            """ order list view for admin """
             orders = Order.objects.all()
             if request.user.user_role.name =="supplier":
                 orders = orders.filter(user = request.user.id)
@@ -245,6 +250,7 @@ class AdminOrderView(View):
 
 class CancelRequest(View):
     def post(self, request):
+        """ view that allow user to cancle return or replace request. """
         cancel_request = ReturnAndReplaceOrder.objects.get(id=request.POST.get('request'))
         cancel_request.active = False
         cancel_request.save()
@@ -264,6 +270,7 @@ paypalrestsdk.configure({
 
 class CreatePaymentView(View):
     def get(self, request):
+        """ payment create view for user """
         payment = paypalrestsdk.Payment({
             "intent": "sale",
             "payer": {
@@ -293,6 +300,7 @@ class CreatePaymentView(View):
 
 class ExecutePaymentView(View):
     def get(self, request):
+        """ payment process view for end user """
         payment_id = request.GET.get('paymentId')
         payer_id = request.GET.get('PayerID')
         payment = paypalrestsdk.Payment.find(payment_id)
@@ -301,6 +309,7 @@ class ExecutePaymentView(View):
         return render(request, 'payment_failed.html')
 
 class PaymentSuccessView(TemplateView):
+    """ paypal payment success view for user """
     template_name = 'payment_success.html'  # Create a template for displaying payment success
 
     def get_context_data(self, **kwargs):
@@ -309,14 +318,17 @@ class PaymentSuccessView(TemplateView):
         return context
 
 class PaymentCheckoutView(View):
+    """ paypal payment checkout view """
     def get(self, request):
         return render(request, 'checkout.html')
 
 class PaymentFailedView(View):
+    """ paypal payment failed view for user """
     def get(self, request):
         return render(request, 'payment_failed.html')
 
 class OrderTracking(View):
+    """ tacking view using order for user """
     def post(self, request):
         order = Order.objects.get(id=request.POST.get('order_id'))
         try:

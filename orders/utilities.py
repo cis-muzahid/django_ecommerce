@@ -8,12 +8,14 @@ from datetime import date
 import json
 
 def check_default_address(user):
+    """ function to check login user default address """
     try:
         return UserAddress.objects.get(user_id=user.id, is_default=True)
     except UserAddress.DoesNotExist:
         return None
 
 def order_cart_item(order, user):
+    """ function to create order items when user create order """
     user = CustomUser.objects.get(id=user)
     carts = Cart.objects.filter(user=user, active=True)
     for cart in carts:
@@ -22,6 +24,7 @@ def order_cart_item(order, user):
         cart.save()
 
 def current_user_cart(user):
+    """ function to fetch all carts of login user """
     try:
         carts =  Cart.objects.filter(user=user.id, active=True)
     except Cart.DoesNotExist:
@@ -38,6 +41,7 @@ def tracking_header():
     return headers
 
 def create_order_tracking(order):
+    """ function to create order tracking """
     tracking_number = randint(1000, 10000)
     order_id = order.id
     conn = http.client.HTTPSConnection("api.aftership.com")
@@ -74,6 +78,7 @@ def create_order_tracking(order):
     return tracking_number
 
 def update_tracking_status(tracking_number):
+    """ function to update tracking status """
     payload = { "tracking": { "tag": "out_for_delivery" } }
     payload_json = json.dumps(payload)
     conn = http.client.HTTPSConnection("api.aftership.com")
@@ -84,6 +89,7 @@ def update_tracking_status(tracking_number):
     pass
 
 def fetch_user_address(user):
+    """ function to fetch all login user's address """
     try:
         addresses = UserAddress.objects.filter(user=user)
     except:

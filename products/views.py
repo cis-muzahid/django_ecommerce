@@ -12,6 +12,7 @@ from django.contrib import messages
 
 class ProductView(View):
     def get(self, request, **kargs):
+        """ products list view for admin """
         if request.user.is_authenticated:
             if kargs and kargs['category'] != None:
                 category = Category.objects.get(name=kargs['category'])
@@ -34,6 +35,7 @@ class ProductView(View):
 
 class ProductRetrieve(View):
     def get(self, request, id, action):
+        """ product details view for admin """
         if action == 'delete':
             product = Product.objects.get(id=id)
             product.is_delete = True
@@ -46,6 +48,7 @@ class ProductRetrieve(View):
             return render(request, 'admin/products/retrieve.html', {'product_specs': product_specs,'product_attr': product_attr, "product": product})
 
 class ProductCreateView(CreateView, UpdateView):
+    """ product create view for admin and supplier """
     model = Product
     form_class = ProductForm
     template_name = 'admin/products/product_form.html'
@@ -66,6 +69,7 @@ class ProductCreateView(CreateView, UpdateView):
             return reverse('product_attributes', kwargs={'product_id': self.object.pk})
 
 class CreateProductSpecification(CreateView):
+    """ product specification create view for admin """
     form_class = ProductSpecificationForm
     template_name = 'admin/products/product_spec_form.html'
 
@@ -96,6 +100,7 @@ class CreateProductSpecification(CreateView):
 
 
 class UpdateProductSpecification(UpdateView):
+    """ product specifictions update view """
     model = ProductSpecification
     form_class = ProductSpecificationForm
     template_name = 'admin/products/product_spec_form.html'
@@ -109,6 +114,7 @@ class UpdateProductSpecification(UpdateView):
     
 class deleteProductAttribute(View):
     def get(self, request, pk, attr):
+        """ delete view for product attributes and specification on the admin dashboard """
         if attr == "attributes":
             product_detail = ProductAttribute.objects.get(pk=pk)
         elif attr == "specification":
@@ -119,6 +125,7 @@ class deleteProductAttribute(View):
         return redirect('product_retrieve', product_detail.product.id, 'get')
 
 class ProductAttributeView(View):
+    """ product attributes create and update view for admin """
     form_class = ProductAttributeForm
     template_name = 'admin/products/product_spec_form.html'
 
@@ -160,10 +167,12 @@ class ProductAttributeView(View):
 
 class ProductReviewView(View):
     def get(self, request):
+        """ products review list for user """
         reviews = ProductReview.objects.filter(user= request.user)
         return render(request, "authenticate/user_review.html", {'reviews': reviews} )
 
     def post(self, request):
+        """ products review create and update view for user """
         product = Product.objects.get(id = request.POST.get("product"))
         try:
             review = ProductReview.objects.filter(product=product.id, user= request.POST.get("user"))
@@ -180,13 +189,14 @@ class ProductReviewView(View):
             except Exception as e:
                 messages.error(request, "An error occurred while adding your review for this product.")
             
-            return redirect('product_details', product.category.name, product.name)
+            return redirect('product_details', product.category.name, product.slug)
         else:
             messages.info(request, "Your review is already added.")
-            return redirect('product_details', product.category.name, product.name)
+            return redirect('product_details', product.category.name, product.slug)
 
-class ProductUpdateDeleteView(View):
+class ProductReviewUpdateDeleteView(View):
     def post(self, request):
+        """ product review update and delete view for user """
         try:
             review = ProductReview.objects.get(id=request.POST.get("review_id"))
             if request.POST.get("action") == "update":

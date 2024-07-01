@@ -10,6 +10,7 @@ from django.contrib import messages
 # Create your views here.
 class CategoryListView(View):
     def get(self, request, **kargs):
+        """ category list for admin """
         if request.user.is_authenticated:
             if request.GET.get('q'):
                 categories = Category.objects.filter(name__icontains=request.GET['q'], is_delete=False)
@@ -25,6 +26,7 @@ class CategoryListView(View):
             return redirect('admin_login')
 
 class CategoryCreateView(CreateView):
+    """ category create view """
     model = Category
     form_class = CategoryForm
     template_name = 'admin/category/category_form.html'
@@ -36,6 +38,7 @@ class CategoryCreateView(CreateView):
 
 
 class CategoryUpdateView(UpdateView):
+    """ category update view """
     model = Category
     form_class = CategoryForm
     template_name = 'admin/category/category_form.html'
@@ -46,6 +49,7 @@ class CategoryUpdateView(UpdateView):
         return context
 
 class CategoryDeleteView(View):
+    """ category delete view """
     def get(self, request, pk):
         category = Category.objects.get(id=pk)
         category.is_delete = True 
