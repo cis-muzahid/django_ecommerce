@@ -21,11 +21,15 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class OrderView(View):
     def get(self, request):
         """ Orders View for orders list """
-        default_address = check_default_address(request.user)
-        all_addresses = fetch_user_address(request.user) 
-        publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-        return render(request, 'orders/checkout.html', 
-                      {'publishable_key': publishable_key, 'default_address': default_address, 'all_addresses': all_addresses})
+        if request.user.id:
+            default_address = check_default_address(request.user)
+            all_addresses = fetch_user_address(request.user)
+            publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+            return render(request, 'orders/checkout.html',
+                        {'publishable_key': publishable_key, 'default_address': default_address,
+                         'all_addresses': all_addresses})
+        else:
+            return redirect('login_user')
 
     def post(self, request, pk=None):
         """ Orders View for create orders """

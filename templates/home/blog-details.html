@@ -59,8 +59,9 @@
                         {{ comment.user.first_name }} {{ comment.user.last_name }}
                       </h4>
                       <span class="review-action pull-right">
-                        {{ comment.created_at|comment_time }} ago &sol;
-                        <button class="btn-link"
+                        {{ comment.created_at|comment_time }} ago
+                        {% if user.is_authenticated %}
+                        &sol; <button class="btn-link"
                                 onclick="showDiv('update_comment_form_{{ comment.id }}')">Repost</button>
                         &sol;
                         <button class="btn-link" onclick="showDiv('reply_form_{{ comment.id }}')">Reply</button>
@@ -71,6 +72,7 @@
                           <input type="hidden" name="blog" value="{{ blog.id }}">
                           <button type="submit" class='btn btn-link' style="padding:0px;">Delete</button>
                         </form>
+                        {% endif %}
                       </span>
                       <p>{{ comment.description }}</p>
                     </div>
@@ -88,8 +90,9 @@
                             <div class=" inner-bottom-xs">
                               <h4>{{ reply.user.first_name }} {{ reply.user.last_name }}</h4>
                               <span class="review-action pull-right">
-                                {{ reply.created_at|comment_time }} ago &sol;
-                                <button class="btn-link"
+                                {{ reply.created_at|comment_time }} ago
+                                {% if user.is_authenticated %}
+                                &sol; <button class="btn-link"
                                         onclick="showDiv('update_reply_form_{{ reply.id }}')">Repost</button>
                                 &sol;
                                 <form action="/user/comment/delete/" method="post" style="display:inline;">
@@ -98,6 +101,7 @@
                                   <input type="hidden" name="blog" value="{{ blog.id }}">
                                   <button type="submit" class='btn btn-link' style="padding:0px;">Delete</button>
                                 </form>
+                                {% endif %}
                               </span>
                               <p>{{ reply.description }}</p>
                             </div>
@@ -185,6 +189,7 @@
                 {% endfor %}
               </div>
             </div>
+            {% if user.is_authenticated %}
             <div class="blog-write-comment outer-bottom-xs outer-top-xs">
               <div class="row">
                 <div class="col-md-12">
@@ -214,6 +219,7 @@
                 </form>
               </div>
             </div>
+            {% endif %}
           </div>
           <div class="col-xs-12 col-sm-3 col-md-3 sidebar" style="padding:0px">
             <div class="sidebar-module-container">

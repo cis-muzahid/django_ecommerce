@@ -302,6 +302,7 @@
                             
                           </div>
                           <!-- /.product-info -->
+                          {% if user.is_authenticated %}
                           <div class="cart clearfix animate-effect">
                             <div class="action">
                               <ul class="list-unstyled">
@@ -327,6 +328,7 @@
                             </div>
                             <!-- /.action --> 
                           </div>
+                          {% endif %}
                           <!-- /.cart --> 
                         </div>
                       </div>
@@ -363,6 +365,7 @@
                             <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
                             <!-- /.product-price -->
                             <div class="description m-t-10">{{product.description}}</div>
+                            {% if user.is_authenticated %}
                             <div class="cart clearfix animate-effect">
                               <div class="action">
                                 <ul class="list-unstyled">
@@ -388,6 +391,7 @@
                               </div>
                               <!-- /.action --> 
                             </div>
+                            {% endif %}
                             <!-- /.cart --> 
                             
                           </div>

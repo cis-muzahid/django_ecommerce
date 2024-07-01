@@ -62,11 +62,13 @@ class HomeView(View):
 
 class AdminBannerView(View):
     def get(self, request):
+        """ admin and supplier banners list """
         banners = Banner.objects.filter(active=True).order_by('-id')
         categories = Category.objects.filter(is_delete=False)
         return render(request, "admin/home/banner.html", {'banners': banners, 'categories': categories})
     
     def post(self, request):
+        """ banner create view for admin and supplier  """
         banners = Banner.objects.filter(active=True).order_by('-id')
         categories = Category.objects.filter(is_delete=False)
         form = BannerForm(request.POST, request.FILES)
@@ -83,16 +85,8 @@ class AdminBannerView(View):
         return render(request, "admin/home/banner.html", {'banners': banners, 'categories': categories})
 
 class AdminBannerUpdateDeleteView(View):
-    def get(self, request, pk):
-        try:
-            categories = Category.objects.filter(is_delete=False)
-            banner = Banner.objects.get(id=pk)
-            return render(request, "admin/home/edit_banner.html", {'banner': banner})
-        except Banner.DoesNotExist as e:
-            messages.error(request, "An error occurred while adding banner : ", e)
-            return redirect("admin_banner_view")
-
     def post(self, request, pk):
+        """ banner update and delete view for admin and supplier """
         categories = Category.objects.filter(is_delete=False)
         banners = Banner.objects.filter(active=True).order_by('-id')
         try:
@@ -125,10 +119,12 @@ class AdminBannerUpdateDeleteView(View):
 
 class AdminFacilityView(View):
     def get(self, request):
+        """ facilities list view for admin """
         facilities = Facility.objects.filter(active=True).order_by('-id')
         return render(request, "admin/home/facilities.html", {'facilities': facilities})
 
     def post(self, request):
+        """ facilities create and update view for admin """
         if request.POST.get("facility"):
             action = "updat"
             facility = Facility.objects.get(id=request.POST.get("facility"))
@@ -152,6 +148,7 @@ class AdminFacilityView(View):
 
 class AdminFacilityDeleteView(View):
     def post(self, request):
+        """ category delete view for admin """
         try:
             facility = Facility.objects.get(id=request.POST.get("facility"))
             facility.active = False

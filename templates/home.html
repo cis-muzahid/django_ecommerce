@@ -87,7 +87,7 @@
                 
               </div>
               <!-- /.product-info -->
-              
+              {% if user.is_authenticated %}
               <div class="cart clearfix animate-effect">
                 <div class="action">
                   <div class="add-cart-button btn-group">
@@ -101,6 +101,7 @@
                 </div>
                 <!-- /.action --> 
               </div>
+              {% endif %}
               <!-- /.cart --> 
             </div>
           </div>
@@ -461,6 +462,7 @@
                           
                         </div>
                         <!-- /.product-info -->
+                        {% if user.is_authenticated %}
                         <div class="cart clearfix animate-effect">
                           <div class="action">
                             <ul class="list-unstyled">
@@ -485,6 +487,7 @@
                           </div>
                           <!-- /.action --> 
                         </div>
+                        {% endif %}
                         <!-- /.cart --> 
                       </div>
                       <!-- /.product --> 
@@ -542,6 +545,7 @@
                               
                             </div>
                             <!-- /.product-info -->
+                            {% if user.is_authenticated %}
                             <div class="cart clearfix animate-effect">
                               <div class="action">
                                 <ul class="list-unstyled">
@@ -567,6 +571,7 @@
                               </div>
                               <!-- /.action --> 
                             </div>
+                            {% endif %}
                             <!-- /.cart --> 
                           </div>
                           <!-- /.product --> 
@@ -677,6 +682,7 @@
                   
                 </div>
                 <!-- /.product-info -->
+                {% if user.is_authenticated %}
                 <div class="cart clearfix animate-effect">
                   <div class="action">
                     <ul class="list-unstyled">
@@ -702,6 +708,7 @@
                   </div>
                   <!-- /.action --> 
                 </div>
+                {% endif %}
                 <!-- /.cart --> 
               </div>
               <!-- /.product --> 
@@ -863,6 +870,7 @@
                   
                 </div>
                 <!-- /.product-info -->
+                {% if user.is_authenticated %}
                 <div class="cart clearfix animate-effect">
                   <div class="action">
                     <ul class="list-unstyled">
@@ -888,6 +896,7 @@
                   </div>
                   <!-- /.action --> 
                 </div>
+                {% endif %}
                 <!-- /.cart --> 
               </div>
               <!-- /.product --> 
