@@ -29,10 +29,10 @@ class LoginView(View):
             print('user', user)
             if user is not None:
                 login(request, user)
-                if user.user_role.name == 'admin':
+                if user.is_superuser or (user.user_role and user.user_role.name == 'admin'):
                     messages.success(request, 'Welcome, you are now logged in as Admin.')
                     return redirect('/admin')
-                elif user.user_role.name == 'supplier':
+                elif user.user_role and user.user_role.name == 'supplier':
                     messages.success(request, 'Welcome, you are now logged in as Supplier.')
                     return redirect('/products')
                 else:
@@ -62,11 +62,11 @@ class CustomAdminLoginView(View):
             user = authenticate(request, email=email, password=password)
 
             print('user', user)
-            if user.is_superuser:
+            if user.is_superuser or user.user_role.name == 'admin':
                 login(request, user)
                 messages.success(request, 'Welcome, you are now logged in as admin.')
                 return redirect('user_index')  # Redirect superusers to user index
-            elif user.user_role.name == 'supplier':
+            elif request.user.user_role and user.user_role.name == 'supplier':
                 login(request, user)
                 messages.success(request, 'Welcome, you are now logged in as Supplier.')
                 return redirect('/products')
@@ -254,7 +254,7 @@ class AddRoleView(View):
     def post(self, request):
         """ role create view """
         try:
-            role_name = request.POST.get('role_name').lower
+            role_name = request.POST.get('role_name').lower()
             selected_permissions = request.POST.getlist('permissions')
 
             new_role = Role.objects.create(name=role_name)
@@ -401,11 +401,15 @@ class AdminDashboardView(View):
     """ admin dashboard view """
     template_name = 'admin/dashboard.html'
     def get(self, request):
-        if request.user.is_authenticated and request.user.is_superuser:
-            users = CustomUser.objects.all()
-            products = Product.objects.all()
-            orders = Order.objects.all()
-            return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
+        if request.user.is_authenticated:
+            if request.user.is_superuser or (request.user.user_role and request.user.user_role.name == 'admin'):
+                users = CustomUser.objects.all()
+                products = Product.objects.all()
+                orders = Order.objects.all()
+                return render(request, self.template_name, {'users': users, 'products': products, 'orders': orders})
+            else:
+                messages.error(request, 'Sorry, you are not authorized to access this page.')
+                return redirect('home')
         else:
             return redirect('admin_login')
 

@@ -22,7 +22,7 @@ class ProductView(View):
             else:
                 products = Product.objects.filter(is_delete=False)
             
-            if request.user.user_role.name == 'supplier':
+            if request.user.user_role and request.user.user_role.name == 'supplier':
                 products = products.filter(user = request.user.id)
             
             paginator = Paginator(products, 10)

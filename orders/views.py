@@ -207,12 +207,12 @@ class SupplierReturnAndReplaceView(View):
         """ return and replace view for supplier """
         if "return" in request.path:
             orders = ReturnAndReplaceOrder.objects.filter(action='Return', requested=True, approved=False, active=True)
-            if request.user.user_role.name =="supplier":
+            if request.user.user_role and request.user.user_role.name =="supplier":
                 orders = orders.filter(user = request.user.id)
         else:
             orders = ReturnAndReplaceOrder.objects.filter(action='Replace', requested=True, approved=False, active=True)
             orders = orders.exclude(cart=None)
-            if request.user.user_role.name =="supplier":
+            if request.user.user_role and request.user.user_role.name =="supplier":
                 orders = orders.filter(user = request.user.id)
         return render(request, 'admin/orders/return_replace.html', {'orders': orders})
 
@@ -241,13 +241,13 @@ class AdminOrderView(View):
         if pk:
             """ order view for admin """
             orders = OrderItem.objects.filter(order=pk)
-            if request.user.user_role.name =="supplier":
+            if request.user.user_role and request.user.user_role.name =="supplier":
                 orders = orders.filter(user = request.user.id)
             return render(request, 'admin/orders/order_items.html', {'orders': orders})
         else:
             """ order list view for admin """
             orders = Order.objects.all()
-            if request.user.user_role.name =="supplier":
+            if request.user.user_role and request.user.user_role.name =="supplier":
                 orders = orders.filter(user = request.user.id)
             orders = pagination(orders, request.GET.get("page"))
             return render(request, 'admin/orders/order.html', {'orders': orders})

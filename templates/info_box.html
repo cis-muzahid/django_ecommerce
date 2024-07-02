@@ -3,6 +3,7 @@
         {% block 'info_box' %}
         <div class="row our-features-box">
             <div class="container text-center">
+            {% if ''|facilities %}
              <ul class="facility_ul">
               {% for facility in ''|facilities %}
                <li>
@@ -13,6 +14,9 @@
                </li>
               {% endfor %}
              </ul>
+             {% else %}
+             <p>No data Found</p>
+             {% endif %}
            </div>
          </div>
                <!-- /.info-boxes --> 

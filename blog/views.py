@@ -127,7 +127,7 @@ class BlogCategoryView(View):
     
     def post(self, request):
         """ create and update view for blog category on the admin dashboard """
-        if request.user.user_role.name == 'admin':
+        if request.user.is_superuser or (request.user.user_role and request.user.user_role.name == 'admin'):
             if request.POST.get("category"):
                 action = "updat"
                 category = BlogCategory.objects.get(id=request.POST.get("category"))

@@ -16,6 +16,7 @@
 						</div>
 					</div>
 					<div class="card-body">
+						{% if permissions%}
 						<table id="example1" class="table table-striped">
 							<thead>
 							<tr class="text-center">
@@ -45,6 +46,9 @@
 								{% endfor %}
 							</tbody>
 						</table>
+						{% else %}
+							<p style="margin:auto; text-align:center"><b>No Data Found</b></p>
+						{% endif %}
 					</div>
 					<div class="card-footer clearfix bg-white justify-content-md-start">
 						<ul class="pagination pagination-sm m-0 float-right">

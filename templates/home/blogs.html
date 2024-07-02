@@ -19,6 +19,7 @@
       <div class="row">
         <div class="blog-page">
           <div class="col-xs-12 col-sm-9 col-md-9 rht-col">
+            {% if blogs %}
 						{% for blog in blogs %}
 							<div class="blog-post  wow fadeInUp">
 								<a href="/user/blog/{{ blog.id }}">
@@ -39,40 +40,13 @@
 							</div>
 							<hr style="margin:0px;">
 						{% endfor %}
-            <div class="clearfix blog-pagination filters-container  wow fadeInUp"
-                 style="padding:0px;
-                        background:none;
-                        box-shadow:none;
-                        margin-top:15px;
-                        border:none">
-              <div class="text-right">
-                <div class="pagination-container">
-                  <ul class="list-inline list-unstyled">
-                    <li class="prev">
-                      <a href="#"><i class="fa fa-angle-left"></i></a>
-                    </li>
-                    <li>
-                      <a href="#">1</a>
-                    </li>
-                    <li class="active">
-                      <a href="#">2</a>
-                    </li>
-                    <li>
-                      <a href="#">3</a>
-                    </li>
-                    <li>
-                      <a href="#">4</a>
-                    </li>
-                    <li class="next">
-                      <a href="#"><i class="fa fa-angle-right"></i></a>
-                    </li>
-                  </ul>
-                  <!-- /.list-inline -->
+            {% else %}
+              <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+                <div class="inner-container">
+                  <p class="text-center">No Data Found</p>
                 </div>
-                <!-- /.pagination-container -->
               </div>
-              <!-- /.text-right -->
-            </div>
+            {% endif %}
             <!-- /.filters-container -->
           </div>
           <div class="col-xs-12 col-sm-3 col-md-3 sidebar" style="padding:0px">
@@ -89,13 +63,18 @@
                 <h3 class="section-title">Category</h3>
                 <div class="sidebar-widget-body m-t-10">
                   <div class="accordion">
-                  <ul>
-                    {% for category in ''|blog_categories %}
-                    <li>
-                      <a class="item" href="/user/blogs/{{ category.id }}">{{ category.name }}</a></li>
-                    {% endfor %}
-                    <!-- /.accordion-group -->
-                    </ul>
+                    {% if ''|blog_categories %}
+                      <ul>
+                        {% for category in ''|blog_categories %}
+                          <li>
+                            <a class="item" href="/user/blogs/{{ category.id }}">{{ category.name }}</a>
+                          </li>
+                        {% endfor %}
+                        <!-- /.accordion-group -->
+                      </ul>
+                    {% else %}
+                      <p class="text-center">No Data Found</p>
+                    {% endif %}
                   </div>
                   <!-- /.accordion -->
                 </div>
@@ -115,6 +94,7 @@
                 </ul>
                 <div class="tab-content" style="padding-left:0">
                   <div class="tab-pane active m-t-20" id="popular">
+                  {% if ''|top_blogs_with_most_comments %}
                     {% for blog in ''|top_blogs_with_most_comments %}
                       <div class="blog-post inner-bottom-30 ">
                         <a href="/user/blog/{{ blog.id }}"><img class="img-responsive"
@@ -128,21 +108,28 @@
                         <p>{{ blog.description|truncate_description|safe }}...</p>
                       </div>
                     {% endfor %}
+                  {% else %}
+                    <p class="text-center">No Data Found</p>
+                  {% endif %}
                   </div>
                   <div class="tab-pane m-t-20" id="recent">
-                    {% for blog in ''|recently_created_blogs_view %}
-                      <div class="blog-post inner-bottom-30 ">
-                        <a href="/user/blog/{{ blog.id }}"><img class="img-responsive"
-                            src="/media/{{ blog.image }}"
-                            alt=""></a>
-                        <h4>
-                          <a href="/user/blog/{{ blog.id }}">{{ blog.title }}</a>
-                        </h4>
-                        <span class="review">{{ blog.id|comments_counts }} Comments</span>
-                        <span class="date-time">{{ blog.created_at }}</span>
-                        <p>{{ blog.description|truncate_description|safe }}...</p>
-                      </div>
-                    {% endfor %}
+                    {% if ''|recently_created_blogs_view %}
+                      {% for blog in ''|recently_created_blogs_view %}
+                        <div class="blog-post inner-bottom-30 ">
+                          <a href="/user/blog/{{ blog.id }}"><img class="img-responsive"
+                              src="/media/{{ blog.image }}"
+                              alt=""></a>
+                          <h4>
+                            <a href="/user/blog/{{ blog.id }}">{{ blog.title }}</a>
+                          </h4>
+                          <span class="review">{{ blog.id|comments_counts }} Comments</span>
+                          <span class="date-time">{{ blog.created_at }}</span>
+                          <p>{{ blog.description|truncate_description|safe }}...</p>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <p class="text-center">No Data Found</p>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -151,9 +138,13 @@
                 <h3 class="section-title">Product Tags</h3>
                 <div class="sidebar-widget-body outer-top-xs">
                   <div class="tag-list">
-                    {% for category in ''|product_categories %}
-                      <a class="item" title="Phone" href="/category/{{ category.name }}">{{ category.name }}</a>
-                    {% endfor %}
+                    {% if ''|product_categories %}
+                      {% for category in ''|product_categories %}
+                        <a class="item" title="Phone" href="/category/{{ category.name }}">{{ category.name }}</a>
+                      {% endfor %}
+                    {% else %}
+                      <p class="text-center">No Data Found</p>
+                    {% endif %}
                   </div>
                   <!-- /.tag-list -->
                 </div>

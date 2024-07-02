@@ -41,9 +41,12 @@ def pagination(products, page):
 def fetch_banner(category):
     """ function to fetch latest wide large banner """
     banner = Banner.objects.filter(category=category.id, type="wide banner large").last()
-    if banner:
-        return banner 
-    else:
-        categories = Category.objects.filter(id=category.parent_category.id).values_list('id', flat=True)
-        banner = Banner.objects.filter(category__in=categories, type="wide banner large").last()
+    try:
+        if banner:
+            return banner
+        else:
+            categories = Category.objects.filter(id=category.parent_category.id).values_list('id', flat=True)
+            banner = Banner.objects.filter(category__in=categories, type="wide banner large").last()
+    except:
+        banner = None
     return banner

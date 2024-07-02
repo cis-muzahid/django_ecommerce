@@ -1,494 +1,593 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filter %}
-
 {% block body %}
-<!-- ============================================== HEADER ============================================== -->
-<div class="breadcrumb">
-  <div class="container">
-    <div class="breadcrumb-inner">
-      <ul class="list-inline list-unstyled">
-        <li><a href="/">Home</a></li>
-        {% for category in category|fetch_all_parent_category %}
-          <li><a href="/category/{{ category }}">{{ category }}</a></li>
-        {% endfor %}
-        <li class='active'>{{category}}</li>
-      </ul>
+  <!-- ============================================== HEADER ============================================== -->
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <ul class="list-inline list-unstyled">
+          <li><a href="/">Home</a></li>
+          {% for category in category|fetch_all_parent_category %}
+            <li><a href="/category/{{ category }}">{{ category }}</a></li>
+          {% endfor %}
+          <li class='active'>{{ category }}</li>
+        </ul>
+      </div>
+      <!-- /.breadcrumb-inner -->
     </div>
-    <!-- /.breadcrumb-inner --> 
+    <!-- /.container -->
   </div>
-  <!-- /.container --> 
-</div>
-<!-- /.breadcrumb -->
-<div class="body-content outer-top-xs">
-  <div class='container'>
-    <div class='row'>
-      <div class='col-xs-12 col-sm-12 col-md-3 sidebar'> 
-        <!-- ================================== TOP NAVIGATION ================================== -->
-      <div class="side-menu animate-dropdown outer-bottom-xs">
-        <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Categories</div>
-        <nav class="yamm megamenu-horizontal">
-          <ul class="nav">
-            {% for category in categories %}
-            <li class="dropdown menu-item"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{category.name}}</a>
-              <ul class="dropdown-menu mega-menu">
-                  <div class="row">
-                {% for subcategory in category|subcategories %}
-                    <div class="col-sm-12 col-md-3">
-                      <ul class="links list-unstyled">
-                        <li><a href="/category/{{subcategory.name}}"><b>{{subcategory.name}}</b></a></li>
-                        {% for sub in subcategory|subcategories %}
-                            <li><a href="/category/{{sub.name}}">{{sub.name}}</a></li>
-                        {% endfor %}<!-- /.col -->
-                      </ul>
-                    </div>
-                {% endfor %}
-                  </div>
-                  <!-- /.row --> 
-                <!-- /.yamm-content -->
-              </ul>
-              <!-- /.dropdown-menu --> </li>
-            <!-- /.menu-item -->  
-            {% endfor %}          
-          </ul>
-          <!-- /.nav --> 
-        </nav>
-        <!-- /.megamenu-horizontal --> 
-      </div>
-        <!-- /.side-menu --> 
-        <!-- ================================== TOP NAVIGATION : END ================================== -->
-        <div class="sidebar-module-container">
-          <div class="sidebar-filter"> 
-            <!-- ============================================== SIDEBAR CATEGORY ============================================== -->
-            <div class="sidebar-widget">
-              <h3 class="section-title">Shop by</h3>
-              <div class="widget-header">
-                <h4 class="widget-title">Category</h4>
-              </div>
-              <div class="sidebar-widget-body">
-                <div class="accordion">
-                  {% for category in categories %}
-                  <div class="accordion-group">
-                    <div class="accordion-heading"> <a href="#collapseOne" data-toggle="collapse" class="accordion-toggle collapsed"> {{category}} </a> </div>
-                    <!-- /.accordion-heading -->
-                    <div class="accordion-body collapse" id="collapseOne" style="height: 0px;">
-                      <div class="accordion-inner">
-                        <ul>
-                          {% for sub in category|subcategories %}
-                            <li><a href="/category/{{sub.name}}">{{sub.name}}</a></li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-                      <!-- /.accordion-inner --> 
-                    </div>
-                    <!-- /.accordion-body --> 
-                  </div>
-                  <!-- /.accordion-group -->
-                  {% endfor %}
-                
-                </div>
-                <!-- /.accordion --> 
-              </div>
-              <!-- /.sidebar-widget-body --> 
+  <!-- /.breadcrumb -->
+  <div class="body-content outer-top-xs">
+    <div class='container'>
+      <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-md-3 sidebar'>
+          <!-- ================================== TOP NAVIGATION ================================== -->
+          <div class="side-menu animate-dropdown outer-bottom-xs">
+            <div class="head">
+              <i class="icon fa fa-align-justify fa-fw"></i> Categories
             </div>
-            <!-- /.sidebar-widget --> 
-            <!-- ============================================== SIDEBAR CATEGORY : END ============================================== --> 
-            
-            <!-- ============================================== PRICE SILDER============================================== -->
-            <div class="sidebar-widget">
-              <div class="widget-header">
-                <h4 class="widget-title">Price Slider</h4>
-              </div>
-              <div class="sidebar-widget-body m-t-10">
-                <form method='post'>{% csrf_token %}
-                <div class="price-range-holder"> <span class="min-max"> <span class="pull-left">$200.00</span> <span class="pull-right">$800.00</span> </span>
-                  <input type="text" id="amount" style="border:0; color:#666666; font-weight:bold;text-align:center;">
-                  <input type="text" name='price' class="price-slider" >
-                </div>
-                <!-- /.price-range-holder --> 
-                <button class="lnk btn btn-primary">Show Now</button> </div>
-                </form>
-              <!-- /.sidebar-widget-body --> 
-            </div>
-            <!-- /.sidebar-widget --> 
-            <!-- ============================================== PRICE SILDER : END ============================================== --> 
-            <!-- ============================================== MANUFACTURES============================================== -->
-            {% comment %} <div class="sidebar-widget">
-              <div class="widget-header">
-                <h4 class="widget-title">Manufactures</h4>
-              </div>
-              <div class="sidebar-widget-body">
-                <ul class="list">
-                  <li><a href="#">Forever 18</a></li>
-                  <li><a href="#">Nike</a></li>
-                  <li><a href="#">Dolce & Gabbana</a></li>
-                  <li><a href="#">Alluare</a></li>
-                  <li><a href="#">Chanel</a></li>
-                  <li><a href="#">Other Brand</a></li>
-                </ul>
-                <!--<a href="#" class="lnk btn btn-primary">Show Now</a>--> 
-              </div>
-              <!-- /.sidebar-widget-body --> 
-            </div>
-            <!-- /.sidebar-widget --> 
-            <!-- ============================================== MANUFACTURES: END ============================================== --> 
-            <!-- ============================================== COLOR============================================== -->
-            <div class="sidebar-widget">
-              <div class="widget-header">
-                <h4 class="widget-title">Colors</h4>
-              </div>
-              <div class="sidebar-widget-body">
-                <ul class="list">
-                  <li><a href="#">Red</a></li>
-                  <li><a href="#">Blue</a></li>
-                  <li><a href="#">Yellow</a></li>
-                  <li><a href="#">Pink</a></li>
-                  <li><a href="#">Brown</a></li>
-                  <li><a href="#">Teal</a></li>
-                </ul>
-              </div>
-              <!-- /.sidebar-widget-body --> 
-            </div> {% endcomment %}
-            <!-- /.sidebar-widget --> 
-            <!-- ============================================== COLOR: END ============================================== --> 
-            <!-- ============================================== COMPARE============================================== -->
-            <div class="sidebar-widget outer-top-vs">
-              <h3 class="section-title">Compare products</h3>
-              <div class="sidebar-widget-body">
-                <div class="compare-report">
-                  <p>You have no <span>item(s)</span> to compare</p>
-                </div>
-                <!-- /.compare-report --> 
-              </div>
-              <!-- /.sidebar-widget-body --> 
-            </div>
-            <!-- /.sidebar-widget --> 
-            <!-- ============================================== COMPARE: END ============================================== --> 
-            <!-- ============================================== PRODUCT TAGS ============================================== -->
-            <div class="sidebar-widget product-tag outer-top-vs">
-              <h3 class="section-title">Product tags</h3>
-              <div class="sidebar-widget-body outer-top-xs">
-                <div class="tag-list">
-                {% for category in ""|categories_all %}
-              <a class="item" title="Phone" href="/category/{{ category.name }}/">{{ category.name }}</a>
-            {% endfor %}
-                 </div>
-                <!-- /.tag-list --> 
-              </div>
-              <!-- /.sidebar-widget-body --> 
-            </div>
-            <!-- /.sidebar-widget --> 
-          <!-- /.Testimonials -->
-            <div class="sidebar-widget  outer-top-vs ">
-              <div id="advertisement" class="advertisement">
-                <div class="item">
-                  <div class="avatar"><img src="assets/images/testimonials/member1.png" alt="Image"></div>
-                  <div class="testimonials"><em>"</em> Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore.<em>"</em></div>
-                  <div class="clients_author">John Doe <span>Abc Company</span> </div>
-                  <!-- /.container-fluid --> 
-                </div>
-                <!-- /.item -->
-                
-                <div class="item">
-                  <div class="avatar"><img src="assets/images/testimonials/member3.png" alt="Image"></div>
-                  <div class="testimonials"><em>"</em>Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore.<em>"</em></div>
-                  <div class="clients_author">Stephen Doe <span>Xperia Designs</span> </div>
-                </div>
-                <!-- /.item -->
-                
-                <div class="item">
-                  <div class="avatar"><img src="assets/images/testimonials/member2.png" alt="Image"></div>
-                  <div class="testimonials"><em>"</em> Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore.<em>"</em></div>
-                  <div class="clients_author">Saraha Smith <span>Datsun &amp; Co</span> </div>
-                  <!-- /.container-fluid --> 
-                </div>
-                <!-- /.item --> 
-                
-              </div>
-              <!-- /.owl-carousel --> 
-            </div>
-            
-            <!-- ============================================== Testimonials: END ============================================== -->
-            
-             <!-- ============================================== NEWSLETTER ============================================== -->
-        <div class="sidebar-widget newsletter outer-bottom-small  outer-top-vs">
-          <h3 class="section-title">Newsletters</h3>
-          <div class="sidebar-widget-body outer-top-xs">
-            <p>Sign Up for Our Newsletter!</p>
-            <form>
-              <div class="form-group">
-                <label class="sr-only" for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Subscribe to our newsletter">
-              </div>
-              <button class="btn btn-primary">Subscribe</button>
-            </form>
-          </div>
-          <!-- /.sidebar-widget-body --> 
-        </div>
-        <!-- /.sidebar-widget --> 
-        <!-- ============================================== NEWSLETTER: END ============================================== --> 
-            
-           
-          </div>
-          <!-- /.sidebar-filter --> 
-        </div>
-        <!-- /.sidebar-module-container --> 
-      </div>
-      <!-- /.sidebar -->
-      <div class="col-xs-12 col-sm-12 col-md-9 rht-col">
-        <!-- ========================================== SECTION – HERO ========================================= -->
-        <div class="search-result-container ">
-          <div id="myTabContent" class="tab-content category-list">
-            <div class="tab-pane active " id="grid-container">
-              {% if banner %}
-                <div class=""
-                    style=" background: url('/media/{{ banner.image }}');
-                            background-size: cover;">
-                  <div class="card-body">
-                    <div class="text-left mx-3" style="margin-bottom: 20px;padding: 20vh;">
-                      <div class="slider-header fadeInDown-1"
-                          style="color: white;
-                                  font-weight: 400;
-                                  font-size: large;">{{ banner.subtitle }}</div>
-                      <div class=""
-                          style="color: white;
-                                  font-size: xx-large;
-                                  font-weight: 600;">{{ banner.title }}</div>
-                      <div class="excerpt fadeInDown-2 hidden-xs"
-                          style="color: white;
-                                  font-weight: 400;">
-                        <span>"{{ banner.description }}"</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-              <div class="category-product">
-                <div class="row">
-                  {% for product in products %}
-                  <div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="item">
-                      <div class="products">
-                        <div class="product">
-                          <div class="product-image">
-                            <div class="image"> 
-                            <a href="/category/{{product.category}}/{{product.slug}}/">
-                              <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                                <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
-                            </a> 
-                            </div>
-                            <!-- /.image -->
-                            
-                        {% if product.tag is not None %}
-                          <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                        {% endif %}
-                          </div>
-                          <!-- /.product-image -->
-                          
-                          <div class="product-info text-left">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                            <div class="">
-                              {% for star in 5|range_filter %}
-                                {% if star < product|product_rating %}
-                                    <span class="star_{{ product|product_rating }}">★</span>
-                                {% else %}
-                                    <span class="empty-star">★</span>
-                                {% endif %}
-                              {% endfor %}
-                            </div>
-                            <div class="description"></div>
-                            <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
-                            
-                          </div>
-                          <!-- /.product-info -->
-                          {% if user.is_authenticated %}
-                          <div class="cart clearfix animate-effect">
-                            <div class="action">
-                              <ul class="list-unstyled">
-                                <li class="add-cart-button btn-group">
-                                  <form action='/add_cart/' method='post'>{% csrf_token %}
-                                    <input type='hidden' name='product' value='{{ product.id }}'>
-                                    <input type='hidden' name='user' value='{{ user.id }}'>
-                                    <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                                    title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                                  </form>
-                                  <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+            <nav class="yamm megamenu-horizontal">
+              <ul class="nav">
+                {% for category in categories %}
+                  {% if category|subcategories %}
+                    <li class="dropdown menu-item">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{ category.name }}</a>
+                      <ul class="dropdown-menu mega-menu">
+                        <div class="row">
+                          {% for subcategory in category|subcategories %}
+                            <div class="col-sm-12 col-md-3">
+                              <ul class="links list-unstyled">
+                                <li>
+                                  <a href="/category/{{ subcategory.name }}"><b>{{ subcategory.name }}</b></a>
                                 </li>
-                              <li class="lnk wishlist">
-                                <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                                <input type='hidden' name='product' value='{{ product.id }}'>
-                                <input type='hidden' name='user' value='{{ user.id }}'>
-                                <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                                  <i class="icon fa fa-heart"></i> </button>
-                                </form>
-                              </li>
-                              <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal"></i> </a> </li>
+                                {% for sub in subcategory|subcategories %}
+                                  <li>
+                                    <a href="/category/{{ sub.name }}">{{ sub.name }}</a>
+                                  </li>
+                                {% endfor %}
                               </ul>
                             </div>
-                            <!-- /.action --> 
-                          </div>
-                          {% endif %}
-                          <!-- /.cart --> 
+                          {% endfor %}
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor %}
-                  <!-- /.item --> 
+                        <!-- /.yamm-content -->
+                      </ul>
+                    </li>
+                  {% else %}
+                    <li class="dropdown menu-item">
+                      <a href="/category/{{ category.name }}">
+                        <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{ category.name }}</a>
+                    </li>
+                  {% endif %}
+                  <!-- /.menu-item -->
+                {% endfor %}
+              </ul>
+              <!-- /.nav -->
+            </nav>
+            <!-- /.megamenu-horizontal -->
+          </div>
+          <!-- /.side-menu -->
+          <!-- ================================== TOP NAVIGATION : END ================================== -->
+          <div class="sidebar-module-container">
+            <div class="sidebar-filter">
+              <!-- ============================================== SIDEBAR CATEGORY ============================================== -->
+              <div class="sidebar-widget">
+                <h3 class="section-title">Shop by</h3>
+                <div class="widget-header">
+                  <h4 class="widget-title">Category</h4>
                 </div>
-                <!-- /.row --> 
-              </div>
-              <!-- /.category-product --> 
-              
-            </div>
-            <!-- /.tab-pane -->
-            
-            <div class="tab-pane "  id="list-container">
-              <div class="category-product">
-                {% for product in products %}
-                <div class="category-product-inner">
-                  <div class="products">
-                    <div class="product-list product">
-                      <div class="row product-list-row">
-                        <div class="col col-sm-3 col-lg-3">
-                          <div class="product-image">
-                            <div class="image"> <img src="assets/images/products/p3.jpg" alt=""> </div>
-                          </div>
-                          <!-- /.product-image --> 
-                        </div>
-                        <!-- /.col -->
-                        <div class="col col-sm-9 col-lg-9">
-                          <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                            <div class="rating rateit-small"></div>
-                            <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
-                            <!-- /.product-price -->
-                            <div class="description m-t-10">{{product.description}}</div>
-                            {% if user.is_authenticated %}
-                            <div class="cart clearfix animate-effect">
-                              <div class="action">
-                                <ul class="list-unstyled">
-                                  <li class="add-cart-button btn-group">
-                                    <form action='/add_cart/' method='post'>{% csrf_token %}
-                                      <input type='hidden' name='product' value='{{ product.id }}'>
-                                      <input type='hidden' name='user' value='{{ user.id }}'>
-                                      <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                                      title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                                    </form>
-                                    <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
-                                  </li>
-                                  <li class="lnk wishlist">
-                                    <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                                    <input type='hidden' name='product' value='{{ product.id }}'>
-                                    <input type='hidden' name='user' value='{{ user.id }}'>
-                                    <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                                      <i class="icon fa fa-heart"></i> </button>
-                                    </form>
-                                  </li>
-                                  <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal"></i> </a> </li>
+                <div class="sidebar-widget-body">
+                  {% if categories %}
+                    <div class="accordion">
+                      {% for category in categories %}
+                        {% if category|subcategories %}
+                          <div class="accordion-group">
+                            <div class="accordion-heading">
+                              <a href="#collapse_{{ category.id }}"
+                                 data-toggle="collapse"
+                                 class="accordion-toggle collapsed">{{ category }}</a>
+                            </div>
+                            <!-- /.accordion-heading -->
+                            <div class="accordion-body collapse" id="collapse_{{ category.id }}" style="height: 0px;">
+                              <div class="accordion-inner">
+                                <ul>
+                                  {% for sub in category|subcategories %}
+                                    <li>
+                                      <a href="/category/{{ sub.name }}">{{ sub.name }}</a>
+                                    </li>
+                                  {% endfor %}
                                 </ul>
                               </div>
-                              <!-- /.action --> 
+                              <!-- /.accordion-inner -->
                             </div>
-                            {% endif %}
-                            <!-- /.cart --> 
-                            
+                            <!-- /.accordion-body -->
                           </div>
-                          <!-- /.product-info --> 
-                        </div>
-                        <!-- /.col --> 
-                      </div>
-                      <!-- /.product-list-row -->
-                      {% if product.tag is not None %}
-                        <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                      {% endif %}
+                          
+                        {% else %}
+                          <a href="/category/{{ category.name }}">{{ category.name }}</a>
+                        {% endif %}
+                        <!-- /.accordion-group -->
+                      {% endfor %}
                     </div>
-                    <!-- /.product-list --> 
-                  </div>
-                  <!-- /.products --> 
+                  {% else %}
+                    <p>No Data Found</p>
+                  {% endif %}
+                  <!-- /.accordion -->
                 </div>
-                {% endfor %}
-                <!-- /.category-product-inner --> 
-                
+                <!-- /.sidebar-widget-body -->
               </div>
-              <!-- /.category-product --> 
+              <!-- /.sidebar-widget -->
+              <!-- ============================================== SIDEBAR CATEGORY : END ============================================== -->
+              <!-- ============================================== PRICE SILDER============================================== -->
+              <div class="sidebar-widget">
+                <div class="widget-header">
+                  <h4 class="widget-title">Price Slider</h4>
+                </div>
+                <div class="sidebar-widget-body m-t-10">
+                  <form method='post'>
+                    {% csrf_token %}
+                    <div class="price-range-holder">
+                      <span class="min-max"> <span class="pull-left">$200.00</span> <span class="pull-right">$800.00</span> </span>
+                      <input type="text"
+                             id="amount"
+                             style="border:0;
+                                    color:#666666;
+                                    font-weight:bold;
+                                    text-align:center">
+                      <input type="text" name='price' class="price-slider">
+                    </div>
+                    <!-- /.price-range-holder -->
+                    <button class="lnk btn btn-primary">Show Now</button>
+                  </div>
+                </form>
+                <!-- /.sidebar-widget-body -->
+              </div>
+              <!-- ============================================== Price slider: END ============================================== -->
+              <!-- ============================================== PRODUCT TAGS ============================================== -->
+              <div class="sidebar-widget product-tag outer-top-vs">
+                <h3 class="section-title">Product tags</h3>
+                <div class="sidebar-widget-body outer-top-xs">
+                  <div class="tag-list">
+                    {% if ""|categories_all %}
+                      {% for category in ""|categories_all %}
+                        <a class="item" title="Phone" href="/category/{{ category.name }}/">{{ category.name }}</a>
+                      {% endfor %}
+                    {% else %}
+                      <p class="text-center">No Data Found</p>
+                    {% endif %}
+                  </div>
+                  <!-- /.tag-list -->
+                </div>
+                <!-- /.sidebar-widget-body -->
+              </div>
+              <!-- /.sidebar-widget -->
+              <!-- /.Testimonials -->
+              <div class="sidebar-widget  outer-top-vs ">
+                <div id="advertisement" class="advertisement">
+                  <div class="item">
+                    <div class="avatar">
+                      <img src="assets/images/testimonials/member1.png" alt="Image">
+                    </div>
+                    <div class="testimonials">
+                      <em>"</em> Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore.<em>"</em>
+                    </div>
+                    <div class="clients_author">
+                      John Doe <span>Abc Company</span>
+                    </div>
+                    <!-- /.container-fluid -->
+                  </div>
+                  <!-- /.item -->
+                  <div class="item">
+                    <div class="avatar">
+                      <img src="assets/images/testimonials/member3.png" alt="Image">
+                    </div>
+                    <div class="testimonials">
+                      <em>"</em>Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore.<em>"</em>
+                    </div>
+                    <div class="clients_author">
+                      Stephen Doe <span>Xperia Designs</span>
+                    </div>
+                  </div>
+                  <!-- /.item -->
+                  <div class="item">
+                    <div class="avatar">
+                      <img src="assets/images/testimonials/member2.png" alt="Image">
+                    </div>
+                    <div class="testimonials">
+                      <em>"</em> Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore.<em>"</em>
+                    </div>
+                    <div class="clients_author">
+                      Saraha Smith <span>Datsun &amp; Co</span>
+                    </div>
+                    <!-- /.container-fluid -->
+                  </div>
+                  <!-- /.item -->
+                </div>
+                <!-- /.owl-carousel -->
+              </div>
+              <!-- ============================================== Testimonials: END ============================================== -->
+              <!-- ============================================== NEWSLETTER ============================================== -->
+              <div class="sidebar-widget newsletter outer-bottom-small  outer-top-vs">
+                <h3 class="section-title">Newsletters</h3>
+                <div class="sidebar-widget-body outer-top-xs">
+                  <p>Sign Up for Our Newsletter!</p>
+                  <form>
+                    <div class="form-group">
+                      <label class="sr-only" for="exampleInputEmail1">Email address</label>
+                      <input type="email"
+                             class="form-control"
+                             id="exampleInputEmail1"
+                             placeholder="Subscribe to our newsletter">
+                    </div>
+                    <button class="btn btn-primary">Subscribe</button>
+                  </form>
+                </div>
+                <!-- /.sidebar-widget-body -->
+              </div>
+              <!-- /.sidebar-widget -->
+              <!-- ============================================== NEWSLETTER: END ============================================== -->
             </div>
-            <!-- /.tab-pane #list-container --> 
+            <!-- /.sidebar-filter -->
           </div>
-          <!-- /.tab-content -->
-          <div class="clearfix filters-container bottom-row">
-            <div class="text-right">
-              <div class="pagination-container">
-                <ul class="list-inline list-unstyled">
-                  {% if products.has_previous %}
-                    <li class="prev"><a class="page-link" href="?page={{ products.previous_page_number }}"><i class="fa fa-angle-left"></a></li>
-                  {% endif %}
-                  {% for page_num in products.paginator.page_range %}
-                      <li class="page-item {% if products.number == page_num %} active {% endif %}">
-                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+          <!-- /.sidebar-module-container -->
+        </div>
+        <!-- /.sidebar -->
+        <div class="col-xs-12 col-sm-12 col-md-9 rht-col">
+          <!-- ========================================== SECTION – HERO ========================================= -->
+          <div class="search-result-container ">
+            <div id="myTabContent" class="tab-content category-list">
+              <div class="tab-pane active " id="grid-container">
+                {% if banner %}
+                  <div class=""
+                       style="background: url('/media/{{ banner.image }}');
+                              background-size: cover">
+                    <div class="card-body">
+                      <div class="text-left mx-3" style="margin-bottom: 20px;padding: 20vh;">
+                        <div class="slider-header fadeInDown-1"
+                             style="color: white;
+                                    font-weight: 400;
+                                    font-size: large">{{ banner.subtitle }}</div>
+                        <div class="" style="color: white; font-size: xx-large; font-weight: 600;">{{ banner.title }}</div>
+                        <div class="excerpt fadeInDown-2 hidden-xs"
+                             style="color: white;
+                                    font-weight: 400">
+                          <span>"{{ banner.description }}"</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                <div class="category-product">
+                  <div class="row">
+                    {% if products %}
+                      {% for product in products %}
+                        <div class="col-sm-6 col-md-4 col-lg-3">
+                          <div class="item">
+                            <div class="products">
+                              <div class="product">
+                                <div class="product-image">
+                                  <div class="image">
+                                    <a href="/category/{{ product.category }}/{{ product.slug }}/">
+                                      <img src="/media/{{ product.id|product_attributes }}" alt="">
+                                      <img src="/media/{{ product.id|product_attributes }}"
+                                           alt=""
+                                           class="hover-image">
+                                    </a>
+                                  </div>
+                                  <!-- /.image -->
+                                  {% if product.tag is not None %}
+                                    <div class="tag {{ product.tag.lower }}">
+                                      <span>{{ product.tag }}</span>
+                                    </div>
+                                  {% endif %}
+                                </div>
+                                <!-- /.product-image -->
+                                <div class="product-info text-left">
+                                  <h3 class="name">
+                                    <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                                  </h3>
+                                  <div class="">
+                                    {% for star in 5|range_filter %}
+                                      {% if star < product|product_rating %}
+                                        <span class="star_{{ product|product_rating }}">★</span>
+                                      {% else %}
+                                        <span class="empty-star">★</span>
+                                      {% endif %}
+                                    {% endfor %}
+                                  </div>
+                                  <div class="description"></div>
+                                  <div class="product-price">
+                                    <span class="price">${{ product.price }}</span> <span class="price-before-discount">$ 800</span>
+                                  </div>
+                                </div>
+                                <!-- /.product-info -->
+                                {% if user.is_authenticated %}
+                                  <div class="cart clearfix animate-effect">
+                                    <div class="action">
+                                      <ul class="list-unstyled">
+                                        <li class="add-cart-button btn-group">
+                                          <form action='/add_cart/' method='post'>
+                                            {% csrf_token %}
+                                            <input type='hidden' name='product' value='{{ product.id }}'>
+                                            <input type='hidden' name='user' value='{{ user.id }}'>
+                                            <button type='submit'
+                                                    data-toggle="tooltip"
+                                                    class="btn btn-primary icon"
+                                                    title="Add Cart">
+                                              <i class="fa fa-shopping-cart"></i>
+                                            </button>
+                                          </form>
+                                          <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                                        </li>
+                                        <li class="lnk wishlist">
+                                          <form action='/add_to_wishlist/' method='post'>
+                                            {% csrf_token %}
+                                            <input type='hidden' name='product' value='{{ product.id }}'>
+                                            <input type='hidden' name='user' value='{{ user.id }}'>
+                                            <button type='submit'
+                                                    data-toggle="tooltip"
+                                                    class="add-to-cart wishlist_css"
+                                                    title="Wishlist">
+                                              <i class="icon fa fa-heart"></i>
+                                            </button>
+                                          </form>
+                                        </li>
+                                        <li class="lnk">
+                                          <a class="add-to-cart"
+                                             href="/category/{{ product.category }}/{{ product.slug }}/"
+                                             title="Compare"> <i class="fa fa-signal"></i> </a>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                    <!-- /.action -->
+                                  </div>
+                                {% endif %}
+                                <!-- /.cart -->
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <div style="display: flex;
+                                  justify-content: center;
+                                  align-items: center;
+                                  height: 230px;
+                                  background-color:white">
+                        <div class="inner-container">
+                          <p class="text-center">No Data Found</p>
+                        </div>
+                      </div>
+                    {% endif %}
+                    <!-- /.item -->
+                  </div>
+                  <!-- /.row -->
+                </div>
+                <!-- /.category-product -->
+              </div>
+              <!-- /.tab-pane -->
+              <div class="tab-pane "  id="list-container">
+                <div class="category-product">
+                  {% for product in products %}
+                    <div class="category-product-inner">
+                      <div class="products">
+                        <div class="product-list product">
+                          <div class="row product-list-row">
+                            <div class="col col-sm-3 col-lg-3">
+                              <div class="product-image">
+                                <div class="image">
+                                  <img src="assets/images/products/p3.jpg" alt="">
+                                </div>
+                              </div>
+                              <!-- /.product-image -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col col-sm-9 col-lg-9">
+                              <div class="product-info">
+                                <h3 class="name">
+                                  <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                                </h3>
+                                <div class="rating rateit-small"></div>
+                                <div class="product-price">
+                                  <span class="price">${{ product.price }}</span> <span class="price-before-discount">$ 800</span>
+                                </div>
+                                <!-- /.product-price -->
+                                <div class="description m-t-10">{{ product.description }}</div>
+                                {% if user.is_authenticated %}
+                                  <div class="cart clearfix animate-effect">
+                                    <div class="action">
+                                      <ul class="list-unstyled">
+                                        <li class="add-cart-button btn-group">
+                                          <form action='/add_cart/' method='post'>
+                                            {% csrf_token %}
+                                            <input type='hidden' name='product' value='{{ product.id }}'>
+                                            <input type='hidden' name='user' value='{{ user.id }}'>
+                                            <button type='submit'
+                                                    data-toggle="tooltip"
+                                                    class="btn btn-primary icon"
+                                                    title="Add Cart">
+                                              <i class="fa fa-shopping-cart"></i>
+                                            </button>
+                                          </form>
+                                          <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                                        </li>
+                                        <li class="lnk wishlist">
+                                          <form action='/add_to_wishlist/' method='post'>
+                                            {% csrf_token %}
+                                            <input type='hidden' name='product' value='{{ product.id }}'>
+                                            <input type='hidden' name='user' value='{{ user.id }}'>
+                                            <button type='submit'
+                                                    data-toggle="tooltip"
+                                                    class="add-to-cart wishlist_css"
+                                                    title="Wishlist">
+                                              <i class="icon fa fa-heart"></i>
+                                            </button>
+                                          </form>
+                                        </li>
+                                        <li class="lnk">
+                                          <a class="add-to-cart"
+                                             href="/category/{{ product.category }}/{{ product.slug }}/"
+                                             title="Compare"> <i class="fa fa-signal"></i> </a>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                    <!-- /.action -->
+                                  </div>
+                                {% endif %}
+                                <!-- /.cart -->
+                              </div>
+                              <!-- /.product-info -->
+                            </div>
+                            <!-- /.col -->
+                          </div>
+                          <!-- /.product-list-row -->
+                          {% if product.tag is not None %}
+                            <div class="tag {{ product.tag.lower }}">
+                              <span>{{ product.tag }}</span>
+                            </div>
+                          {% endif %}
+                        </div>
+                        <!-- /.product-list -->
+                      </div>
+                      <!-- /.products -->
+                    </div>
                   {% endfor %}
-                  {% if products.has_next %}
-                    <li class="next"><a class="page-link" href="?page={{ products.next_page_number }}"><i class="fa fa-angle-right"></i></a></li>
-                  {% endif %}
-                </ul>
-                <!-- /.list-inline --> 
-              </div><!-- /.pagination-container --> </div>
-            <!-- /.text-right --> 
-            
+                  <!-- /.category-product-inner -->
+                </div>
+                <!-- /.category-product -->
+              </div>
+              <!-- /.tab-pane #list-container -->
+            </div>
+            <!-- /.tab-content -->
+            <div class="clearfix filters-container bottom-row">
+              <div class="text-right">
+                <div class="pagination-container">
+                  <ul class="list-inline list-unstyled">
+                    {% if products.has_previous %}
+                      <li class="prev">
+                        <a class="page-link" href="?page={{ products.previous_page_number }}"><i class="fa fa-angle-left"></a>
+                      </li>
+                    {% endif %}
+                    {% for page_num in products.paginator.page_range %}
+                      <li class="page-item {% if products.number == page_num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                      </li>
+                    {% endfor %}
+                    {% if products.has_next %}
+                      <li class="next">
+                        <a class="page-link" href="?page={{ products.next_page_number }}"><i class="fa fa-angle-right"></i></a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                  <!-- /.list-inline -->
+                </div>
+                <!-- /.pagination-container -->
+              </div>
+              <!-- /.text-right -->
+            </div>
+            <!-- /.filters-container -->
           </div>
-          <!-- /.filters-container --> 
-          
+          <!-- /.search-result-container -->
         </div>
-        <!-- /.search-result-container --> 
-        
+        <!-- /.col -->
       </div>
-      <!-- /.col --> 
-    </div>
-    <!-- /.row --> 
-    <!-- ============================================== BRANDS CAROUSEL ============================================== -->
-    <div id="brands-carousel" class="logo-slider">
-      <div class="logo-slider-inner">
-        <div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
-          <div class="item m-t-15"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item m-t-10"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand3.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand6.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item-->
-          
-          <div class="item"> <a href="#" class="image"> <img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt=""> </a> </div>
-          <!--/.item--> 
+      <!-- /.row -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+      <div id="brands-carousel" class="logo-slider">
+        <div class="logo-slider-inner">
+          <div id="brand-slider"
+               class="owl-carousel brand-slider custom-carousel owl-theme">
+            <div class="item m-t-15">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item m-t-10">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand3.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand6.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+          </div>
+          <!-- /.owl-carousel #logo-slider -->
         </div>
-        <!-- /.owl-carousel #logo-slider --> 
+        <!-- /.logo-slider-inner -->
       </div>
-      <!-- /.logo-slider-inner --> 
-      
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
     </div>
-    <!-- /.logo-slider --> 
-    <!-- ============================================== BRANDS CAROUSEL : END ============================================== --> </div>
-  <!-- /.container --> 
-  
-</div>
-<!-- /.body-content --> 
+    <!-- /.container -->
+  </div>
+  <!-- /.body-content -->
 {% endblock %}

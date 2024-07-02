@@ -23,7 +23,7 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          {% if user.is_superuser %}
+          {% if user.is_superuser  %}
             <li class="nav-item">
               <a href="{% url 'admin' %}" class="nav-link {% if request.path == '/admin/' %}active{% endif %}">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -104,7 +104,7 @@
                 </p>
               </a>
             </li>
-          {% elif request.user.user_role.name == 'supplier' %}
+          {% elif user.user_role.name == 'supplier' %}
             <li class="nav-item">
               <a href="/products" class="nav-link {% if 'product' in request.path %}active{% endif %}">
                 <i class="nav-icon fas fa-boxes"></i>

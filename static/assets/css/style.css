@@ -230,3 +230,10 @@ color: #0ba10b;
     padding: 5px;
     margin-right: 10px;
 }
+
+.inner-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
