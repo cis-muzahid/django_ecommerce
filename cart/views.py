@@ -10,6 +10,7 @@ from django.urls import reverse
 class CartView(View):
     form_class = CartForm
     def get(self, request):
+        """ cart list for user """
         if request.user.id:
             try:
                 try:
@@ -23,6 +24,7 @@ class CartView(View):
             return redirect('login_user')
 
     def post(self, request, pk=None):
+        """ cart create and update view """
         try:
             cart = get_object_or_404(Cart, user=request.POST['user'], product=request.POST['product'], active=True)
         except:
@@ -52,6 +54,7 @@ class CartView(View):
 
 class WishlistView(View):
     def get(self, request):
+        """ wishlist list for user """
         try:
             try:
                 wishlists = Wishlist.objects.filter(user=request.user.id, active=True, product__name__icontains=request.GET['q']).order_by('-id')
@@ -62,6 +65,7 @@ class WishlistView(View):
         return render(request, 'cart/wishlist.html', {'wishlists': wishlists})
 
     def post(self, request, pk=None):
+        """ wishlist create and update view """
         try:
             wishlist = get_object_or_404(Wishlist, user=request.POST['user'], product=request.POST['product'], active=True)
         except:
@@ -86,6 +90,7 @@ class WishlistView(View):
 
 class DeleteView(View):
     def get(self, request, pk, action):
+        """ cart and wishlist delete view """
         if action == 'cart':
             cart = Cart.objects.get(pk=pk)
             cart.active=False 

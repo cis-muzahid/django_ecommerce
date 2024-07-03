@@ -16,6 +16,7 @@
             </div>
         </div>
         <div class="card-body">
+            {% if products %}
             <table class="table table-striped table-hover">
                 <thead>
                     <tr class='text-center'>
@@ -47,6 +48,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+                <p style="margin:auto; text-align:center"><b>No Data Found</b></p>
+            {% endif %}
         </div>
         <hr>
         <div class="card-footer clearfix bg-white justify-content-md-start">

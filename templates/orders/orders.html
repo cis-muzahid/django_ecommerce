@@ -3,193 +3,254 @@
 {% load custom_filter %}
 {% load order_filter %}
 {% block body %}
-
-<!-- ============================================== HEADER : END ============================================== -->
-<div class="breadcrumb">
-	<div class="container">
-		<div class="breadcrumb-inner">
-			<ul class="list-inline list-unstyled">
-				<li><a href="/">Home</a></li>
-				<li class='active'>Order</li>
-			</ul>
-		</div><!-- /.breadcrumb-inner -->
-	</div><!-- /.container -->
-</div><!-- /.breadcrumb -->
-
-<div class="body-content">
-	<div class="container">
-		<div class="my-wishlist-page">
-			<div class="row">
-				<div class="col-md-12 my-wishlist">
-	<div class="table-responsive">
-		<table class="table">
-			<thead>
-				<tr>
-					<th colspan="4" class="heading-title">My Orders</th>
-				</tr>
-			</thead>
-			<tbody>
-                {% for order in orders %}
-				<tr>
-					<td class="col-md-2 col-sm-6 col-xs-6">
-                        <img src="/media/{{ order.cart.product.id|product_attributes }}" alt="imga"></td>
-					<td class="col-md-4 col-sm-6 col-xs-6">
-						<div class="product-name"><a href="#">{{ order.cart.product.name }}</a></div>
-						<div class="">
-                            {% for star in 5|range_filter %}
-                              {% if star < order.cart.product|product_rating %}
-                                  <span class="star_{{ order.cart.product|product_rating }}">★</span>
-                              {% else %}
-                                  <span class="empty-star">★</span>
-                              {% endif %}
-                            {% endfor %}
-                        </div>
-						<span class="review">( {{ order.cart.product|product_review_users_count }} Reviews )</span>
-						<div class="price">
-							${{ order.cart.product.price }}
-						</div>
-					</td>
-					<td class="col-md-3 col-sm-6 col-xs-6">
-						{{order.payment_method}}
-						{% if order.order.payment_method == "stripe" %}
-                        <p>Payment Method : {{ order.order.payment_method }}</p>
-						<p>Payment Status : {{ order.order.payment_status }}</p>
+    <!-- ============================================== HEADER : END ============================================== -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-inner">
+                <ul class="list-inline list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li class='active'>Order</li>
+                </ul>
+            </div>
+            <!-- /.breadcrumb-inner -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.breadcrumb -->
+    <div class="body-content">
+        <div class="container">
+            <div class="my-wishlist-page">
+                <div class="row">
+                    <div class="col-md-12 my-wishlist">
+                        {% if orders %}
+							<div class="table-responsive">
+								<table class="table">
+									<thead>
+										<tr>
+											<th colspan="4" class="heading-title">My Orders</th>
+										</tr>
+									</thead>
+										<tbody>
+											{% for order in orders %}
+												<tr>
+													<td class="col-md-2 col-sm-6 col-xs-6">
+														<img src="/media/{{ order.cart.product.id|product_attributes }}"
+															alt="imga">
+													</td>
+													<td class="col-md-4 col-sm-6 col-xs-6">
+														<div class="product-name">
+															<a href="#">{{ order.cart.product.name }}</a>
+														</div>
+														<div class="">
+															{% for star in 5|range_filter %}
+																{% if star < order.cart.product|product_rating %}
+																	<span class="star_{{ order.cart.product|product_rating }}">★</span>
+																{% else %}
+																	<span class="empty-star">★</span>
+																{% endif %}
+															{% endfor %}
+														</div>
+														<span class="review">( {{ order.cart.product|product_review_users_count }} Reviews )</span>
+														<div class="price">${{ order.cart.product.price }}</div>
+													</td>
+													<td class="col-md-3 col-sm-6 col-xs-6">
+														{{ order.payment_method }}
+														{% if order.order.payment_method == "stripe" %}
+															<p>Payment Method : {{ order.order.payment_method }}</p>
+															<p>Payment Status : {{ order.order.payment_status }}</p>
+														{% else %}
+															<p>Payment Method : Case on Delivery</p>
+															<p>Payment Status : pending</p>
+														{% endif %}
+													</td>
+													<td class="col-md-2 ">
+														{% if order.id|is_last_seven_days_order %}
+															{% if order.id|current_user_return_request == None %}
+																<button type="button"
+																		class="btn btn-primary"
+																		data-toggle="modal"
+																		data-target="#exampleModalCenter{{ order.id }}">
+																	return / replace
+																</button>
+																<div class="modal fade"
+																	id="exampleModalCenter{{ order.id }}"
+																	tabindex="-1"
+																	role="dialog"
+																	aria-labelledby="exampleModalCenterTitle"
+																	aria-hidden="true">
+																	<div class="modal-dialog modal-dialog-centered" role="document">
+																		<div class="modal-content">
+																			<div class="modal-header">
+																				<h5 class="modal-title" id="exampleModalLongTitle">Return/Replace Order</h5>
+																				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																					<span aria-hidden="true">&times;</span>
+																				</button>
+																			</div>
+																			<div class="modal-body">
+																				<form action='/orders/' method='post'>
+																					{% csrf_token %}
+																					<div class="modal-body">
+																						<input class="form-control"
+																							placeholder='Reason to return/replace order'
+																							type='text'
+																							name='reason'>
+																						<select name='action'
+																								class="form-control form-select"
+																								style='margin-top: 10px'
+																								aria-label="Default select example">
+																							<option selected>Open this select menu</option>
+																							<option value="Return">Return</option>
+																							<option value="Replace">Replace</option>
+																						</select>
+																						<input type='hidden' name='order' value="{{ order.id }}">
+																						<input type='hidden' name='requested' value='True'>
+																						<input type='hidden' name='user' value="{{ user.id }}">
+																					</div>
+																					<div class="modal-footer">
+																						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+																						<button type="submit" class="btn btn-primary">Proceed</button>
+																					</div>
+																				</form>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															{% else %}
+																{% if order.id|current_user_return_request == 'Approved' %}
+																	<b>Return Approved</b>
+																{% elif order.id|current_user_return_request == 'Replaced' %}
+																{% else %}
+																	In Process : {{ order.id|current_user_return_request }}
+																{% endif %}
+															{% endif %}
+														{% endif %}
+													</td>
+													<td class="col-md-1 close-btn">
+														{% if order.id|is_last_seven_days_order %}
+															<form method='post' action='/order/cancel/'>
+																{% csrf_token %}
+																<input type='hidden' name='order' value={{ order.id }}>
+																<button type="submit" class="btn btn-link">
+																	<i class="fa fa-times" style='color:#ff7878;'></i>
+																</button>
+															</form>
+														{% endif %}
+													</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+								</table>
+							</div>
 						{% else %}
-						<p>Payment Method : Case on Delivery</p>
-						<p>Payment Status : pending</p>
+						      <section class="section new-arriavls">
+        			<h3 class="section-title">Orders</h3>
+                    <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <h3 class="text-center">No Data Found</h3>
+              </div>
+            </div>
+        <!-- /.home-owl-carousel --> 
+      </section>
 						{% endif %}
-					</td>
-                    <td class="col-md-2 ">
-						{% if order.id|is_last_seven_days_order %}
-							{% if order.id|current_user_return_request == None %}
-								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter{{ order.id }}">
-									return / replace
-								</button>
-
-								<div class="modal fade" id="exampleModalCenter{{ order.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-									<div class="modal-dialog modal-dialog-centered" role="document">
-										<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="exampleModalLongTitle"> Return/Replace Order</h5>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-										<div class="modal-body">
-											<form action='/orders/' method='post'>{% csrf_token %}
-												<div class="modal-body">
-													<input class="form-control" placeholder='Reason to return/replace order' type='text' name='reason'>
-													<select name='action' class="form-control form-select" style='margin-top: 10px;' aria-label="Default select example">
-														<option selected>Open this select menu</option>
-														<option value="Return">Return</option>
-														<option value="Replace">Replace</option>
-													</select>
-													<input type='hidden' name='order' value="{{ order.id }}">
-													<input type='hidden' name='requested' value='True'>
-													<input type='hidden' name='user' value="{{ user.id }}">
-												</div>
-												<div class="modal-footer">
-													<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-													<button type="submit" class="btn btn-primary">Proceed</button>
-												</div>
-											</form>
-										</div>
-									</div>
-								</div>
-							{% else %}
-								{% if order.id|current_user_return_request == 'Approved' %}
-									<b>Return Approved</b>
-								{% elif order.id|current_user_return_request == 'Replaced' %}
-								{% else %}
-									In Process : {{ order.id|current_user_return_request }}
-								{% endif %}
-							{% endif %}
-						{% endif %}
-					</td>
-					<td class="col-md-1 close-btn">
-						{% if order.id|is_last_seven_days_order %}
-						<form method='post' action='/order/cancel/'>{% csrf_token %}
-							<input type='hidden' name='order' value={{ order.id }}>
-							<button type="submit" class="btn btn-link"><i class="fa fa-times" style='color:#ff7878;'></i></button>
-						</form>
-						{% endif %}
-					</td>
-				</tr>
-                {% endfor %}
-			</tbody>
-		</table>
-	</div>
-</div>			</div><!-- /.row -->
-		</div><!-- /.sigin-in-->
-		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
-<div id="brands-carousel" class="logo-slider wow fadeInUp">
-
-		<div class="logo-slider-inner">	
-			<div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
-				<div class="item m-t-15">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item m-t-10">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand3.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand6.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-		    </div><!-- /.owl-carousel #logo-slider -->
-		</div><!-- /.logo-slider-inner -->
-	
-</div><!-- /.logo-slider -->
-<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
-</div><!-- /.body-content -->
-
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.sigin-in-->
+            <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+            <div id="brands-carousel" class="logo-slider wow fadeInUp">
+                <div class="logo-slider-inner">
+                    <div id="brand-slider"
+                         class="owl-carousel brand-slider custom-carousel owl-theme">
+                        <div class="item m-t-15">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand1.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item m-t-10">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand2.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand3.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand4.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand5.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand6.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand2.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand4.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand1.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                        <div class="item">
+                            <a href="#" class="image">
+                                <img data-echo="assets/images/brands/brand5.png"
+                                     src="assets/images/blank.gif"
+                                     alt="">
+                            </a>
+                        </div>
+                        <!--/.item-->
+                    </div>
+                    <!-- /.owl-carousel #logo-slider -->
+                </div>
+                <!-- /.logo-slider-inner -->
+            </div>
+            <!-- /.logo-slider -->
+            <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.body-content -->
 {% endblock body %}

@@ -1,9 +1,8 @@
 from django.db import models
 from users.models import CustomUser
-from djmoney.models.fields import MoneyField
-from django.utils.text import slugify
 
 class Category(models.Model):
+    """ Model class for Category """
     name = models.CharField(max_length=255, unique=True)
     parent_category = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     is_delete = models.BooleanField(default=False)
@@ -13,6 +12,7 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
+    """ Model class for Product """
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -33,6 +33,7 @@ class Product(models.Model):
 
 
 class ProductReview(models.Model):
+    """ Model class for Product Review """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     review = models.IntegerField()
@@ -42,6 +43,7 @@ class ProductReview(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class ProductAttribute(models.Model):
+    """ Model class for Product Attribute """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
@@ -55,6 +57,7 @@ class ProductAttribute(models.Model):
 
 
 class ProductSpecification(models.Model):
+    """ Model class for Product Specification """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField()

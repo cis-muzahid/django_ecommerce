@@ -3,8 +3,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
+    """ Model class for User Manager """
     def create_user(self, email, password, **extra_fields):
-
         if not email:
             raise ValueError('The Email must be set')
         email = self.normalize_email(email)
@@ -23,13 +23,14 @@ class UserManager(BaseUserManager):
 
 
 class Permission(models.Model):
-	name = models.CharField(max_length=255)
+    """ Model class for Permission """
+    name = models.CharField(max_length=255)
 
-	def __str__(self):
-		return self.name
+    def __str__(self):
+        return self.name
 
 class Role(models.Model):
-	
+	""" Model class for Role """
 	name = models.CharField(max_length=20, blank=True, null=True)
 	permissions = models.ManyToManyField(Permission)
 
@@ -37,6 +38,7 @@ class Role(models.Model):
 			return self.name
 
 class CustomUser(AbstractUser):
+    """ Model class for CustomUser """
     username = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
@@ -65,6 +67,7 @@ class CustomUser(AbstractUser):
         return username
 
 class UserAddress(models.Model):
+    """ Model class for User Address """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='addresses')    
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=100)

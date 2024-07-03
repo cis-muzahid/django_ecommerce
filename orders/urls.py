@@ -1,10 +1,7 @@
 # urls.py
 
 from django.urls import path
-from .views import (OrderView, ReturnAndReplaceView, ChangeOrderStatus, AdminOrderView, SupplierReturnAndReplaceView,
-#  CreatePaymentView, ExecutePaymentView, PaymentCheckoutView, PaymentFailedView, PaymentSuccessView
-UserAddressView
- )
+from .views import *
 from .views import CancelRequest, OrderTracking
 
 urlpatterns = [
@@ -21,15 +18,11 @@ urlpatterns = [
     # path('delete_order/<int:pk>', AdminOrderDelete(), name='delete_order_admin'),
     # path('update_order/<int:pk>', AdminOrderUpdate(), name='update_order_admin')
 
-
     # PAYPAL PAYMENT GATEWAY===============================
-
     # path('create-payment/', CreatePaymentView.as_view(), name='create_payment'),
     # path('execute-payment/', ExecutePaymentView.as_view(), name='execute_payment'),
     # path('payment-checkout/', PaymentCheckoutView.as_view(), name='payment_checkout'),
     # path('payment-failed/', PaymentFailedView.as_view(), name='payment_failed'),
     # path('payment-success/', PaymentSuccessView.as_view(), name='payment_success'),
     path('order_tracking/', OrderTracking.as_view(), name='order_tracking'),
-
 ]
-

@@ -1,15 +1,22 @@
+{% load custom_filter %}
         <!-- ============================================== INFO BOXES ============================================== -->
         {% block 'info_box' %}
         <div class="row our-features-box">
             <div class="container text-center">
+            {% if ''|facilities %}
              <ul class="facility_ul">
+              {% for facility in ''|facilities %}
                <li>
                  <div class="feature-box">
-                   <div class="icon-truck"></div>
-                   <div class="content-blocks">We ship worldwide</div>
+                   <div><img src="/media/{{ facility.image }}" class="img-rounded image-responsive" style="width:50px; height:30px"></div>
+                   <div class="content-blocks">{{ facility.title }}</div>
                  </div>
                </li>
+              {% endfor %}
              </ul>
+             {% else %}
+             <p>No data Found</p>
+             {% endif %}
            </div>
          </div>
                <!-- /.info-boxes --> 

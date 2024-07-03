@@ -17,7 +17,7 @@ urlpatterns = [    # products views
     path('product_attribute/<int:product_id>/create/', ProductAttributeView.as_view(), name='product_attributes'),
     path('product/<int:product_id>/attribute_update/<int:pk>/', ProductAttributeView.as_view(), name='update_product_attributes'),
     path('user_review/', ProductReviewView.as_view(), name='review'),
-    path('update_delete_review/', ProductUpdateDeleteView.as_view(), name='update_delete_review')
+    path('update_delete_review/', ProductReviewUpdateDeleteView.as_view(), name='update_delete_review')
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

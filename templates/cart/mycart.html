@@ -2,220 +2,270 @@
 {% load static %}
 {% load custom_filter %}
 {% load order_filter %}
-
 {% block body %}
-<div class="breadcrumb">
-	<div class="container">
-		<div class="breadcrumb-inner">
-			<ul class="list-inline list-unstyled">
-				<li><a href="/">Home</a></li>
-				<li class='active'>Shopping Cart</li>
-			</ul>
-		</div><!-- /.breadcrumb-inner -->
-	</div><!-- /.container -->
-</div><!-- /.breadcrumb -->
-
-<div class="body-content outer-top-xs">
-	<div class="container">
-		<div class="row ">
-			<div class="shopping-cart">
-				<div class="shopping-cart-table ">
-	<div class="table-responsive">
-		<table class="table">
-			<thead>
-				<tr>
-					<th class="cart-description item">Image</th>
-					<th class="cart-product-name item">Product Name</th>
-					<th class="cart-edit item">Edit</th>
-					<th class="cart-qty item">Quantity</th>
-					<th class="cart-sub-total item">Subtotal</th>
-					<th class="cart-total last-item">Grandtotal</th>
-					<th class="cart-romove item">Remove</th>
-				</tr>
-			</thead><!-- /thead -->
-			
-			<tbody>
-				{% for cart in carts %}
-				<tr>
-					<td class="cart-image">
-						<a class="entry-thumbnail" href="/category/{{ cart.product.category }}/{{ cart.product.slug }}/">
-						    <img src='/media/{{ cart.product.id|product_attributes }}' alt="">
-						</a>
-					</td>
-					<td class="cart-product-name-info">
-						<h4 class='cart-product-description'>
-							<a href="/category/{{ cart.product.category }}/{{ cart.product.slug }}/">
-								{{cart.product.name}}</a></h4>
-						<div class="row">
-							<div class="col-sm-12">
-								<div class="">
-									{% for star in 5|range_filter %}
-										{% if star < cart.product|product_rating %}
-											<span class="star_{{ cart.product|product_rating }}">★</span>
-										{% else %}
-											<span class="empty-star">★</span>
-										{% endif %}
-									{% endfor %}
-								</div>
-							</div>
-							<div class="col-sm-12">
-								<div class="reviews">
-									({{ cart.product|product_review_users_count }} Reviews)
-								</div>
-							</div>
-						</div><!-- /.row -->
-						<div class="cart-product-info">
-											<span class="product-color">COLOR:<span>Blue</span></span>
-						</div>
-					</td>
-					<td class="cart-product-edit"><a href="/category/{{ cart.product.category }}/{{ cart.product.slug }}/" class="product-edit">Edit</a></td>
-					<td class="cart-product-quantity">
-						<span>{{cart.quantity}}</span>
-		            </td>
-					<td class="cart-product-sub-total"><span class="cart-sub-total-price">${{ cart.product.price }}</span></td>
-					<td class="cart-product-grand-total"><span class="cart-grand-total-price">
-					${{ cart|total_price }}</span></td>
-					{% if user.id|current_user_replace_request %}
-					<td class="cart-product-sub-total">
-						<form action="/orders/replace/{{ user.id|current_user_replace_request }}/" method='post'>
-							{% csrf_token %}
-							<input type='hidden' name='requested' value="Replace">
-							<input type='hidden' name='cart' value="{{ cart.id }}">
-							<button type='submit' class='btn btn-primary'>Replace product</button>
-						</form>
-					</td>
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <ul class="list-inline list-unstyled">
+          <li><a href="/">Home</a></li>
+          <li class='active'>Shopping Cart</li>
+        </ul>
+      </div>
+      <!-- /.breadcrumb-inner -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.breadcrumb -->
+  <div class="body-content outer-top-xs">
+    <div class="container">
+      <div class="row ">
+        <div class="shopping-cart">
+          <div class="shopping-cart-table ">
+            {% if carts %}
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="cart-description item">Image</th>
+                      <th class="cart-product-name item">Product Name</th>
+                      <th class="cart-edit item">Edit</th>
+                      <th class="cart-qty item">Quantity</th>
+                      <th class="cart-sub-total item">Subtotal</th>
+                      <th class="cart-total last-item">Grandtotal</th>
+                      <th class="cart-romove item">Remove</th>
+                    </tr>
+                  </thead>
+                  <!-- /thead -->
+                  <tbody>
+                    {% for cart in carts %}
+                      <tr>
+                        <td class="cart-image">
+                          <a class="entry-thumbnail"
+                             href="/category/{{ cart.product.category }}/{{ cart.product.slug }}/">
+                            <img src='/media/{{ cart.product.id|product_attributes }}' alt="">
+                          </a>
+                        </td>
+                        <td class="cart-product-name-info">
+                          <h4 class='cart-product-description'>
+                            <a href="/category/{{ cart.product.category }}/{{ cart.product.slug }}/">{{ cart.product.name }}</a>
+                          </h4>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              <div class="">
+                                {% for star in 5|range_filter %}
+                                  {% if star < cart.product|product_rating %}
+                                    <span class="star_{{ cart.product|product_rating }}">★</span>
+                                  {% else %}
+                                    <span class="empty-star">★</span>
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                            </div>
+                            <div class="col-sm-12">
+                              <div class="reviews">({{ cart.product|product_review_users_count }} Reviews)</div>
+                            </div>
+                          </div>
+                          <!-- /.row -->
+                          <div class="cart-product-info">
+                            <span class="product-color">COLOR:<span>Blue</span></span>
+                          </div>
+                        </td>
+                        <td class="cart-product-edit">
+                          <a href="/category/{{ cart.product.category }}/{{ cart.product.slug }}/"
+                             class="product-edit">Edit</a>
+                        </td>
+                        <td class="cart-product-quantity">
+                          <span>{{ cart.quantity }}</span>
+                        </td>
+                        <td class="cart-product-sub-total">
+                          <span class="cart-sub-total-price">${{ cart.product.price }}</span>
+                        </td>
+                        <td class="cart-product-grand-total">
+                          <span class="cart-grand-total-price">${{ cart|total_price }}</span>
+                        </td>
+                        {% if user.id|current_user_replace_request %}
+                          <td class="cart-product-sub-total">
+                            <form action="/orders/replace/{{ user.id|current_user_replace_request }}/"
+                                  method='post'>
+                              {% csrf_token %}
+                              <input type='hidden' name='requested' value="Replace">
+                              <input type='hidden' name='cart' value="{{ cart.id }}">
+                              <button type='submit' class='btn btn-primary'>Replace product</button>
+                            </form>
+                          </td>
+                        {% endif %}
+                        <td class="romove-item">
+                          <a href="/remove_product/cart/{{ cart.id }}" title="cancel" class="icon"><i class="fa fa-trash-o">
+                          </i></a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                  <!-- /tbody -->
+                  <tfoot>
+                    <tr>
+                      <td colspan="7">
+                        <div class="shopping-cart-btn">
+                          <span class="">
+                            <a href="/" class="btn btn-upper btn-primary outer-left-xs">Continue Shopping</a>
+                          </span>
+                        </div>
+                        <!-- /.shopping-cart-btn -->
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+                <!-- /table -->
+              </div>
+            {% else %}
+              <section class="section new-arriavls">
+                <h3 class="section-title">My Cart</h3>
+                <div style="display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 230px;
+                            background-color:white">
+                  <div class="inner-container">
+                    <h3 class="text-center">No Data Found</h3>
+                  </div>
+                </div>
+                <!-- /.home-owl-carousel -->
+              </section>
+            {% endif %}
+          </div>
+          <!-- /.shopping-cart-table -->
+					{% if carts %}
+          <div class="cart-shopping-total">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>
+                    {% with carts|cart_total_price as total %}
+                      <div class="cart-sub-total">
+                        Subtotal<span class="inner-left-md">${{ total.sub_total }}</span>
+                      </div>
+                      <div class="cart-grand-total">
+                        Grand Total<span class="inner-left-md">${{ total.grand_total }}</span>
+                      </div>
+                    {% endwith %}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="cart-checkout-btn pull-right">
+                      <a href='/checkout/' class="btn btn-primary checkout-btn">PROCEED TO CHECKOUT</a>
+                      <span>Checkout with multiple addresses!</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <!-- /tbody -->
+            </table>
+            <!-- /table -->
+          </div>
 					{% endif %}
-					<td class="romove-item">
-					<a href="/remove_product/cart/{{ cart.id }}" title="cancel" class="icon"><i class="fa fa-trash-o">
-					</i></a></td>
-				</tr>
-				{% endfor %}
-			</tbody><!-- /tbody -->
-            
-            <tfoot>
-				<tr>
-					<td colspan="7">
-						<div class="shopping-cart-btn">
-							<span class="">
-								<a href="/" class="btn btn-upper btn-primary outer-left-xs">Continue Shopping</a>
-							</span>
-						</div><!-- /.shopping-cart-btn -->
-					</td>
-				</tr>
-			</tfoot>
-		</table><!-- /table -->
-	</div>
-</div><!-- /.shopping-cart-table -->
-
-
-<div class="cart-shopping-total">
-	<table class="table">
-		<thead>
-			<tr>
-				<th>
-					{% with carts|cart_total_price as total %}
-					<div class="cart-sub-total">
-						Subtotal<span class="inner-left-md">${{ total.sub_total }}</span>
-					</div>
-					<div class="cart-grand-total">
-						Grand Total<span class="inner-left-md">${{ total.grand_total }}</span>
-					</div>
-					{% endwith %}
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-				<tr>
-					<td>
-						<div class="cart-checkout-btn pull-right">
-							<!-- {% if total.grand_total > 0 %} -->
-								<a href='/checkout/' class="btn btn-primary checkout-btn">PROCEED TO CHECKOUT</a>
-								<span>Checkout with multiple addresses!</span>
-							<!-- {% endif %}
-							<h6 class="text text-danger">You have no items in cart please add items in cart to proceed</h4>
-							<a href='/' class="btn btn-primary checkout-btn"><span>${{ total.grand_total }}</span></a> -->
-						</div>
-						<div class="cart-checkout-btn pull-right">
-								<a href='/checkout/' class="btn btn-primary checkout-btn">PROCEED TO CHECKOUT</a>
-								<span>Checkout with multiple addresses!</span>
-						</div>
-						
-					</td>
-				</tr>
-		</tbody><!-- /tbody -->
-	</table><!-- /table -->
-</div><!-- /.cart-shopping-total -->			</div><!-- /.shopping-cart -->
-		</div> <!-- /.row -->
-		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
-<div id="brands-carousel" class="logo-slider wow fadeInUp">
-
-		<div class="logo-slider-inner">	
-			<div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
-				<div class="item m-t-15">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item m-t-10">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand3.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand6.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand2.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand4.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand1.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-
-				<div class="item">
-					<a href="#" class="image">
-						<img data-echo="assets/images/brands/brand5.png" src="assets/images/blank.gif" alt="">
-					</a>	
-				</div><!--/.item-->
-		    </div><!-- /.owl-carousel #logo-slider -->
-		</div><!-- /.logo-slider-inner -->
-	
-</div><!-- /.logo-slider -->
-<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
-</div><!-- /.body-content -->
-
-<!-- ============================================================= FOOTER ============================================================= -->
+          <!-- /.cart-shopping-total -->
+        </div>
+        <!-- /.shopping-cart -->
+      </div>
+      <!-- /.row -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+      <div id="brands-carousel" class="logo-slider wow fadeInUp">
+        <div class="logo-slider-inner">
+          <div id="brand-slider"
+               class="owl-carousel brand-slider custom-carousel owl-theme">
+            <div class="item m-t-15">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item m-t-10">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand3.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand6.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand2.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand4.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand1.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+            <div class="item">
+              <a href="#" class="image">
+                <img data-echo="assets/images/brands/brand5.png"
+                     src="assets/images/blank.gif"
+                     alt="">
+              </a>
+            </div>
+            <!--/.item-->
+          </div>
+          <!-- /.owl-carousel #logo-slider -->
+        </div>
+        <!-- /.logo-slider-inner -->
+      </div>
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.body-content -->
+  <!-- ============================================================= FOOTER ============================================================= -->
 {% endblock %}

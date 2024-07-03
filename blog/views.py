@@ -121,12 +121,13 @@ class DeleteCommentView(View):
 
 class BlogCategoryView(View):
     def get(self, request):
+        """ Blog category list for admin """
         categories = BlogCategory.objects.filter(active=True)
         return render(request, "admin/blog/blog-category.html", { 'categories': categories})
     
     def post(self, request):
-        """ Admin create and update view for blog category """
-        if request.user.user_role.name == 'admin':
+        """ create and update view for blog category on the admin dashboard """
+        if request.user.is_superuser or (request.user.user_role and request.user.user_role.name == 'admin'):
             if request.POST.get("category"):
                 action = "updat"
                 category = BlogCategory.objects.get(id=request.POST.get("category"))

@@ -4,6 +4,7 @@ from cart.models import Cart
 
 # Create your models here.
 class Order(models.Model):
+    """ Model class for Order """
     ORDER_STATUS = (
         ('initial', 'Initial'),
         ('in_process', 'In Process'),
@@ -28,6 +29,7 @@ class Order(models.Model):
         return f"Order #{self.pk} - {self.user.email}"
 
 class OrderItem(models.Model):
+    """ Model class for Order Items """
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
@@ -36,6 +38,7 @@ class OrderItem(models.Model):
         return f"OrderItem #{self.pk} - {self.cart.product.name}"
     
 class ReturnAndReplaceOrder(models.Model):
+    """ Model class for Return and Replace Order """
     order = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name='order_return_replace')
     requested = models.BooleanField(default=True)
     approved = models.BooleanField(default=False)

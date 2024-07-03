@@ -22,52 +22,56 @@
 						</div>
 					</div>
 					<div class="card-body">
-						<div class="table-responsive">
-							<table class="table table-striped">
-								<thead>
-									<tr class="text-center">
-										<th>Role</th>
-										<th>Actions</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for role in roles_with_permissions %}
-										<tr class="role-row text-center" data-role-id="{{ role.id }}">
-											<td>{{ role.name }}</td>
-											<td>
-												<div class='d-flex justify-content-center'>
-													<a href="{% url 'update_role' role.id %}"
-															style='font-weight:100;
-																		color:black'>
-														<i class='fa fa-pencil text-success'></i>
-													</a>
-													<span style="margin: 0 5px;"></span> <!-- Adjust margin for spacing -->
-													<form method="POST"
-																action="{% url 'delete_role' role.id %}"
-																onsubmit="return confirm('Are you sure you want to delete the role \'{{ role.name }}\'?');">
-														{% csrf_token %}
-														<button type="submit"
-																		style="border: none;
-																						background-color: transparent;
-																						cursor: pointer">
-															<i class="fa fa-trash text-danger"></i>
-														</button>
-													</form>
-												</div>
-											</td>
+						{% if roles_with_permissions %}
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr class="text-center">
+											<th>Role</th>
+											<th>Actions</th>
 										</tr>
-										<tr class="permissions-row" data-role-id="{{ role.id }}">
-											<td colspan="2">
-												<strong>Permissions:</strong>
-												<ul>
-													{% for permission in role.permissions.all %}<li>{{ permission.name }}</li>{% endfor %}
-												</ul>
-											</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
+									</thead>
+									<tbody>
+										{% for role in roles_with_permissions %}
+											<tr class="role-row text-center" data-role-id="{{ role.id }}">
+												<td>{{ role.name }}</td>
+												<td>
+													<div class='d-flex justify-content-center'>
+														<a href="{% url 'update_role' role.id %}"
+																style='font-weight:100;
+																			color:black'>
+															<i class='fa fa-pencil text-success'></i>
+														</a>
+														<span style="margin: 0 5px;"></span> <!-- Adjust margin for spacing -->
+														<form method="POST"
+																	action="{% url 'delete_role' role.id %}"
+																	onsubmit="return confirm('Are you sure you want to delete the role \'{{ role.name }}\'?');">
+															{% csrf_token %}
+															<button type="submit"
+																			style="border: none;
+																							background-color: transparent;
+																							cursor: pointer">
+																<i class="fa fa-trash text-danger"></i>
+															</button>
+														</form>
+													</div>
+												</td>
+											</tr>
+											<tr class="permissions-row" data-role-id="{{ role.id }}">
+												<td colspan="2">
+													<strong>Permissions:</strong>
+													<ul>
+														{% for permission in role.permissions.all %}<li>{{ permission.name }}</li>{% endfor %}
+													</ul>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						{% else %}
+						<p style="margin:auto; text-align:center"><b>No Data Found</b></p>
+						{% endif %}
 					</div>
 					<div class="card-footer clearfix bg-white justify-content-md-start">
 						<ul class="pagination pagination-sm m-0 float-right">

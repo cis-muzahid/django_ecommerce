@@ -24,31 +24,35 @@
         <div class="card-body">
           <div class="">
             <div class="row">
-              {% for banner in banners %}
-                <div class="col-md-4">
-                  <div class="card bg-dark text-white" style="height:70%">
-                    <img src="/media/{{ banner.image }}" class="card-img" alt="..." style="height:100%">
-                    <div class="card-img-overlay p-5">
-                      <h2 class="">
-                        <b>{{ banner.title }}</b>
-                      </h2>
-                      <h4>{{ banner.subtitle }}</h4>
-                      <p class="card-text">{{ banner.description }}</p>
+              {% if banners %}
+                {% for banner in banners %}
+                  <div class="col-md-4">
+                    <div class="card bg-dark text-white" style="height:70%">
+                      <img src="/media/{{ banner.image }}" class="card-img" alt="..." style="height:100%">
+                      <div class="card-img-overlay p-5">
+                        <h2 class="">
+                          <b>{{ banner.title }}</b>
+                        </h2>
+                        <h4>{{ banner.subtitle }}</h4>
+                        <p class="card-text">{{ banner.description }}</p>
+                      </div>
+                    </div>
+                    <div class='d-flex bg-dark text-white' style="margin-top:-10px;">
+                      <button type="button"
+                        class="btn btn-info me-md-2 m-2"
+                        data-toggle="modal"
+                        data-target="#bannerModal_{{ banner.id }}">Edit</button>
+                      <form action="/admin/banner/{{ banner.id }}/" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="banner" value="{{ banner.id }}">
+                        <button type="submit" class='btn btn-danger my-2' style='position:absolute; right:15px;'>Delete</button>
+                      </form>
                     </div>
                   </div>
-									<div class='d-flex bg-dark text-white' style="margin-top:-10px;">
-                    <button type="button"
-                      class="btn btn-info me-md-2 m-2"
-                      data-toggle="modal"
-                      data-target="#bannerModal_{{ banner.id }}">Edit</button>
-										<form action="/admin/banner/{{ banner.id }}/" method="post">
-											{% csrf_token %}
-											<input type="hidden" name="banner" value="{{ banner.id }}">
-											<button type="submit" class='btn btn-danger my-2' style='position:absolute; right:15px;'>Delete</button>
-										</form>
-									</div>
-                </div>
-              {% endfor %}
+                {% endfor %}
+              {% else %}
+                <p style="margin:auto;"><b>No Data Found</b></p>
+              {% endif %}
             </div>
             <!-- /.row -->
           </div>

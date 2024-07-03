@@ -4,6 +4,7 @@ from products.models import Category
 # Create your models here.
 
 class Banner(models.Model):
+    """ Model class for Banner """
     title=models.CharField(max_length=255, unique=True)
     subtitle=models.CharField(max_length=255)
     description=models.CharField(max_length=1000)
@@ -17,6 +18,7 @@ class Banner(models.Model):
         return f"{self.title}"
 
 class Facility(models.Model):
+    """ Model class for Facility """
     image=models.ImageField(upload_to='facility/images/')
     title=models.CharField(max_length=255)
     active=models.BooleanField(default=True)

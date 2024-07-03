@@ -17,40 +17,44 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr class="text-center">
-                        <th scope="col">S. no</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">value</th>
-                        <th scope="col">Out of stoke</th>
-                        <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    {% for attr in product_attr %}
-                    <tbody>
-                        <tr class="text-center">
-                        <th scope="row">{{ forloop.counter }}
-                        <td>
-                            <p>{{attr.title}}</p>
-                        </td>
-                        <td>
-                            <p>{{attr.value}}</p>
-                        </td>
-                        <td>
-                            <p>{% if attr.out_of_stoke == False %} No {% else %} Yes {% endif %}</p>
-                        </td>
-                        <td>
-                         <div class='d-flex justify-content-center'>
-                        <span class="ml-2 mr-2">
-                        <a href='/product/{{product.id}}/attribute_update/{{attr.id}}' style='color:black;'>
-                        <i class="fa fa-pencil text-success"></i></a></span>
-                        <span class="ml-2 mr-2"><a href='/delete_product_detail/{{attr.id}}/attributes'>
-                        <i class='fa fa-trash text-danger'></i></a></span></div></td>
-                        </tr>
-                    </tbody>
-                    {% endfor %}
-                </table>
+                {% if product_attr %}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr class="text-center">
+                            <th scope="col">S. no</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">value</th>
+                            <th scope="col">Out of stoke</th>
+                            <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        {% for attr in product_attr %}
+                        <tbody>
+                            <tr class="text-center">
+                            <th scope="row">{{ forloop.counter }}
+                            <td>
+                                <p>{{attr.title}}</p>
+                            </td>
+                            <td>
+                                <p>{{attr.value}}</p>
+                            </td>
+                            <td>
+                                <p>{% if attr.out_of_stoke == False %} No {% else %} Yes {% endif %}</p>
+                            </td>
+                            <td>
+                            <div class='d-flex justify-content-center'>
+                            <span class="ml-2 mr-2">
+                            <a href='/product/{{product.id}}/attribute_update/{{attr.id}}' style='color:black;'>
+                            <i class="fa fa-pencil text-success"></i></a></span>
+                            <span class="ml-2 mr-2"><a href='/delete_product_detail/{{attr.id}}/attributes'>
+                            <i class='fa fa-trash text-danger'></i></a></span></div></td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p style="margin:auto; text-align:center"><b>No Data Found</b></p>
+                {% endif %}
             </div>
             <div class="card-footer clearfix bg-white justify-content-md-start">
                 <ul class="pagination pagination-sm m-0 float-right">
@@ -76,6 +80,7 @@
                 </div>
             </div>
             <div class="card-body">
+            {% if product_specs %}
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr class="text-center">
@@ -107,6 +112,9 @@
                     </tbody>
                     {% endfor %}
                 </table>
+            {% else %}
+                <p style="margin:auto; text-align:center"><b>No Data Found</b></p>
+            {% endif %}
             </div>
             <div class="card-footer clearfix bg-white justify-content-md-start">
                 <ul class="pagination pagination-sm m-0 float-right">

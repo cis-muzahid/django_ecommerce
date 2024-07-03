@@ -92,6 +92,7 @@
                         <!-- /.product-price -->
                       </div>
                       <!-- /.product-info -->
+                      {% if user.is_authenticated %}
                       <div class="cart clearfix animate-effect">
                         <div class="action">
                           <div class="add-cart-button btn-group">
@@ -112,6 +113,7 @@
                         </div>
                         <!-- /.action -->
                       </div>
+                      {% endif %}
                       <!-- /.cart -->
                     </div>
                   </div>
@@ -461,6 +463,7 @@
                           <span class="price-strike">$900.00</span>
                         </div>
                       </div>
+                      {% if user.is_authenticated %}
                       <div class="col-sm-6 col-xs-6">
                         <div class="favorite-button m-t-5">
                           <form action='/add_to_wishlist/'
@@ -494,10 +497,12 @@
                           </a>
                         </div>
                       </div>
+                      {% endif %}
                     </div>
                     <!-- /.row -->
                   </div>
                   <!-- /.price-container -->
+                  {% if user.is_authenticated %}
                   <div class="quantity-container info-container">
                     <div class="row">
                       <div class="qty">
@@ -594,6 +599,7 @@
                     </div>
                     <!-- /.row -->
                   </div>
+                  {% endif %}
                   <!-- /.quantity-container -->
                 </div>
                 <!-- /.product-info -->
@@ -709,6 +715,7 @@
                             <!-- /.product-price -->
                           </div>
                           <!-- /.product-info -->
+                          {% if user.is_authenticated %}
                           <div class="cart clearfix animate-effect">
                             <div class="action">
                               <ul class="list-unstyled">
@@ -750,6 +757,7 @@
                             </div>
                             <!-- /.action -->
                           </div>
+                          {% endif %}
                           <!-- /.cart -->
                         </div>
                         <!-- /.product -->

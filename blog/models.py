@@ -2,6 +2,7 @@ from django.db import models
 from users.models import CustomUser
 # Create your models here.
 class BlogCategory(models.Model):
+    """ Model class for Blog's Category """
     name = models.CharField(max_length=500)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
@@ -10,6 +11,7 @@ class BlogCategory(models.Model):
         return self.name
 
 class Blog(models.Model):
+    """ Model class for Blog """
     title=models.CharField(max_length=255, unique=True)
     description=models.CharField(max_length=1000)
     image=models.ImageField(upload_to='blog/images/')
@@ -24,6 +26,7 @@ class Blog(models.Model):
         return self.title
 
 class Comment(models.Model):
+    """ Model class for Comment """
     description=models.CharField(max_length=500)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

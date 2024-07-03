@@ -14,6 +14,7 @@
         <nav class="yamm megamenu-horizontal">
           <ul class="nav">
             {% for category in categories %}
+            {% if category|subcategories %}
             <li class="dropdown menu-item"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{category.name}}</a>
               <ul class="dropdown-menu mega-menu">
@@ -32,6 +33,10 @@
                 <!-- /.yamm-content -->
               </ul>
             </li>
+            {% else %}
+               <li class="dropdown menu-item"><a href="/category/{{category.name}}">
+               <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{category.name}}</a></li>
+            {% endif %}
             <!-- /.menu-item -->  
             {% endfor %}          
           </ul>
@@ -42,6 +47,7 @@
       <div class="sidebar-widget hot-deals outer-bottom-xs">
         <h3 class="section-title">Hot deals</h3>
         <div class="owl-carousel sidebar-carousel custom-carousel owl-theme outer-top-ss">
+        {% if products %}
           {% for product in hot_deals %}
           <div class="item">
             <div class="products">
@@ -87,7 +93,7 @@
                 
               </div>
               <!-- /.product-info -->
-              
+              {% if user.is_authenticated %}
               <div class="cart clearfix animate-effect">
                 <div class="action">
                   <div class="add-cart-button btn-group">
@@ -101,10 +107,14 @@
                 </div>
                 <!-- /.action --> 
               </div>
+              {% endif %}
               <!-- /.cart --> 
             </div>
           </div>
           {% endfor %}
+        {% else %}
+          <p class="text-center">No Data Found</p>
+        {% endif %}
         </div>
         <!-- /.sidebar-widget --> 
       </div>
@@ -116,6 +126,7 @@
         <h3 class="section-title">Special Offer</h3>
         <div class="sidebar-widget-body outer-top-xs">
           <div class="owl-carousel sidebar-carousel special-offer custom-carousel owl-theme outer-top-xs">
+          {% if special_offer_products %}
             <div class="item">
               <div class="products special-product">
               {% for product in special_offer_products %}
@@ -157,6 +168,9 @@
               {% endfor %}
               </div>
             </div>
+          {% else %}
+            <p class="text-center">No Data Found</p>
+          {% endif %}
           </div>
         </div>
         <!-- /.sidebar-widget-body --> 
@@ -168,9 +182,13 @@
         <h3 class="section-title">Product tags</h3>
         <div class="sidebar-widget-body outer-top-xs">
           <div class="tag-list">
+          {% if ""|categories_all %}
             {% for category in ""|categories_all %}
               <a class="item" title="Phone" href="category/{{ category.name }}/">{{ category.name }}</a>
             {% endfor %}
+          {% else %}
+            <p class="text-center">No Data Found</p>
+          {% endif %}
           </div>
           <!-- /.tag-list --> 
         </div>
@@ -184,6 +202,7 @@
         <h3 class="section-title">Special Deals</h3>
         <div class="sidebar-widget-body outer-top-xs">
           <div class="owl-carousel sidebar-carousel special-offer custom-carousel owl-theme outer-top-xs">
+          {% if special_offer_products %}
             <div class="item">
               <div class="products special-product">
                 {% for product in special_offer_products %}
@@ -314,7 +333,9 @@
                 {% endfor %}
               </div>
             </div>
-
+          {% else %}
+            <p class="text-center">No Data Found</p>
+          {% endif %}
           </div>
         </div>
         <!-- /.sidebar-widget-body --> 
@@ -382,6 +403,7 @@
       
       <div id="hero">
         <div id="owl-main" class="owl-carousel owl-inner-nav owl-ui-sm">
+        {% if banners %}
           {% for banner in banners %}
             <div class="item" style="background-image: url('/media/{{ banner.image }}');">
               <div class="container-fluid">
@@ -401,7 +423,13 @@
             </div>
             <!-- /.item -->
           {% endfor %}
-          
+        {% else %}
+          <div class="item" style="display: flex; justify-content: center; align-items: center;">
+              <div class="inner-container">
+                  <h3 class="text-center">No Data Found</h3>
+              </div>
+          </div>
+        {% endif %}
         </div>
         <!-- /.owl-carousel --> 
       </div>
@@ -424,6 +452,7 @@
         <div class="tab-content outer-top-xs">
           <div class="tab-pane in active" id="all">
             <div class="product-slider">
+              {% if latest_products %}
               <div class="owl-carousel home-owl-carousel custom-carousel owl-theme">
                 {% for product in latest_products %}  
                   <div class="item item-carousel">
@@ -461,6 +490,7 @@
                           
                         </div>
                         <!-- /.product-info -->
+                        {% if user.is_authenticated %}
                         <div class="cart clearfix animate-effect">
                           <div class="action">
                             <ul class="list-unstyled">
@@ -485,6 +515,7 @@
                           </div>
                           <!-- /.action --> 
                         </div>
+                        {% endif %}
                         <!-- /.cart --> 
                       </div>
                       <!-- /.product --> 
@@ -494,6 +525,13 @@
                 {% endfor %}
                 <!-- /.item --> 
               </div>
+              {% else %}
+              <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <p class="text-center">No Data Found</p>
+              </div>
+            </div>
+              {% endif %}
               <!-- /.home-owl-carousel --> 
             </div>
             <!-- /.product-slider --> 
@@ -542,6 +580,7 @@
                               
                             </div>
                             <!-- /.product-info -->
+                            {% if user.is_authenticated %}
                             <div class="cart clearfix animate-effect">
                               <div class="action">
                                 <ul class="list-unstyled">
@@ -567,6 +606,7 @@
                               </div>
                               <!-- /.action --> 
                             </div>
+                            {% endif %}
                             <!-- /.cart --> 
                           </div>
                           <!-- /.product --> 
@@ -640,78 +680,88 @@
         </ul>
         </div>
         <div class="col-lg-9">
+        {% if 'electronics'|electronics_product_filter %}
         <div class="owl-carousel homepage-owl-carousel custom-carousel owl-theme outer-top-xs">
           {% for product in 'electronics'|electronics_product_filter %}
-          <div class="item item-carousel">
-            <div class="products">
-              <div class="product">
-                <div class="product-image">
-                  <div class="image"> 
-                    <a href="/category/{{product.category}}/{{product.slug}}/">
-                        <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                        <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
-                    </a>
+            <div class="item item-carousel">
+              <div class="products">
+                <div class="product">
+                  <div class="product-image">
+                    <div class="image"> 
+                      <a href="/category/{{product.category}}/{{product.slug}}/">
+                          <img src="/media/{{product.id|product_attributes}}" alt=""> 
+                          <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
+                      </a>
+                    </div>
+                    {% if product.tag is not None %}
+                      <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
+                    {% endif %}
                   </div>
-                  {% if product.tag is not None %}
-                    <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                  {% endif %}
-                </div>
-                <!-- /.product-image -->
+                  <!-- /.product-image -->
 
-                <div class="product-info text-left">
-                  <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                  <div class="">
+                  <div class="product-info text-left">
+                    <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
+                    <div class="">
 
-                      {% for star in 5|range_filter %}
-                        {% if star < product|product_rating %}
-                            <span class="star_{{ product|product_rating }}">★</span>
-                        {% else %}
-                            <span class="empty-star">★</span>
-                        {% endif %}
-                      {% endfor %}
+                        {% for star in 5|range_filter %}
+                          {% if star < product|product_rating %}
+                              <span class="star_{{ product|product_rating }}">★</span>
+                          {% else %}
+                              <span class="empty-star">★</span>
+                          {% endif %}
+                        {% endfor %}
 
+                    </div>
+                    <div class="description"></div>
+                    <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
+                    <!-- /.product-price --> 
+                    
                   </div>
-                  <div class="description"></div>
-                  <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
-                  <!-- /.product-price --> 
-                  
-                </div>
-                <!-- /.product-info -->
-                <div class="cart clearfix animate-effect">
-                  <div class="action">
-                    <ul class="list-unstyled">
-                      <li class="add-cart-button btn-group">
-                        <form action='/add_cart/' method='post'>{% csrf_token %}
+                  <!-- /.product-info -->
+                  {% if user.is_authenticated %}
+                  <div class="cart clearfix animate-effect">
+                    <div class="action">
+                      <ul class="list-unstyled">
+                        <li class="add-cart-button btn-group">
+                          <form action='/add_cart/' method='post'>{% csrf_token %}
+                            <input type='hidden' name='product' value='{{ product.id }}'>
+                            <input type='hidden' name='user' value='{{ user.id }}'>
+                            <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
+                            title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
+                          </form>
+                          <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                        </li>
+                        <li class="lnk wishlist">
+                          <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
                           <input type='hidden' name='product' value='{{ product.id }}'>
                           <input type='hidden' name='user' value='{{ user.id }}'>
-                          <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                          title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                        </form>
-                        <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
-                      </li>
-                      <li class="lnk wishlist">
-                        <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                        <input type='hidden' name='product' value='{{ product.id }}'>
-                        <input type='hidden' name='user' value='{{ user.id }}'>
-                        <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                          <i class="icon fa fa-heart"></i> </button>
-                        </form>
-                      </li>
-                      <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
-                    </ul>
+                          <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
+                            <i class="icon fa fa-heart"></i> </button>
+                          </form>
+                        </li>
+                        <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
+                      </ul>
+                    </div>
+                    <!-- /.action --> 
                   </div>
-                  <!-- /.action --> 
+                  {% endif %}
+                  <!-- /.cart --> 
                 </div>
-                <!-- /.cart --> 
+                <!-- /.product --> 
+                
               </div>
-              <!-- /.product --> 
-              
+              <!-- /.products --> 
             </div>
-            <!-- /.products --> 
-          </div>
           {% endfor %}
-          <!-- /.item --> 
         </div>
+        {% else %}
+            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <p class="text-center">No Data Found</p>
+              </div>
+            </div>
+        {% endif %}
+          <!-- /.item --> 
         </div>
         </div>
         <!-- /.home-owl-carousel --> 
@@ -722,6 +772,7 @@
       <div class="wide-banners outer-bottom-xs">
         <div class="row">
           <div class="col-md-8">
+          {% if wide_banner_large %}
             <div class="wide-banner1 cnt-strip">
               <div class="image">
                 <img class="img-responsive"
@@ -749,9 +800,17 @@
               </div>
               <!-- /.new-label -->
             </div>
+          {% else %}
+            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <p class="text-center">No Data Found</p>
+              </div>
+            </div>
+          {% endif %}
           </div>
           <!-- /.col -->
           <div class="col-md-4">
+          {% if wide_banner_small %}
             <div class="wide-banner cnt-strip">
               <div class="image">
                 <img class="img-responsive"
@@ -774,7 +833,14 @@
                 </div>
               </div>
               <!-- /.wide-banner -->
-            </div>            
+            </div>
+          {% else %}
+            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <p class="text-center">No Data Found</p>
+              </div>
+            </div>
+          {% endif %}
           </div>
         </div>
       </div>
@@ -790,6 +856,7 @@
       <section class="section latest-blog outer-bottom-vs">
         <h3 class="section-title">Latest form Blog</h3>
         <div class="blog-slider-container outer-top-xs">
+          {% if blogs %}
           <div class="owl-carousel blog-slider custom-carousel">
           {% for blog in blogs %}
             <div class="item">
@@ -812,8 +879,15 @@
               <!-- /.blog-post --> 
             </div>
             <!-- /.item -->
-            {% endfor %}            
+          {% endfor %}            
           </div>
+          {% else %}
+            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <p class="text-center">No Data Found</p>
+              </div>
+            </div>
+          {% endif %}
           <!-- /.owl-carousel --> 
         </div>
         <!-- /.blog-slider-container --> 
@@ -824,6 +898,7 @@
       <!-- ============================================== FEATURED PRODUCTS ============================================== -->
       <section class="section new-arriavls">
         <h3 class="section-title">Featured Products</h3>
+        {% if latest_products %}
         <div class="owl-carousel home-owl-carousel custom-carousel owl-theme outer-top-xs">
           {% for product in latest_products %}
           <div class="item item-carousel">
@@ -863,6 +938,7 @@
                   
                 </div>
                 <!-- /.product-info -->
+                {% if user.is_authenticated %}
                 <div class="cart clearfix animate-effect">
                   <div class="action">
                     <ul class="list-unstyled">
@@ -888,6 +964,7 @@
                   </div>
                   <!-- /.action --> 
                 </div>
+                {% endif %}
                 <!-- /.cart --> 
               </div>
               <!-- /.product --> 
@@ -898,6 +975,13 @@
           {% endfor %}
           <!-- /.item -->
         </div>
+        {% else %}
+                    <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+              <div class="inner-container">
+                <p class="text-center">No Data Found</p>
+              </div>
+            </div>
+          {% endif %}
         <!-- /.home-owl-carousel --> 
       </section>
       <!-- /.section --> 
