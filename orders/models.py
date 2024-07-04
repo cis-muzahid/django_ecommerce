@@ -54,3 +54,14 @@ class ReturnAndReplaceOrder(models.Model):
 
     def __str__(self):
         return f"{self.user.email} : {self.order.id} - {self.action}"
+
+
+class CartOrderItem(models.Model):
+    """ Model class for storing cart items if user choose stripe payment """
+
+    active = models.BooleanField(default=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Order #{self.pk} - {self.order.user.email}"

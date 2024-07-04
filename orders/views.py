@@ -9,11 +9,15 @@ from .forms import OrderForm, ReturnAndReplaceOrderForm, AddressForm
 from django.contrib import messages
 from .utilities import *
 from home.utilities import *
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
 import paypalrestsdk
 from django.views.generic.base import TemplateView
 from users.models import UserAddress
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -33,22 +37,20 @@ class OrderView(View):
 
     def post(self, request, pk=None):
         """ Orders View for create orders """
-        payment_intent = ''
-        if request.POST.get('stripeToken'):
-            payment_intent = self.__payment_method(request)
-            payment_intent = stripe.PaymentIntent.retrieve(payment_intent)
+        payment_intent = None
 
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
-            if payment_intent != '' and payment_intent['status'] == 'succeeded':
-                order.payment_method = "stripe"
-                order.payment_id = payment_intent.id
-                order.payment_status = payment_intent['status'] if payment_intent['status'] == 'succeeded' else 'failed'
-            # order.tracking_number = create_order_tracking(order)
             order.save()
-            order_cart_item(order, request.user.pk)
-            messages.success(request,  f'order added successfully.')
+            if request.POST.get('stripeToken'):
+                order.payment_method = "stripe"
+                stripe_cart_item(order, request.user.pk)
+                payment_intent = self.__payment_method(request)
+                order.payment_id = payment_intent
+                order.save()
+            if payment_intent == None:
+                order_cart_item(order, request.user.pk)
             return redirect('home')
         else:
             messages.error(request, form.errors)
@@ -56,20 +58,20 @@ class OrderView(View):
 
     def __payment_method(self, request):
         """ Create strip payment """
-        token = request.POST.get('stripeToken')
-        source = stripe.Source.create(
-                type='card',
-                token=token
-            )
-
-        customer = None
-        for cus in stripe.Customer.list()['data']:
-            if cus.email==request.user:
-                customer=cus
-                break
-        if customer == None:
-            customer = stripe.Customer.create( email=request.POST.get('stripeEmail'), source=source.id) 
         try:
+            token = request.POST.get('stripeToken')
+            source = stripe.Source.create(
+                    type='card',
+                    token=token
+                )
+
+            customer = None
+            for cus in stripe.Customer.list()['data']:
+                if cus.email==request.user:
+                    customer=cus
+                    break
+            if customer == None:
+                customer = stripe.Customer.create( email=request.POST.get('stripeEmail'), source=source.id) 
             payment_intent = stripe.PaymentIntent.create(
                 amount=int(float(request.POST['total_amount'])*100),
                 currency='inr',
@@ -340,3 +342,46 @@ class OrderTracking(View):
         except:
             messages.error(request, 'unable to track this order please try again.')
         return render(request, 'orders/tracking.html', {'orders': orders})
+
+@method_decorator(csrf_exempt, name='dispatch')
+class StripeWebhookView(View):
+    def post(self, request, *args, **kwargs):
+        payload = request.body
+        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+        endpoint_secret = settings.STRIPE_WEBHOOK_KEY
+
+        event = None
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+            )
+        except ValueError:
+            # Invalid payload
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError:
+            # Invalid signature
+            return HttpResponse(status=400)
+
+        # Handle the event
+        if event['type'] == 'payment_intent.succeeded':
+            payment_intent = event['data']['object']
+            self.handle_payment_intent_succeeded(payment_intent)
+        elif event['type'] == 'payment_intent.payment_failed':
+            payment_intent = event['data']['object']
+            self.handle_payment_intent_failed(payment_intent)
+        else:
+            # Unexpected event type
+            return HttpResponse(status=400)
+        return HttpResponse(status=200)
+
+    def handle_payment_intent_succeeded(self, payment_intent):
+        order = Order.objects.filter(payment_id=payment_intent.id).first()
+        order.payment_status = 'succeeded'
+        order.save()
+        create_order_item(order)
+
+    def handle_payment_intent_failed(self, payment_intent):
+        order = Order.objects.filter(payment_id=payment_intent.id).first()
+        order.payment_status = 'failed'
+        order.save()

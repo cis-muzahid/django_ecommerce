@@ -25,4 +25,5 @@ urlpatterns = [
     # path('payment-failed/', PaymentFailedView.as_view(), name='payment_failed'),
     # path('payment-success/', PaymentSuccessView.as_view(), name='payment_success'),
     path('order_tracking/', OrderTracking.as_view(), name='order_tracking'),
+    path('stripe-webhook/', StripeWebhookView.as_view(), name='stripe-webhook'),
 ]

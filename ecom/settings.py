@@ -30,8 +30,9 @@ SECRET_KEY = os.environ.get("DJANGO_KEY", None)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0896-103-47-44-135.ngrok-free.app']
 
+CSRF_TRUSTED_ORIGINS = ['https://0896-103-47-44-135.ngrok-free.app']
 
 # Application definition
 
@@ -167,3 +168,4 @@ PAYMENT_CANCEL_URL = os.environ.get("PAYMENT_CANCEL_URL")
 PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET = os.environ.get('PAYPAL_SECRET')
 TRACKING_KEY = os.environ.get("TRACKING_SECRET")
+STRIPE_WEBHOOK_KEY = os.environ.get("STRIPE_WEBHOOK_KEY")

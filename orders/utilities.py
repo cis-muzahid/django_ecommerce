@@ -1,5 +1,5 @@
 from cart.models import Cart
-from .models import OrderItem
+from .models import OrderItem, CartOrderItem
 from users.models import CustomUser, UserAddress
 from django.conf import settings
 from random import randint
@@ -19,9 +19,29 @@ def order_cart_item(order, user):
     user = CustomUser.objects.get(id=user)
     carts = Cart.objects.filter(user=user, active=True)
     for cart in carts:
-        OrderItem.objects.create(order=order, cart=cart)
-        cart.active = False
+        if not CartOrderItem.objects.filter(order=order, cart=cart).exists():
+            OrderItem.objects.create(order=order, cart=cart)
+            cart.active = False
+            cart.save()
+
+def stripe_cart_item(order, user):
+    """ function to create cart order items when user choose stripe for payment """
+    user = CustomUser.objects.get(id=user)
+    carts = Cart.objects.filter(user=user, active=True)
+    for cart in carts:
+        if not CartOrderItem.objects.filter(order=order, cart=cart).exists():
+            CartOrderItem.objects.create(order=order, cart=cart).save()
+
+
+def create_order_item(order):
+    """ function to create order items after successful payment from stripe """
+    carts = CartOrderItem.objects.filter(order=order, active=True)
+    for cart in carts:
+        if not OrderItem.objects.filter(order=order, cart=cart.cart).exists():
+            OrderItem.objects.create(order=order, cart=cart.cart)
+        cart.active = cart.cart.active = False
         cart.save()
+        cart.cart.save()
 
 def current_user_cart(user):
     """ function to fetch all carts of login user """
