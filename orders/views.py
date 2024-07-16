@@ -158,7 +158,6 @@ class ReturnAndReplaceView(View):
             cart = request.POST.get('cart')
             cart = Cart.objects.get(id=cart)
             replace.cart = cart
-            breakpoint()
             if replace.cancle_reason:
                 replace.active = True
                 replace.approved = False
@@ -205,7 +204,7 @@ class ChangeOrderStatus(View):
         if order != None:
             order.active = False
             order.save()
-            if order.order.payment_status:
+            if order.order.payment_method=='stripe':
                 refund = stripe.Refund.create(
                     payment_intent=order.order.payment_status,
                     amount=order.cart.product.price,
@@ -238,6 +237,7 @@ class SupplierReturnAndReplaceView(View):
             return_replace_request.approved = True
             return_replace_request.save()
             if return_replace_request.action == 'Replace':
+                amount = (return_replace_request.order.cart.product.price - return_replace_request.cart.product.price)
                 return_replace_request.order.cart = return_replace_request.cart
                 return_replace_request.order.save()
                 return_replace_request.cart = None
@@ -245,7 +245,7 @@ class SupplierReturnAndReplaceView(View):
                 if return_replace_request.order.order.payment_method == 'stripe':
                     stripe.Refund.create( 
                        payment_intent=return_replace_request.order.order.payment_id, 
-                       amount=int(float(return_replace_request.order.cart.product.price)*100)
+                       amount=int(float(amount)*100)
                     )
                 return redirect('admin_replace_request_list')
             elif return_replace_request.action == 'Return':

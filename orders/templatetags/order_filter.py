@@ -41,7 +41,7 @@ def current_user_replace_request(user):
         if replace_order.first() and replace_order.first().order.active and replace_order.first().created_at >= date_before_seven_days and replace_order.first().created_at <= current_time:
             replace_order = replace_order.first().pk
         else:
-            replace_order = replace_orders.exclude(cancle_reason=None, approved=False)
+            replace_order = replace_orders.exclude(cancle_reason=None, approved=True)
             if replace_order.first() and replace_order.first().cancle_reason:
                 replace_order = replace_order.first().pk
             else:

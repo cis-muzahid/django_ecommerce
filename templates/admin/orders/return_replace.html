@@ -47,19 +47,19 @@
                            height='40px'
                            alt="">
                       <div class="product-name">
-                        <a href="#">{{ order.cart.product.name }}</a>
+                        <a href="#">{{ order.order.cart.product.name }}</a>
                       </div>
                       <div class="">
                         {% for star in 5|range_filter %}
-                          {% if star < order.cart.product|product_rating %}
-                            <span class="star_{{ order.cart.product|product_rating }}">★</span>
+                          {% if star < order.order.cart.product|product_rating %}
+                            <span class="star_{{ order.order.cart.product|product_rating }}">★</span>
                           {% else %}
                             <span class="empty-star">★</span>
                           {% endif %}
                         {% endfor %}
                       </div>
-                      <span class="review">( {{ order.cart.product|product_review_users_count }} Reviews )</span>
-                      <div class="price">${{ order.cart.product.price }}</div>
+                      <span class="review">( {{ order.order.cart.product|product_review_users_count }} Reviews )</span>
+                      <div class="price">${{ order.order.cart.product.price }}</div>
                     </td>
                     {% if 'replace' in request.path %}
                       <td>

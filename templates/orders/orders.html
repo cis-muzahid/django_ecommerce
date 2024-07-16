@@ -73,7 +73,7 @@
 																	return / replace
 																</button>
 																<div class="modal fade"
-																	id="exampleModalCenter{{ order.id }}"
+																	id="exampleModalCenter{{ order.pk }}"
 																	tabindex="-1"
 																	role="dialog"
 																	aria-labelledby="exampleModalCenterTitle"
@@ -102,7 +102,7 @@
 																							<option value="Return">Return</option>
 																							<option value="Replace">Replace</option>
 																						</select>
-																						<input type='hidden' name='order' value="{{ order.id }}">
+																						<input type='hidden' name='order' value="{{ order.pk }}">
 																						<input type='hidden' name='requested' value='True'>
 																						<input type='hidden' name='user' value="{{ user.id }}">
 																					</div>
