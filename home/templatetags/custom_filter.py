@@ -142,6 +142,8 @@ def check_user_role(user):
                 return admin_role.id
             else:
                 return user_role.id
+        else:
+            return user.user_role.id
     except Role.DoesNotExist:
         return None 
     

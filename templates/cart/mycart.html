@@ -85,13 +85,17 @@
                         </td>
                         {% if user.id|current_user_replace_request %}
                           <td class="cart-product-sub-total">
-                            <form action="/orders/replace/{{ user.id|current_user_replace_request }}/"
-                                  method='post'>
-                              {% csrf_token %}
-                              <input type='hidden' name='requested' value="Replace">
-                              <input type='hidden' name='cart' value="{{ cart.id }}">
-                              <button type='submit' class='btn btn-primary'>Replace product</button>
-                            </form>
+                            {% if cart.id|cancle_current_user_replace_request %}
+                              <p>{{ cart.id|cancle_current_user_replace_request }}</p>
+                            {% else %}
+                              <form action="/orders/replace/{{ user.id|current_user_replace_request }}/"
+                                    method='post'>
+                                {% csrf_token %}
+                                <input type='hidden' name='requested' value="Replace">
+                                <input type='hidden' name='cart' value="{{ cart.id }}">
+                                <button type='submit' class='btn btn-primary'>Replace product</button>
+                              </form>
+                            {% endif %}
                           </td>
                         {% endif %}
                         <td class="romove-item">

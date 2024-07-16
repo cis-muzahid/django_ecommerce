@@ -10,7 +10,7 @@ class CutomUserForm(forms.ModelForm):
     )
     class Meta:
         model = CustomUser
-        fields = ['mobile_no', 'email', 'first_name', 'last_name', 'user_role', 'password']
+        fields = ['mobile_no', 'email', 'first_name', 'last_name', 'user_role', 'password', 'user_image']
 
 
 class UserRoleForm(forms.ModelForm):

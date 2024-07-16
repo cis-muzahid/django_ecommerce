@@ -55,12 +55,12 @@
 													</td>
 													<td class="col-md-3 col-sm-6 col-xs-6">
 														{{ order.payment_method }}
-														{% if order.order.payment_method == "stripe" %}
-															<p>Payment Method : {{ order.order.payment_method }}</p>
-															<p>Payment Status : {{ order.order.payment_status }}</p>
-														{% else %}
-															<p>Payment Method : Case on Delivery</p>
+														{% if order.order.payment_method == "cash on delivery" or order.order.payment_method == None %}
+															<p>Payment Method : Cash on Delivery</p>
 															<p>Payment Status : pending</p>
+                                                        {% else %}
+                                                            <p>Payment Method : {{ order.order.payment_method }}</p>
+															<p>Payment Status : {{ order.order.payment_status }}</p>
 														{% endif %}
 													</td>
 													<td class="col-md-2 ">

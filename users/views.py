@@ -426,13 +426,16 @@ class UserProfileView(View):
     
     def post(self, request):
         """ update user profile view """
-        form = CutomUserForm(request.POST, instance=request.user)
+        form = CutomUserForm(request.POST, request.FILES, instance=request.user)
         addresses = fetch_user_address(request.user)
         try:
             if form.is_valid():
                 form.save()
+            else:
+                messages.error(request, f"Facing issue with this request : { form.errors }")
             return redirect('user_profile')
-        except:
+        except Exception as e:
+            messages.error(request, f"Facing issue with this request : { e }")
             return render(request, 'authenticate/profile.html', { 'addresses': addresses })
 
 class UserUpdateAddressView(View):

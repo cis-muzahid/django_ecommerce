@@ -49,6 +49,7 @@ class ReturnAndReplaceOrder(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True,blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
+    cancle_reason = models.CharField(max_length=255, null=True)
     # tracking_number = models.CharField(max_length=255, default=None, null=True)
 
 

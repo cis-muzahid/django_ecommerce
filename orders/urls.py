@@ -19,11 +19,9 @@ urlpatterns = [
     # path('update_order/<int:pk>', AdminOrderUpdate(), name='update_order_admin')
 
     # PAYPAL PAYMENT GATEWAY===============================
-    # path('create-payment/', CreatePaymentView.as_view(), name='create_payment'),
-    # path('execute-payment/', ExecutePaymentView.as_view(), name='execute_payment'),
-    # path('payment-checkout/', PaymentCheckoutView.as_view(), name='payment_checkout'),
-    # path('payment-failed/', PaymentFailedView.as_view(), name='payment_failed'),
-    # path('payment-success/', PaymentSuccessView.as_view(), name='payment_success'),
+    path('create-payment/', CreatePaymentView.as_view(), name='create_payment'),
+    path('execute-payment/', ExecutePaymentView.as_view(), name='payment_success'),
+    path('payment-cancelled/', PaymentCancelledView.as_view(), name='payment_cancelled'),
     path('order_tracking/', OrderTracking.as_view(), name='order_tracking'),
     path('stripe-webhook/', StripeWebhookView.as_view(), name='stripe-webhook'),
 ]

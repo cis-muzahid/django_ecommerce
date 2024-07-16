@@ -45,7 +45,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=30)
     mobile_no = models.CharField(max_length=30,blank=True, null=True)
     user_role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
-
+    user_image = models.ImageField(upload_to='users/images/', blank=True, null=True )
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -78,5 +78,10 @@ class UserAddress(models.Model):
 
     def __str__(self):
         return f"{self.street}, {self.city}, {self.state}, {self.postal_code}, {self.country}"
-	
 
+class Vendor(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    account_id = models.CharField(max_length=255, blank=True, null=True)
+    account_balance = models.DecimalField(max_digits=10, decimal_places=2)
+    account_type = models.CharField(max_length=255, blank=True, null=True)
+    payment_status = models.CharField(max_length=255, blank=True, null=True)

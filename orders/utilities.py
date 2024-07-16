@@ -1,11 +1,19 @@
 from cart.models import Cart
 from .models import OrderItem, CartOrderItem
-from users.models import CustomUser, UserAddress
+from users.models import CustomUser, UserAddress, Vendor
 from django.conf import settings
 from random import randint
 import http.client
 from datetime import date
 import json
+import time
+import paypalrestsdk
+
+paypalrestsdk.configure({
+    "mode": "sandbox",  # Change to "live" for production
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_SECRET,
+})
 
 def check_default_address(user):
     """ function to check login user default address """
@@ -115,3 +123,49 @@ def fetch_user_address(user):
     except:
         addresses = None
     return addresses
+
+def process_payment(self, order):
+    order_items = OrderItem.objects.filter(order=order)
+    for order_item in order_items:
+        vendor = order_item.cart.product.user
+        vendor_user = Vendor.objects.filter(user=vendor).first()
+        # send_payment_to_vendor(order_item.cart.product.price, vendor.email)
+        if not vendor_user:
+            vendor = Vendor.objects.create(user=vendor)
+            vendor.account_balance = order_item.cart.product.price
+            vendor.save()
+        else:
+            vendor_user.account_balance += order_item.cart.product.price
+            vendor_user.save()
+
+def send_payment_to_vendor(self, amount, email):
+    try:
+        payout = paypalrestsdk.Payout({
+            "sender_batch_header": {
+                "sender_batch_id": "batch_" + str(int(time.time())),
+                "email_subject": "You have a payment"
+            },
+            "items": [{
+                "recipient_type": "EMAIL",
+                "amount": {
+                    "value": int(float(amount)*100),
+                    "currency": "USD"
+                },
+                "receiver": email,
+                "note": "Thank you.",
+                "sender_item_id": "item_1"
+            }]
+        })
+        
+        if payout.create(sync_mode=True):
+            print("Payout created successfully")
+            return payout
+        else:
+            print("Failed to create payout")
+            print(payout.error)
+            return None
+
+    except paypalrestsdk.ResourceNotFound as error:
+        print("ResourceNotFound Error: ", error)
+    except Exception as e:
+        print("An error occurred: ", str(e))
