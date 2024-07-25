@@ -119,6 +119,8 @@
 																{% if order.id|current_user_return_request == 'Approved' %}
 																	<b>Return Approved</b>
 																{% elif order.id|current_user_return_request == 'Replaced' %}
+                                                                {% elif order.id|check_request_is_cancel %}
+                                                                    {{ order.id|check_request_is_cancel }}
 																{% else %}
 																	In Process : {{ order.id|current_user_return_request }}
 																{% endif %}

@@ -124,21 +124,19 @@ def fetch_user_address(user):
         addresses = None
     return addresses
 
-def process_payment(self, order):
+def process_payment(order):
     order_items = OrderItem.objects.filter(order=order)
     for order_item in order_items:
         vendor = order_item.cart.product.user
         vendor_user = Vendor.objects.filter(user=vendor).first()
-        # send_payment_to_vendor(order_item.cart.product.price, vendor.email)
         if not vendor_user:
-            vendor = Vendor.objects.create(user=vendor)
-            vendor.account_balance = order_item.cart.product.price
+            vendor = Vendor.objects.create(user=vendor, account_balance = order_item.cart.product.price)
             vendor.save()
         else:
             vendor_user.account_balance += order_item.cart.product.price
             vendor_user.save()
 
-def send_payment_to_vendor(self, amount, email):
+def send_payment_to_vendor(amount, email):
     try:
         payout = paypalrestsdk.Payout({
             "sender_batch_header": {
@@ -169,3 +167,14 @@ def send_payment_to_vendor(self, amount, email):
         print("ResourceNotFound Error: ", error)
     except Exception as e:
         print("An error occurred: ", str(e))
+
+def retrive_address(address):
+    address_parts = address.split(',')
+    address = {
+        'line1': address_parts[0].strip(),
+        'line2': address_parts[1].strip() if len(address_parts) > 1 else '',
+        'city': address_parts[2].strip() if len(address_parts) > 2 else '',
+        'postal_code': address_parts[3].strip() if len(address_parts) > 3 else '',
+        'country': address_parts[4].strip() if len(address_parts) > 4 else ''
+    }
+    return address

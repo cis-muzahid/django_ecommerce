@@ -4,12 +4,14 @@ from django.views import View
 from django.contrib import messages
 from .forms import BlogForm, CommentForm, BlogCategoryForm
 from django.urls import reverse
+from home.utilities import pagination
 
 # Create your views here.
 class BlogView(View):
     def get(self, request):
         """ Admin blogs view """
         blogs = Blog.objects.filter(active=True)
+        blogs = pagination(blogs, request.GET.get("page"))
         categories = BlogCategory.objects.filter(active=True)
         return render(request, "admin/blog/blog.html", {'blogs': blogs, 'categories': categories })
 
@@ -123,6 +125,7 @@ class BlogCategoryView(View):
     def get(self, request):
         """ Blog category list for admin """
         categories = BlogCategory.objects.filter(active=True)
+        categories = pagination(categories, request.GET.get("page"))
         return render(request, "admin/blog/blog-category.html", { 'categories': categories})
     
     def post(self, request):

@@ -68,31 +68,52 @@ class OrderView(View):
         """ Create strip payment """
         try:
             token = request.POST.get('stripeToken')
+            email = request.POST.get('stripeEmail')
+            total_amount = int(float(request.POST['total_amount']) * 100)
+            address = request.POST.get('address')
             source = stripe.Source.create(
-                    type='card',
-                    token=token
-                )
+                type='card',
+                token=token
+            )
 
             customer = None
-            for cus in stripe.Customer.list()['data']:
-                if cus.email==request.user:
-                    customer=cus
+            for cus in stripe.Customer.list(email=email)['data']:
+                if cus.email == email:
+                    customer = cus
                     break
-            if customer == None:
-                customer = stripe.Customer.create( email=request.POST.get('stripeEmail'), source=source.id) 
+            if customer is None:
+                customer = stripe.Customer.create(
+                    email=email,
+                    source=source.id,
+                    address=retrive_address(address)
+                )
+
+            else:
+                stripe.Customer.modify(
+                    customer['id'],
+                    name=request.user.first_name,
+                    address=retrive_address(address)
+                )
+                stripe.Customer.create_source(
+                    customer.id,
+                    source=source.id
+                )
+
+            # Create a PaymentIntent
             payment_intent = stripe.PaymentIntent.create(
-                amount=int(float(request.POST['total_amount'])*100),
+                amount=total_amount,
                 currency='inr',
                 description='Product payment',
-                customer= customer.id,
-                source=source,
+                customer=customer.id,
+                payment_method=source.id,
                 setup_future_usage='off_session',
-                automatic_payment_methods={ 'enabled': True, 'allow_redirects': 'never' }
+                automatic_payment_methods={'enabled': True, 'allow_redirects': 'never'}
             )
 
             stripe.PaymentIntent.confirm(
                 payment_intent.id,
-                )
+                payment_method=source.id
+            )
 
             return payment_intent.id
 
@@ -240,16 +261,19 @@ class SupplierReturnAndReplaceView(View):
                 amount = (return_replace_request.order.cart.product.price - return_replace_request.cart.product.price)
                 return_replace_request.order.cart = return_replace_request.cart
                 return_replace_request.order.save()
-                return_replace_request.cart = None
+                return_replace_request.active = False
                 return_replace_request.save()
                 if return_replace_request.order.order.payment_method == 'stripe':
-                    stripe.Refund.create( 
-                       payment_intent=return_replace_request.order.order.payment_id, 
-                       amount=int(float(amount)*100)
-                    )
+                    # stripe.Refund.create(
+                    #    payment_intent=return_replace_request.order.order.payment_id,
+                    #    amount=int(float(amount)*100)
+                    # )
+                    pass
                 return redirect('admin_replace_request_list')
             elif return_replace_request.action == 'Return':
                 if return_replace_request.order.order.payment_method == 'stripe':
+                    return_replace_request.active = False
+                    return_replace_request.save()
                     stripe.Refund.create( 
                        payment_intent=return_replace_request.order.order.payment_id, 
                        amount=int(float(return_replace_request.order.cart.product.price)*100)
@@ -262,29 +286,39 @@ class AdminOrderView(View):
             """ order view for admin """
             orders = OrderItem.objects.filter(order=pk)
             if request.user.user_role and request.user.user_role.name =="supplier":
-                orders = orders.filter(user = request.user.id)
+                orders = orders.filter(user = request.user.id, active=True)
             return render(request, 'admin/orders/order_items.html', {'orders': orders})
         else:
             """ order list view for admin """
             orders = Order.objects.all()
             if request.user.user_role and request.user.user_role.name =="supplier":
-                orders = orders.filter(user = request.user.id)
+                orders = orders.filter(user = request.user.id, active=True)
             orders = pagination(orders, request.GET.get("page"))
             return render(request, 'admin/orders/order.html', {'orders': orders})
+
+class AdminDeleteOrder(View):
+    def post(self, request):
+        try:
+            order = Order.objects.get(id=request.POST.get('order'))
+            order.active = False
+            order.save()
+        except:
+            messages.error(request, 'Something went wrong. Try again.')
+        return redirect('admin_orders_list')
 
 class CancelRequest(View):
     def post(self, request):
         """ view that allow user to cancle return or replace request. """
         cancel_request = ReturnAndReplaceOrder.objects.get(id=request.POST.get('request'))
-        if cancel_request.requested == 'return':
+        if cancel_request.action == 'Return':
             cancel_request.active = False
         else:
             cancel_request.cart.active = True
             cancel_request.cart.save()
             cancel_request.active = False
-            cancel_request.cancle_reason = "Admin reject this request."
+            cancel_request.cancle_reason = "Admin reject this replace request."
         cancel_request.save()
-        if cancel_request.action == 'return':
+        if cancel_request.action == 'Return':
             return redirect('admin_return_request_list')
         else:
             return redirect('admin_replace_request_list')
@@ -375,6 +409,9 @@ class StripeWebhookView(View):
         process_payment(order)
 
     def handle_payment_intent_failed(self, payment_intent):
-        order = Order.objects.filter(payment_id=payment_intent.id).first()
-        order.payment_status = 'failed'
-        order.save()
+        try:
+            order = Order.objects.filter(payment_id=payment_intent.id).first()
+            order.payment_status = 'failed'
+            order.save()
+        except:
+            pass

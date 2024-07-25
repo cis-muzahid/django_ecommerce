@@ -79,11 +79,11 @@ class WishlistView(View):
                 if form.is_valid():
                     wishlist = form.save()
                     messages.success(request,  f'{wishlist.product} added successfully in Wishlist.')
-                    return redirect(reverse('product_details', kwargs={'product':wishlist.product,
-                                                                        'category': wishlist.product.category}))
+                    return redirect('wishlist_view')
                 else:
                     messages.error(request, form.errors)
-                    return render(request, 'cart/wishlist.html')
+                    return redirect(reverse('product_details', kwargs={'product':wishlist.product,
+                                                                        'category': wishlist.product.category}))
         else:
             return redirect('login_user')
 
