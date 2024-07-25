@@ -51,7 +51,7 @@
 															{% endfor %}
 														</div>
 														<span class="review">( {{ order.cart.product|product_review_users_count }} Reviews )</span>
-														<div class="price">${{ order.cart.product.price }}</div>
+														<div class="price">&#8377; {{ order.cart.product.price }}</div>
 													</td>
 													<td class="col-md-3 col-sm-6 col-xs-6">
 														{{ order.payment_method }}

@@ -157,7 +157,6 @@ class AddUserView(View):
             if form.is_valid():
                 role = form.cleaned_data['user_role']
                 user = CustomUser.objects.create_user(
-                    username=form.cleaned_data['username'],
                     email=form.cleaned_data['email'],
                     password=form.cleaned_data['password']
                 )
@@ -166,6 +165,15 @@ class AddUserView(View):
                 user.user_role = role
                 user.save()
                 messages.success(request, 'User account has been successfully created.')
+                return redirect('user_index')
+            else:
+                error_messages = []
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        error_messages.append(f"{field}: {error}")
+
+                error_message_str = ' '.join(error_messages)
+                messages.error(request, f'Facing issues while createing user : \n { error_message_str }' )
                 return redirect('user_index')
         except Exception as e:
             messages.error(request, f'Error creating user: {str(e)}')
