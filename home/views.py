@@ -121,6 +121,7 @@ class AdminFacilityView(View):
     def get(self, request):
         """ facilities list view for admin """
         facilities = Facility.objects.filter(active=True).order_by('-id')
+        facilities = pagination(facilities, request.GET.get("page"))
         return render(request, "admin/home/facilities.html", {'facilities': facilities})
 
     def post(self, request):

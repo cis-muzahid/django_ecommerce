@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      DB_DB: ecom
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "5434:5432"  # Change to an available port on the host
+
+  web:
+    build: .
+    command: ./entrypoint.sh 
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_DB: ecom
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DJANGO_KEY: django-insecure-z1e6vv%$*po+)*vpn$ox_k#3^a9akgztf6z(a8sgv8wvdi7ob^
+
+volumes:
+  postgres_data:

@@ -67,7 +67,7 @@
                           </div>
                           <!-- /.row -->
                           <div class="cart-product-info">
-                            <span class="product-color">COLOR:<span>Blue</span></span>
+                            <span class="product-color"> &#8377; {{ cart.product.price }}</span>
                           </div>
                         </td>
                         <td class="cart-product-edit">
@@ -78,20 +78,24 @@
                           <span>{{ cart.quantity }}</span>
                         </td>
                         <td class="cart-product-sub-total">
-                          <span class="cart-sub-total-price">${{ cart.product.price }}</span>
+                          <span class="cart-sub-total-price">&#8377; {{ cart.product.price }}</span>
                         </td>
                         <td class="cart-product-grand-total">
-                          <span class="cart-grand-total-price">${{ cart|total_price }}</span>
+                          <span class="cart-grand-total-price">&#8377; {{ cart|total_price }}</span>
                         </td>
                         {% if user.id|current_user_replace_request %}
                           <td class="cart-product-sub-total">
-                            <form action="/orders/replace/{{ user.id|current_user_replace_request }}/"
-                                  method='post'>
-                              {% csrf_token %}
-                              <input type='hidden' name='requested' value="Replace">
-                              <input type='hidden' name='cart' value="{{ cart.id }}">
-                              <button type='submit' class='btn btn-primary'>Replace product</button>
-                            </form>
+                            {% if cart.id|cancle_current_user_replace_request %}
+                              <p>{{ cart.id|cancle_current_user_replace_request }}</p>
+                            {% else %}
+                              <form action="/orders/replace/{{ user.id|current_user_replace_request }}/"
+                                    method='post'>
+                                {% csrf_token %}
+                                <input type='hidden' name='requested' value="Replace">
+                                <input type='hidden' name='cart' value="{{ cart.id }}">
+                                <button type='submit' class='btn btn-primary'>Replace product</button>
+                              </form>
+                            {% endif %}
                           </td>
                         {% endif %}
                         <td class="romove-item">
@@ -131,6 +135,13 @@
                 </div>
                 <!-- /.home-owl-carousel -->
               </section>
+              {% if user %}
+                <div class="shopping-cart-btn">
+                    <span class="">
+                      <a href="/" class="btn btn-upper btn-primary outer-left-xs">Continue Shopping</a>
+                    </span>
+                  </div>
+              {% endif %}
             {% endif %}
           </div>
           <!-- /.shopping-cart-table -->
@@ -142,10 +153,10 @@
                   <th>
                     {% with carts|cart_total_price as total %}
                       <div class="cart-sub-total">
-                        Subtotal<span class="inner-left-md">${{ total.sub_total }}</span>
+                        Subtotal<span class="inner-left-md">&#8377; {{ total.sub_total }}</span>
                       </div>
                       <div class="cart-grand-total">
-                        Grand Total<span class="inner-left-md">${{ total.grand_total }}</span>
+                        Grand Total<span class="inner-left-md">&#8377; {{ total.grand_total }}</span>
                       </div>
                     {% endwith %}
                   </th>

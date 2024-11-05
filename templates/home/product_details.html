@@ -87,7 +87,7 @@
                             {% endfor %}
                         </div>
                         <div class="product-price">
-                          <span class="price">${{ product.price }}</span> <span class="price-before-discount">$800.00</span>
+                          <span class="price">&#8377; {{ product.price }}</span> <span class="price-before-discount">&#8377; 800.00</span>
                         </div>
                         <!-- /.product-price -->
                       </div>
@@ -459,8 +459,8 @@
                     <div class="row">
                       <div class="col-sm-6 col-xs-6">
                         <div class="price-box">
-                          <span class="price">${{ product.price }}</span>
-                          <span class="price-strike">$900.00</span>
+                          <span class="price">&#8377; {{ product.price }}</span>
+                          <span class="price-strike">&#8377; 900.00</span>
                         </div>
                       </div>
                       {% if user.is_authenticated %}
@@ -709,8 +709,8 @@
                             </div>
                             <div class="description"></div>
                             <div class="product-price">
-                              <span class="price">${{ product.price }}</span>
-                              <span class="price-before-discount">$ 8000</span>
+                              <span class="price">&#8377; {{ product.price }}</span>
+                              <span class="price-before-discount">&#8377; 8000</span>
                             </div>
                             <!-- /.product-price -->
                           </div>

@@ -1,347 +1,386 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filter %}
-
 {% block body %}
-
-<div class="row"> 
+  <div class="row">
     <!-- ============================================== SIDEBAR ============================================== -->
-    <div class="col-xs-12 col-sm-12 col-md-3 sidebar"> 
-      
+    <div class="col-xs-12 col-sm-12 col-md-3 sidebar">
       <!-- ================================== TOP NAVIGATION ================================== -->
       <div class="side-menu animate-dropdown outer-bottom-xs">
-        <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Categories</div>
+        <div class="head">
+          <i class="icon fa fa-align-justify fa-fw"></i> Categories
+        </div>
         <nav class="yamm megamenu-horizontal">
           <ul class="nav">
             {% for category in categories %}
-            {% if category|subcategories %}
-            <li class="dropdown menu-item"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{category.name}}</a>
-              <ul class="dropdown-menu mega-menu">
-                <div class="row">
-                  {% for subcategory in category|subcategories %}
-                    <div class="col-sm-12 col-md-3">
-                      <ul class="links list-unstyled">
-                        <li><a href="/category/{{subcategory.name}}"><b>{{subcategory.name}}</b></a></li>
-                    {% for sub in subcategory|subcategories %}
-                        <li><a href="/category/{{sub.name}}">{{sub.name}}</a></li>
-                    {% endfor %}
-                      </ul>
+              {% if category|subcategories %}
+                <li class="dropdown menu-item">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{ category.name }}</a>
+                  <ul class="dropdown-menu mega-menu">
+                    <div class="row">
+                      {% for subcategory in category|subcategories %}
+                        <div class="col-sm-12 col-md-3">
+                          <ul class="links list-unstyled">
+                            <li>
+                              <a href="/category/{{ subcategory.name }}"><b>{{ subcategory.name }}</b></a>
+                            </li>
+                            {% for sub in subcategory|subcategories %}
+                              <li>
+                                <a href="/category/{{ sub.name }}">{{ sub.name }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endfor %}
                     </div>
-                  {% endfor %}
-                </div>
-                <!-- /.yamm-content -->
-              </ul>
-            </li>
-            {% else %}
-               <li class="dropdown menu-item"><a href="/category/{{category.name}}">
-               <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{category.name}}</a></li>
-            {% endif %}
-            <!-- /.menu-item -->  
-            {% endfor %}          
+                    <!-- /.yamm-content -->
+                  </ul>
+                </li>
+              {% else %}
+                <li class="dropdown menu-item">
+                  <a href="/category/{{ category.name }}">
+                    <i class="icon fa fa-shopping-bag" aria-hidden="true"></i>{{ category.name }}</a>
+                </li>
+              {% endif %}
+              <!-- /.menu-item -->
+            {% endfor %}
           </ul>
-          <!-- /.nav --> 
+          <!-- /.nav -->
         </nav>
-        <!-- /.megamenu-horizontal --> 
+        <!-- /.megamenu-horizontal -->
       </div>
       <div class="sidebar-widget hot-deals outer-bottom-xs">
         <h3 class="section-title">Hot deals</h3>
         <div class="owl-carousel sidebar-carousel custom-carousel owl-theme outer-top-ss">
-        {% if products %}
-          {% for product in hot_deals %}
-          <div class="item">
-            <div class="products">
-              <div class="hot-deal-wrapper">
-                <div class="image"> 
-                <a href="/category/{{product.category}}/{{product.slug}}">
-                <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
-                </a>
-                </div>
-                <div class="sale-offer-tag"><span>49%<br>
-                  off</span></div>
-                <div class="timing-wrapper">
-                  <div class="box-wrapper">
-                    <div class="date box"> <span class="key">120</span> <span class="value">DAYS</span> </div>
+          {% if products %}
+            {% for product in hot_deals %}
+              <div class="item">
+                <div class="products">
+                  <div class="hot-deal-wrapper">
+                    <div class="image">
+                      <a href="/category/{{ product.category }}/{{ product.slug }}">
+                        <img src="/media/{{ product.id|product_attributes }}" alt="">
+                        <img src="/media/{{ product.id|product_attributes }}"
+                             alt=""
+                             class="hover-image">
+                      </a>
+                    </div>
+                    <div class="sale-offer-tag">
+                      <span>49%
+                        <br>
+                      off</span>
+                    </div>
+                    <div class="timing-wrapper">
+                      <div class="box-wrapper">
+                        <div class="date box">
+                          <span class="key">120</span> <span class="value">DAYS</span>
+                        </div>
+                      </div>
+                      <div class="box-wrapper">
+                        <div class="hour box">
+                          <span class="key">20</span> <span class="value">HRS</span>
+                        </div>
+                      </div>
+                      <div class="box-wrapper">
+                        <div class="minutes box">
+                          <span class="key">36</span> <span class="value">MINS</span>
+                        </div>
+                      </div>
+                      <div class="box-wrapper">
+                        <div class="seconds box">
+                          <span class="key">60</span> <span class="value">SEC</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="box-wrapper">
-                    <div class="hour box"> <span class="key">20</span> <span class="value">HRS</span> </div>
-                  </div>
-                  <div class="box-wrapper">
-                    <div class="minutes box"> <span class="key">36</span> <span class="value">MINS</span> </div>
-                  </div>
-                  <div class="box-wrapper">
-                    <div class="seconds box"> <span class="key">60</span> <span class="value">SEC</span> </div>
-                  </div>
-                </div>
-              </div>
-              <!-- /.hot-deal-wrapper -->
-              
-              <div class="product-info text-left m-t-20">
-                <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                <div class="">
-                    {% for star in 5|range_filter %}
-                      {% if star < product|product_rating %}
+                  <!-- /.hot-deal-wrapper -->
+                  <div class="product-info text-left m-t-20">
+                    <h3 class="name">
+                      <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                    </h3>
+                    <div class="">
+                      {% for star in 5|range_filter %}
+                        {% if star < product|product_rating %}
                           <span class="star_{{ product|product_rating }}">★</span>
-                      {% else %}
+                        {% else %}
                           <span class="empty-star">★</span>
-                      {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$800.00</span> </div>
-                <!-- /.product-price --> 
-                
-              </div>
-              <!-- /.product-info -->
-              {% if user.is_authenticated %}
-              <div class="cart clearfix animate-effect">
-                <div class="action">
-                  <div class="add-cart-button btn-group">
-                    <form action='/add_cart/' method='post'>{% csrf_token %}
-                      <input type='hidden' name='product' value='{{ product.id }}'>
-                      <input type='hidden' name='user' value='{{ user.id }}'>
-                      <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                      title="Add Cart"> <i class="fa fa-shopping-cart"></i> Add to cart</button>
-                    </form> 
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <div class="product-price">
+                      <span class="price">&#8377; {{ product.price }}</span> <span class="price-before-discount">&#8377; 800.00</span>
+                    </div>
+                    <!-- /.product-price -->
                   </div>
+                  <!-- /.product-info -->
+                  {% if user.is_authenticated %}
+                    <div class="cart clearfix animate-effect">
+                      <div class="action">
+                        <div class="add-cart-button btn-group">
+                          <form action='/add_cart/' method='post'>
+                            {% csrf_token %}
+                            <input type='hidden' name='product' value='{{ product.id }}'>
+                            <input type='hidden' name='user' value='{{ user.id }}'>
+                            <button type='submit'
+                                    data-toggle="tooltip"
+                                    class="btn btn-primary icon"
+                                    title="Add Cart">
+                              <i class="fa fa-shopping-cart"></i> Add to cart
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                      <!-- /.action -->
+                    </div>
+                  {% endif %}
+                  <!-- /.cart -->
                 </div>
-                <!-- /.action --> 
               </div>
-              {% endif %}
-              <!-- /.cart --> 
-            </div>
-          </div>
-          {% endfor %}
-        {% else %}
-          <p class="text-center">No Data Found</p>
-        {% endif %}
+            {% endfor %}
+          {% else %}
+            <p class="text-center">No Data Found</p>
+          {% endif %}
         </div>
-        <!-- /.sidebar-widget --> 
+        <!-- /.sidebar-widget -->
       </div>
-      <!-- ============================================== HOT DEALS: END ============================================== --> 
-      
+      <!-- ============================================== HOT DEALS: END ============================================== -->
       <!-- ============================================== SPECIAL OFFER ============================================== -->
-      
       <div class="sidebar-widget outer-bottom-small">
         <h3 class="section-title">Special Offer</h3>
         <div class="sidebar-widget-body outer-top-xs">
           <div class="owl-carousel sidebar-carousel special-offer custom-carousel owl-theme outer-top-xs">
-          {% if special_offer_products %}
-            <div class="item">
-              <div class="products special-product">
-              {% for product in special_offer_products %}
-                <div class="product">
-                  <div class="product-micro">
-                    <div class="row product-micro-row">
-                      <div class="col col-xs-5">
-                        <div class="product-image">
-                          <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> 
-                          <img src="/media/{{product.id|product_attributes}}" alt=""></a> </div>
-                        </div>
-                        <!-- /.product-image --> 
-                      </div>
-                      <!-- /.col -->
-                      <div class="col col-xs-7">
-                        <div class="product-info">
-                          <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
-                          <div class="">
-                              {% for star in 5|range_filter %}
-                                {% if star < product|product_rating %}
-                                    <span class="star_{{ product|product_rating }}">★</span>
-                                {% else %}
-                                    <span class="empty-star">★</span>
-                                {% endif %}
-                              {% endfor %}
+            {% if special_offer_products %}
+              <div class="item">
+                <div class="products special-product">
+                  {% for product in special_offer_products %}
+                    <div class="product">
+                      <div class="product-micro">
+                        <div class="row product-micro-row">
+                          <div class="col col-xs-5">
+                            <div class="product-image">
+                              <div class="image">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">
+                                  <img src="/media/{{ product.id|product_attributes }}" alt="">
+                                </a>
+                              </div>
+                            </div>
+                            <!-- /.product-image -->
                           </div>
-                          <div class="product-price"> <span class="price"> ${{product.price}} </span> </div>
-                          <!-- /.product-price --> 
-                          
+                          <!-- /.col -->
+                          <div class="col col-xs-7">
+                            <div class="product-info">
+                              <h3 class="name">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">{{ product.name }}</a>
+                              </h3>
+                              <div class="">
+                                {% for star in 5|range_filter %}
+                                  {% if star < product|product_rating %}
+                                    <span class="star_{{ product|product_rating }}">★</span>
+                                  {% else %}
+                                    <span class="empty-star">★</span>
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                              <div class="product-price">
+                                <span class="price">&#8377; {{ product.price }}</span>
+                              </div>
+                              <!-- /.product-price -->
+                            </div>
+                          </div>
+                          <!-- /.col -->
                         </div>
+                        <!-- /.product-micro-row -->
                       </div>
-                      <!-- /.col --> 
+                      <!-- /.product-micro -->
                     </div>
-                    <!-- /.product-micro-row --> 
-                  </div>
-                  <!-- /.product-micro --> 
-                  
+                  {% endfor %}
                 </div>
-              {% endfor %}
               </div>
-            </div>
-          {% else %}
-            <p class="text-center">No Data Found</p>
-          {% endif %}
+            {% else %}
+              <p class="text-center">No Data Found</p>
+            {% endif %}
           </div>
         </div>
-        <!-- /.sidebar-widget-body --> 
+        <!-- /.sidebar-widget-body -->
       </div>
-      <!-- /.sidebar-widget --> 
-      <!-- ============================================== SPECIAL OFFER : END ============================================== --> 
+      <!-- /.sidebar-widget -->
+      <!-- ============================================== SPECIAL OFFER : END ============================================== -->
       <!-- ============================================== PRODUCT TAGS ============================================== -->
       <div class="sidebar-widget product-tag">
         <h3 class="section-title">Product tags</h3>
         <div class="sidebar-widget-body outer-top-xs">
           <div class="tag-list">
-          {% if ""|categories_all %}
-            {% for category in ""|categories_all %}
-              <a class="item" title="Phone" href="category/{{ category.name }}/">{{ category.name }}</a>
-            {% endfor %}
-          {% else %}
-            <p class="text-center">No Data Found</p>
-          {% endif %}
+            {% if ""|categories_all %}
+              {% for category in ""|categories_all %}
+                <a class="item" title="Phone" href="category/{{ category.name }}/">{{ category.name }}</a>
+              {% endfor %}
+            {% else %}
+              <p class="text-center">No Data Found</p>
+            {% endif %}
           </div>
-          <!-- /.tag-list --> 
+          <!-- /.tag-list -->
         </div>
-        <!-- /.sidebar-widget-body --> 
+        <!-- /.sidebar-widget-body -->
       </div>
-      <!-- /.sidebar-widget --> 
-      <!-- ============================================== PRODUCT TAGS : END ============================================== --> 
+      <!-- /.sidebar-widget -->
+      <!-- ============================================== PRODUCT TAGS : END ============================================== -->
       <!-- ============================================== SPECIAL DEALS ============================================== -->
-      
       <div class="sidebar-widget outer-bottom-small">
         <h3 class="section-title">Special Deals</h3>
         <div class="sidebar-widget-body outer-top-xs">
           <div class="owl-carousel sidebar-carousel special-offer custom-carousel owl-theme outer-top-xs">
-          {% if special_offer_products %}
-            <div class="item">
-              <div class="products special-product">
-                {% for product in special_offer_products %}
-                  <div class="product">
-                    <div class="product-micro">
-                      <div class="row product-micro-row">
-                        <div class="col col-xs-5">
-                          <div class="product-image">
-                            <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
-                            <!-- /.image --> 
-                            
+            {% if special_offer_products %}
+              <div class="item">
+                <div class="products special-product">
+                  {% for product in special_offer_products %}
+                    <div class="product">
+                      <div class="product-micro">
+                        <div class="row product-micro-row">
+                          <div class="col col-xs-5">
+                            <div class="product-image">
+                              <div class="image">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">
+                                  <img src="/media/{{ product.id|product_attributes }}"  alt="">
+                                </a>
+                              </div>
+                              <!-- /.image -->
+                            </div>
+                            <!-- /.product-image -->
                           </div>
-                          <!-- /.product-image --> 
-                        </div>
-                        <!-- /.col -->
-                        <div class="col col-xs-7">
-                          <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
-                            <div class="">
-                              {% for star in 5|range_filter %}
-                                {% if star < product|product_rating %}
+                          <!-- /.col -->
+                          <div class="col col-xs-7">
+                            <div class="product-info">
+                              <h3 class="name">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">{{ product.name }}</a>
+                              </h3>
+                              <div class="">
+                                {% for star in 5|range_filter %}
+                                  {% if star < product|product_rating %}
                                     <span class="star_{{ product|product_rating }}">★</span>
-                                {% else %}
+                                  {% else %}
                                     <span class="empty-star">★</span>
-                                {% endif %}
-                              {% endfor %}
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                              <div class="product-price">
+                                <span class="price">&#8377; {{ product.price }}</span>
+                              </div>
+                              <!-- /.product-price -->
+                            </div>
                           </div>
-                            <div class="product-price"> <span class="price"> ${{product.price}} </span> </div>
-                            <!-- /.product-price --> 
-                            
-                          </div>
+                          <!-- /.col -->
                         </div>
-                        <!-- /.col --> 
+                        <!-- /.product-micro-row -->
                       </div>
-                      <!-- /.product-micro-row --> 
+                      <!-- /.product-micro -->
                     </div>
-                    <!-- /.product-micro --> 
-                    
-                  </div>
-                {% endfor %}
+                  {% endfor %}
+                </div>
               </div>
-            </div>
-            <div class="item">
-              <div class="products special-product">
-                {% for product in special_offer_products_2 %}
-                  <div class="product">
-                    <div class="product-micro">
-                      <div class="row product-micro-row">
-                        <div class="col col-xs-5">
-                          <div class="product-image">
-                            <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
-                            <!-- /.image --> 
-                            
+              <div class="item">
+                <div class="products special-product">
+                  {% for product in special_offer_products_2 %}
+                    <div class="product">
+                      <div class="product-micro">
+                        <div class="row product-micro-row">
+                          <div class="col col-xs-5">
+                            <div class="product-image">
+                              <div class="image">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">
+                                  <img src="/media/{{ product.id|product_attributes }}"  alt="">
+                                </a>
+                              </div>
+                              <!-- /.image -->
+                            </div>
+                            <!-- /.product-image -->
                           </div>
-                          <!-- /.product-image --> 
-                        </div>
-                        <!-- /.col -->
-                        <div class="col col-xs-7">
-                          <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
-                            <div class="">
-        
-                              {% for star in 5|range_filter %}
-                                {% if star < product|product_rating %}
+                          <!-- /.col -->
+                          <div class="col col-xs-7">
+                            <div class="product-info">
+                              <h3 class="name">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">{{ product.name }}</a>
+                              </h3>
+                              <div class="">
+                                {% for star in 5|range_filter %}
+                                  {% if star < product|product_rating %}
                                     <span class="star_{{ product|product_rating }}">★</span>
-                                {% else %}
+                                  {% else %}
                                     <span class="empty-star">★</span>
-                                {% endif %}
-                              {% endfor %}
-        
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                              <div class="product-price">
+                                <span class="price">&#8377; {{ product.price }}</span>
+                              </div>
+                              <!-- /.product-price -->
+                            </div>
                           </div>
-                            <div class="product-price"> <span class="price"> ${{product.price}} </span> </div>
-                            <!-- /.product-price --> 
-                            
-                          </div>
+                          <!-- /.col -->
                         </div>
-                        <!-- /.col --> 
+                        <!-- /.product-micro-row -->
                       </div>
-                      <!-- /.product-micro-row --> 
+                      <!-- /.product-micro -->
                     </div>
-                    <!-- /.product-micro --> 
-                    
-                  </div>
-                {% endfor %}
+                  {% endfor %}
+                </div>
               </div>
-            </div>
-            <div class="item">
-              <div class="products special-product">
-                {% for product in special_offer_products_3 %}
-                  <div class="product">
-                    <div class="product-micro">
-                      <div class="row product-micro-row">
-                        <div class="col col-xs-5">
-                          <div class="product-image">
-                            <div class="image"> <a href="/category/{{product.category}}/{{product.slug}}"> <img src="/media/{{product.id|product_attributes}}"  alt=""> </a> </div>
-                            <!-- /.image --> 
-                            
+              <div class="item">
+                <div class="products special-product">
+                  {% for product in special_offer_products_3 %}
+                    <div class="product">
+                      <div class="product-micro">
+                        <div class="row product-micro-row">
+                          <div class="col col-xs-5">
+                            <div class="product-image">
+                              <div class="image">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">
+                                  <img src="/media/{{ product.id|product_attributes }}"  alt="">
+                                </a>
+                              </div>
+                              <!-- /.image -->
+                            </div>
+                            <!-- /.product-image -->
                           </div>
-                          <!-- /.product-image --> 
-                        </div>
-                        <!-- /.col -->
-                        <div class="col col-xs-7">
-                          <div class="product-info">
-                            <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}">{{product.name}}</a></h3>
-                            <div class="">
-        
-                              {% for star in 5|range_filter %}
-                                {% if star < product|product_rating %}
+                          <!-- /.col -->
+                          <div class="col col-xs-7">
+                            <div class="product-info">
+                              <h3 class="name">
+                                <a href="/category/{{ product.category }}/{{ product.slug }}">{{ product.name }}</a>
+                              </h3>
+                              <div class="">
+                                {% for star in 5|range_filter %}
+                                  {% if star < product|product_rating %}
                                     <span class="star_{{ product|product_rating }}">★</span>
-                                {% else %}
+                                  {% else %}
                                     <span class="empty-star">★</span>
-                                {% endif %}
-                              {% endfor %}
-        
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                              <div class="product-price">
+                                <span class="price">&#8377; {{ product.price }}</span>
+                              </div>
+                              <!-- /.product-price -->
+                            </div>
                           </div>
-                            <div class="product-price"> <span class="price"> ${{product.price}} </span> </div>
-                            <!-- /.product-price --> 
-                            
-                          </div>
+                          <!-- /.col -->
                         </div>
-                        <!-- /.col --> 
+                        <!-- /.product-micro-row -->
                       </div>
-                      <!-- /.product-micro-row --> 
+                      <!-- /.product-micro -->
                     </div>
-                    <!-- /.product-micro --> 
-                    
-                  </div>
-                {% endfor %}
+                  {% endfor %}
+                </div>
               </div>
-            </div>
-          {% else %}
-            <p class="text-center">No Data Found</p>
-          {% endif %}
+            {% else %}
+              <p class="text-center">No Data Found</p>
+            {% endif %}
           </div>
         </div>
-        <!-- /.sidebar-widget-body --> 
+        <!-- /.sidebar-widget-body -->
       </div>
-      <!-- /.sidebar-widget --> 
-      <!-- ============================================== SPECIAL DEALS : END ============================================== --> 
+      <!-- /.sidebar-widget -->
+      <!-- ============================================== SPECIAL DEALS : END ============================================== -->
       <!-- ============================================== NEWSLETTER ============================================== -->
       <div class="sidebar-widget newsletter outer-bottom-small">
         <h3 class="section-title">Newsletters</h3>
@@ -350,698 +389,855 @@
           <form>
             <div class="form-group">
               <label class="sr-only" for="exampleInputEmail1">Email address</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Subscribe to our newsletter">
+              <input type="email"
+                     class="form-control"
+                     id="exampleInputEmail1"
+                     placeholder="Subscribe to our newsletter">
             </div>
             <button class="btn btn-primary">Subscribe</button>
           </form>
         </div>
-        <!-- /.sidebar-widget-body --> 
+        <!-- /.sidebar-widget-body -->
       </div>
-      <!-- /.sidebar-widget --> 
-      <!-- ============================================== NEWSLETTER: END ============================================== --> 
-      
+      <!-- /.sidebar-widget -->
+      <!-- ============================================== NEWSLETTER: END ============================================== -->
       <!-- ============================================== Testimonials============================================== -->
       <div class="sidebar-widget outer-top-vs ">
         <div id="advertisement" class="advertisement">
           <div class="item">
-            <div class="avatar"><img src="{% static  'assets/images/testimonials/member1.png' %}" alt="Image"></div>
-            <div class="testimonials"><em>"</em> Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat.<em>"</em></div>
-            <div class="clients_author">John Doe <span>Abc Company</span> </div>
-            <!-- /.container-fluid --> 
+            <div class="avatar">
+              <img src="{% static  'assets/images/testimonials/member1.png' %}"
+                   alt="Image">
+            </div>
+            <div class="testimonials">
+              <em>"</em> Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat.<em>"</em>
+            </div>
+            <div class="clients_author">
+              John Doe <span>Abc Company</span>
+            </div>
+            <!-- /.container-fluid -->
           </div>
           <!-- /.item -->
-          
           <div class="item">
-            <div class="avatar"><img src="{% static  'assets/images/testimonials/member3.png' %}" alt="Image"></div>
-            <div class="testimonials"><em>"</em>Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat.<em>"</em></div>
-            <div class="clients_author">Stephen Doe <span>Xperia Designs</span> </div>
+            <div class="avatar">
+              <img src="{% static  'assets/images/testimonials/member3.png' %}"
+                   alt="Image">
+            </div>
+            <div class="testimonials">
+              <em>"</em>Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat.<em>"</em>
+            </div>
+            <div class="clients_author">
+              Stephen Doe <span>Xperia Designs</span>
+            </div>
           </div>
           <!-- /.item -->
-          
           <div class="item">
-            <div class="avatar"><img src="{% static  'assets/images/testimonials/member2.png' %}" alt="Image"></div>
-            <div class="testimonials"><em>"</em>Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat.<em>"</em></div>
-            <div class="clients_author">Saraha Smith <span>Datsun &amp; Co</span> </div>
-            <!-- /.container-fluid --> 
+            <div class="avatar">
+              <img src="{% static  'assets/images/testimonials/member2.png' %}"
+                   alt="Image">
+            </div>
+            <div class="testimonials">
+              <em>"</em>Vtae sodales aliq uam morbi non sem lacus port mollis. Nunc condime tum metus eud molest sed consectetuer. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat.<em>"</em>
+            </div>
+            <div class="clients_author">
+              Saraha Smith <span>Datsun &amp; Co</span>
+            </div>
+            <!-- /.container-fluid -->
           </div>
-          <!-- /.item --> 
-          
+          <!-- /.item -->
         </div>
-        <!-- /.owl-carousel --> 
+        <!-- /.owl-carousel -->
       </div>
-      
       <!-- ============================================== Testimonials: END ============================================== -->
-      
-      
     </div>
-    <!-- /.sidemenu-holder --> 
-    <!-- ============================================== SIDEBAR : END ============================================== --> 
-    
+    <!-- /.sidemenu-holder -->
+    <!-- ============================================== SIDEBAR : END ============================================== -->
     <!-- ============================================== CONTENT ============================================== -->
-    <div class="col-xs-12 col-sm-12 col-md-9 homebanner-holder"> 
+    <div class="col-xs-12 col-sm-12 col-md-9 homebanner-holder">
       <!-- ========================================== SECTION – HERO ========================================= -->
-      
       <div id="hero">
         <div id="owl-main" class="owl-carousel owl-inner-nav owl-ui-sm">
-        {% if banners %}
-          {% for banner in banners %}
-            <div class="item" style="background-image: url('/media/{{ banner.image }}');">
-              <div class="container-fluid">
-                <div class="caption bg-color vertical-center text-left header_text_div">
-                  <div class="slider-header fadeInDown-1" style="color: white; font-weight: 400;">{{ banner.subtitle }}</div>
-                  <div class="big-text fadeInDown-1" style="color:white;">{{ banner.title }}</div>
-                  <div class="excerpt fadeInDown-2 hidden-xs" style="color: white; font-weight: 400;">
-                    <span>"{{ banner.description }}"</span>
+          {% if banners %}
+            {% for banner in banners %}
+              <div class="item"
+                   style="background-image: url('/media/{{ banner.image }}')">
+                <div class="container-fluid">
+                  <div class="caption bg-color vertical-center text-left header_text_div">
+                    <div class="slider-header fadeInDown-1"
+                         style="color: white;
+                                font-weight: 400">{{ banner.subtitle }}</div>
+                    <div class="big-text fadeInDown-1" style="color:white;">{{ banner.title }}</div>
+                    <div class="excerpt fadeInDown-2 hidden-xs"
+                         style="color: white;
+                                font-weight: 400">
+                      <span>"{{ banner.description }}"</span>
+                    </div>
+                    <div class="button-holder fadeInDown-3">
+                      <a href="/category/{{ banner.category }}"
+                         class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                    </div>
                   </div>
-                  <div class="button-holder fadeInDown-3">
-                    <a href="/category/{{ banner.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
-                  </div>
+                  <!-- /.caption -->
                 </div>
-                <!-- /.caption -->
+                <!-- /.container-fluid -->
               </div>
-              <!-- /.container-fluid -->
-            </div>
-            <!-- /.item -->
-          {% endfor %}
-        {% else %}
-          <div class="item" style="display: flex; justify-content: center; align-items: center;">
+              <!-- /.item -->
+            {% endfor %}
+          {% else %}
+            <div class="item"
+                 style="display: flex;
+                        justify-content: center;
+                        align-items: center">
               <div class="inner-container">
-                  <h3 class="text-center">No Data Found</h3>
+                <h3 class="text-center">No Data Found</h3>
               </div>
-          </div>
-        {% endif %}
+            </div>
+          {% endif %}
         </div>
-        <!-- /.owl-carousel --> 
+        <!-- /.owl-carousel -->
       </div>
-      
-      <!-- ========================================= SECTION – HERO : END ========================================= --> 
-      
-
+      <!-- ========================================= SECTION – HERO : END ========================================= -->
       <!-- ============================================== SCROLL TABS ============================================== -->
       <div id="product-tabs-slider" class="scroll-tabs outer-top-vs">
         <div class="more-info-tab clearfix ">
           <h3 class="new-product-title pull-left">New Products</h3>
           <ul class="nav nav-tabs nav-tab-line pull-right" id="new-products-1">
-            <li class="active"><a data-transition-type="backSlide" href="#all" data-toggle="tab">All</a></li>
+            <li class="active">
+              <a data-transition-type="backSlide" href="#all" data-toggle="tab">All</a>
+            </li>
             {% for category in categories %}
-            <li><a data-transition-type="backSlide" href="#{{category.name}}" data-toggle="tab">{{category.name}}</a></li>
+              <li>
+                <a data-transition-type="backSlide"
+                   href="#{{ category.name }}"
+                   data-toggle="tab">{{ category.name }}</a>
+              </li>
             {% endfor %}
           </ul>
-          <!-- /.nav-tabs --> 
+          <!-- /.nav-tabs -->
         </div>
         <div class="tab-content outer-top-xs">
           <div class="tab-pane in active" id="all">
             <div class="product-slider">
               {% if latest_products %}
-              <div class="owl-carousel home-owl-carousel custom-carousel owl-theme">
-                {% for product in latest_products %}  
-                  <div class="item item-carousel">
-                    <div class="products">
-                      <div class="product">
-                        <div class="product-image">
-                          <div class="image"> 
-                          <a href="/category/{{ product.category }}/{{ product.slug }}/">
-                            <img src="/media/{{ product.id|product_attributes }}" alt="">          
-                            <img src="/media/{{ product.id|product_attributes }}" alt="" class="hover-image">
-                          </a> 
-                      </div>
-                          <!-- /.image -->
-                          
-                          {% if product.tag is not None %}
-                            <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                          {% endif %}
-                        </div>
-                        <!-- /.product-image -->
-                        
-                        <div class="product-info text-left">
-                          <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                          <div class="">
+                <div class="owl-carousel home-owl-carousel custom-carousel owl-theme">
+                  {% for product in latest_products %}
+                    <div class="item item-carousel">
+                      <div class="products">
+                        <div class="product">
+                          <div class="product-image">
+                            <div class="image">
+                              <a href="/category/{{ product.category }}/{{ product.slug }}/">
+                                <img src="/media/{{ product.id|product_attributes }}" alt="">
+                                <img src="/media/{{ product.id|product_attributes }}"
+                                     alt=""
+                                     class="hover-image">
+                              </a>
+                            </div>
+                            <!-- /.image -->
+                            {% if product.tag is not None %}
+                              <div class="tag {{ product.tag.lower }}">
+                                <span>{{ product.tag }}</span>
+                              </div>
+                            {% endif %}
+                          </div>
+                          <!-- /.product-image -->
+                          <div class="product-info text-left">
+                            <h3 class="name">
+                              <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                            </h3>
+                            <div class="">
                               {% for star in 5|range_filter %}
                                 {% if star < product|product_rating %}
-                                    <span class="star_{{ product|product_rating }}">★</span>
+                                  <span class="star_{{ product|product_rating }}">★</span>
                                 {% else %}
-                                    <span class="empty-star">★</span>
+                                  <span class="empty-star">★</span>
                                 {% endif %}
                               {% endfor %}
-                          </div>
-                          <div class="description"></div>
-                          <div class="product-price"> <span class="price">${{product.price}}</span> <span class="price-before-discount">$ 800</span> </div>
-                          <!-- /.product-price --> 
-                          
-                        </div>
-                        <!-- /.product-info -->
-                        {% if user.is_authenticated %}
-                        <div class="cart clearfix animate-effect">
-                          <div class="action">
-                            <ul class="list-unstyled">
-                              <li class="add-cart-button btn-group">
-                                <form action='/add_cart/' method='post'>{% csrf_token %}
-                                  <input type='hidden' name='product' value='{{ product.id }}'>
-                                  <input type='hidden' name='user' value='{{ user.id }}'>
-                                  <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                                  title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                                </form>
-                                <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
-                              </li>
-                              <li class="lnk wishlist">
-                                <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                                <input type='hidden' name='product' value='{{ product.id }}'>
-                                <input type='hidden' name='user' value='{{ user.id }}'>
-                                <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                                  <i class="icon fa fa-heart"></i> </button> 
-                                </form>
-                              </li>
-                            </ul>
-                          </div>
-                          <!-- /.action --> 
-                        </div>
-                        {% endif %}
-                        <!-- /.cart --> 
-                      </div>
-                      <!-- /.product --> 
-                      
-                    </div>
-                  </div>
-                {% endfor %}
-                <!-- /.item --> 
-              </div>
-              {% else %}
-              <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
-              <div class="inner-container">
-                <p class="text-center">No Data Found</p>
-              </div>
-            </div>
-              {% endif %}
-              <!-- /.home-owl-carousel --> 
-            </div>
-            <!-- /.product-slider --> 
-          </div>
-          <!-- /.tab-pane -->
-          
-          {% for category in categories %}
-            <div class="tab-pane" id="{{ category.name }}">
-              <div class="product-slider">
-                <div class="owl-carousel home-owl-carousel custom-carousel owl-theme">
-                    {% for product in category.id|product_filter %}
-                      <div class="item item-carousel">
-                        <div class="products">
-                          <div class="product">
-                            <div class="product-image">
-                              <div class="image"> 
-                              <a href="/category/{{product.category}}/{{product.slug}}/">
-                                <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                                  <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
-                              </a>
-                              
-                              </div>
-                              <!-- /.image -->
-                              
-                              {% if product.tag is not None %}
-                                <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                              {% endif %}
                             </div>
-                            <!-- /.product-image -->
-                            
-                            <div class="product-info text-left">
-                              <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                              <div class="">
-                                  {% for star in 5|range_filter %}
-                                    {% if star < product|product_rating %}
-                                        <span class="star_{{ product|product_rating }}">★</span>
-                                    {% else %}
-                                        <span class="empty-star">★</span>
-                                    {% endif %}
-                                  {% endfor %}
-            
-                              </div>
-                              <div class="description"></div>
-                              <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
-                              <!-- /.product-price --> 
-                              
+                            <div class="description"></div>
+                            <div class="product-price">
+                              <span class="price">&#8377; {{ product.price }}</span> <span class="price-before-discount">&#8377; 800</span>
                             </div>
-                            <!-- /.product-info -->
-                            {% if user.is_authenticated %}
+                            <!-- /.product-price -->
+                          </div>
+                          <!-- /.product-info -->
+                          {% if user.is_authenticated %}
                             <div class="cart clearfix animate-effect">
                               <div class="action">
                                 <ul class="list-unstyled">
                                   <li class="add-cart-button btn-group">
-                                    <form action='/add_cart/' method='post'>{% csrf_token %}
+                                    <form action='/add_cart/' method='post'>
+                                      {% csrf_token %}
                                       <input type='hidden' name='product' value='{{ product.id }}'>
                                       <input type='hidden' name='user' value='{{ user.id }}'>
-                                      <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                                      title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
+                                      <button type='submit'
+                                              data-toggle="tooltip"
+                                              class="btn btn-primary icon"
+                                              title="Add Cart">
+                                        <i class="fa fa-shopping-cart"></i>
+                                      </button>
                                     </form>
                                     <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
                                   </li>
                                   <li class="lnk wishlist">
-                                <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                                  <input type='hidden' name='product' value='{{ product.id }}'>
-                                  <input type='hidden' name='user' value='{{ user.id }}'>
-                                  <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                                    <i class="icon fa fa-heart"></i> </button>
-                                  </form>
-                                </li>
-                                  <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
+                                    <form action='/add_to_wishlist/' method='post'>
+                                      {% csrf_token %}
+                                      <input type='hidden' name='product' value='{{ product.id }}'>
+                                      <input type='hidden' name='user' value='{{ user.id }}'>
+                                      <button type='submit'
+                                              data-toggle="tooltip"
+                                              class="add-to-cart wishlist_css"
+                                              title="Wishlist">
+                                        <i class="icon fa fa-heart"></i>
+                                      </button>
+                                    </form>
+                                  </li>
                                 </ul>
                               </div>
-                              <!-- /.action --> 
+                              <!-- /.action -->
                             </div>
-                            {% endif %}
-                            <!-- /.cart --> 
-                          </div>
-                          <!-- /.product --> 
-                          
+                          {% endif %}
+                          <!-- /.cart -->
                         </div>
-                        <!-- /.products --> 
+                        <!-- /.product -->
                       </div>
-                    {% endfor %}
+                    </div>
+                  {% endfor %}
+                  <!-- /.item -->
                 </div>
-                <!-- /.home-owl-carousel --> 
-              </div>
-              <!-- /.product-slider --> 
+              {% else %}
+                <div style="display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 230px;
+                            background-color:white">
+                  <div class="inner-container">
+                    <p class="text-center">No Data Found</p>
+                  </div>
+                </div>
+              {% endif %}
+              <!-- /.home-owl-carousel -->
             </div>
+            <!-- /.product-slider -->
+          </div>
           <!-- /.tab-pane -->
-          {% endfor %}          
+          {% for category in categories %}
+            <div class="tab-pane" id="{{ category.name }}">
+              <div class="product-slider">
+                <div class="owl-carousel home-owl-carousel custom-carousel owl-theme">
+                  {% for product in category.id|product_filter %}
+                    <div class="item item-carousel">
+                      <div class="products">
+                        <div class="product">
+                          <div class="product-image">
+                            <div class="image">
+                              <a href="/category/{{ product.category }}/{{ product.slug }}/">
+                                <img src="/media/{{ product.id|product_attributes }}" alt="">
+                                <img src="/media/{{ product.id|product_attributes }}"
+                                     alt=""
+                                     class="hover-image">
+                              </a>
+                            </div>
+                            <!-- /.image -->
+                            {% if product.tag is not None %}
+                              <div class="tag {{ product.tag.lower }}">
+                                <span>{{ product.tag }}</span>
+                              </div>
+                            {% endif %}
+                          </div>
+                          <!-- /.product-image -->
+                          <div class="product-info text-left">
+                            <h3 class="name">
+                              <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                            </h3>
+                            <div class="">
+                              {% for star in 5|range_filter %}
+                                {% if star < product|product_rating %}
+                                  <span class="star_{{ product|product_rating }}">★</span>
+                                {% else %}
+                                  <span class="empty-star">★</span>
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                            <div class="description"></div>
+                            <div class="product-price">
+                              <span class="price">&#8377; {{ product.price }}</span> <span class="price-before-discount">&#8377; 800</span>
+                            </div>
+                            <!-- /.product-price -->
+                          </div>
+                          <!-- /.product-info -->
+                          {% if user.is_authenticated %}
+                            <div class="cart clearfix animate-effect">
+                              <div class="action">
+                                <ul class="list-unstyled">
+                                  <li class="add-cart-button btn-group">
+                                    <form action='/add_cart/' method='post'>
+                                      {% csrf_token %}
+                                      <input type='hidden' name='product' value='{{ product.id }}'>
+                                      <input type='hidden' name='user' value='{{ user.id }}'>
+                                      <button type='submit'
+                                              data-toggle="tooltip"
+                                              class="btn btn-primary icon"
+                                              title="Add Cart">
+                                        <i class="fa fa-shopping-cart"></i>
+                                      </button>
+                                    </form>
+                                    <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                                  </li>
+                                  <li class="lnk wishlist">
+                                    <form action='/add_to_wishlist/' method='post'>
+                                      {% csrf_token %}
+                                      <input type='hidden' name='product' value='{{ product.id }}'>
+                                      <input type='hidden' name='user' value='{{ user.id }}'>
+                                      <button type='submit'
+                                              data-toggle="tooltip"
+                                              class="add-to-cart wishlist_css"
+                                              title="Wishlist">
+                                        <i class="icon fa fa-heart"></i>
+                                      </button>
+                                    </form>
+                                  </li>
+                                  <li class="lnk">
+                                    <a class="add-to-cart"
+                                       href="/category/{{ product.category }}/{{ product.slug }}/"
+                                       title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <!-- /.action -->
+                            </div>
+                          {% endif %}
+                          <!-- /.cart -->
+                        </div>
+                        <!-- /.product -->
+                      </div>
+                      <!-- /.products -->
+                    </div>
+                  {% endfor %}
+                </div>
+                <!-- /.home-owl-carousel -->
+              </div>
+              <!-- /.product-slider -->
+            </div>
+            <!-- /.tab-pane -->
+          {% endfor %}
         </div>
-        <!-- /.tab-content --> 
+        <!-- /.tab-content -->
       </div>
-      <!-- /.scroll-tabs --> 
-      <!-- ============================================== SCROLL TABS : END ============================================== --> 
+      <!-- /.scroll-tabs -->
+      <!-- ============================================== SCROLL TABS : END ============================================== -->
       <!-- ============================================== WIDE PRODUCTS ============================================== -->
       <div class="wide-banners outer-bottom-xs">
         <div class="row">
           {% for banner in middle_banner %}
             <div class="col-md-4">
               <div class=""
-                  style="width: 440px;
+                   style="width: 440px;
                           height: 230px;
                           background: url('/media/{{ banner.image }}');
-                          background-size: cover;">
+                          background-size: cover">
                 <div class="card-body">
                   <div class="text-left mt-3" style="padding-left: 10%; padding-top: 12%;">
                     <div class="slider-header fadeInDown-1"
-                        style="color: white;
+                         style="color: white;
                                 font-weight: 400;
-                                font-size: large;">{{ banner.subtitle }}</div>
-                    <div class=""
-                        style="color: white;
-                                font-size: xx-large;
-                                font-weight: 600;">{{ banner.title }}</div>
+                                font-size: large">{{ banner.subtitle }}</div>
+                    <div class="" style="color: white; font-size: xx-large; font-weight: 600;">{{ banner.title }}</div>
                     <div class="excerpt fadeInDown-2 hidden-xs"
-                        style="color: white;
-                                font-weight: 400;">
+                         style="color: white;
+                                font-weight: 400">
                       <span>"{{ banner.description }}"</span>
                     </div>
                     <br>
                     <div class="button-holder fadeInDown-3">
-                      <a href="/category/{{ banner.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                      <a href="/category/{{ banner.category }}"
+                         class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           {% endfor %}
-          <!-- /.col --> 
+          <!-- /.col -->
         </div>
-        <!-- /.row --> 
+        <!-- /.row -->
       </div>
-      <!-- /.wide-banners --> 
-      
-      <!-- ============================================== WIDE PRODUCTS : END ============================================== --> 
+      <!-- /.wide-banners -->
+      <!-- ============================================== WIDE PRODUCTS : END ============================================== -->
       <!-- ============================================== FEATURED PRODUCTS ============================================== -->
       <section class="section featured-product">
-      <div class="row">
-      <div class="col-lg-3">
-        <h3 class="section-title">Electronics & Digital</h3>
-        <ul class="sub-cat">
-        {% for electronic in 'electronics'|electronics_sub_categories %}
-          <li><a href="#">{{ electronic.name }}</a></li>
-        {% endfor %}
-        </ul>
-        </div>
-        <div class="col-lg-9">
-        {% if 'electronics'|electronics_product_filter %}
-        <div class="owl-carousel homepage-owl-carousel custom-carousel owl-theme outer-top-xs">
-          {% for product in 'electronics'|electronics_product_filter %}
-            <div class="item item-carousel">
-              <div class="products">
-                <div class="product">
-                  <div class="product-image">
-                    <div class="image"> 
-                      <a href="/category/{{product.category}}/{{product.slug}}/">
-                          <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                          <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
-                      </a>
-                    </div>
-                    {% if product.tag is not None %}
-                      <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                    {% endif %}
-                  </div>
-                  <!-- /.product-image -->
-
-                  <div class="product-info text-left">
-                    <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                    <div class="">
-
-                        {% for star in 5|range_filter %}
-                          {% if star < product|product_rating %}
-                              <span class="star_{{ product|product_rating }}">★</span>
-                          {% else %}
-                              <span class="empty-star">★</span>
+        <div class="row">
+          <div class="col-lg-3">
+            <h3 class="section-title">Electronics & Digital</h3>
+            <ul class="sub-cat">
+              {% for electronic in 'electronics'|electronics_sub_categories %}
+                <li>
+                  <a href="#">{{ electronic.name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="col-lg-9">
+            {% if 'electronics'|electronics_product_filter %}
+              <div class="owl-carousel homepage-owl-carousel custom-carousel owl-theme outer-top-xs">
+                {% for product in 'electronics'|electronics_product_filter %}
+                  <div class="item item-carousel">
+                    <div class="products">
+                      <div class="product">
+                        <div class="product-image">
+                          <div class="image">
+                            <a href="/category/{{ product.category }}/{{ product.slug }}/">
+                              <img src="/media/{{ product.id|product_attributes }}" alt="">
+                              <img src="/media/{{ product.id|product_attributes }}"
+                                   alt=""
+                                   class="hover-image">
+                            </a>
+                          </div>
+                          {% if product.tag is not None %}
+                            <div class="tag {{ product.tag.lower }}">
+                              <span>{{ product.tag }}</span>
+                            </div>
                           {% endif %}
-                        {% endfor %}
-
+                        </div>
+                        <!-- /.product-image -->
+                        <div class="product-info text-left">
+                          <h3 class="name">
+                            <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                          </h3>
+                          <div class="">
+                            {% for star in 5|range_filter %}
+                              {% if star < product|product_rating %}
+                                <span class="star_{{ product|product_rating }}">★</span>
+                              {% else %}
+                                <span class="empty-star">★</span>
+                              {% endif %}
+                            {% endfor %}
+                          </div>
+                          <div class="description"></div>
+                          <div class="product-price">
+                            <span class="price">&#8377; {{ product.price }}</span> <span class="price-before-discount">&#8377; 800</span>
+                          </div>
+                          <!-- /.product-price -->
+                        </div>
+                        <!-- /.product-info -->
+                        {% if user.is_authenticated %}
+                          <div class="cart clearfix animate-effect">
+                            <div class="action">
+                              <ul class="list-unstyled">
+                                <li class="add-cart-button btn-group">
+                                  <form action='/add_cart/' method='post'>
+                                    {% csrf_token %}
+                                    <input type='hidden' name='product' value='{{ product.id }}'>
+                                    <input type='hidden' name='user' value='{{ user.id }}'>
+                                    <button type='submit'
+                                            data-toggle="tooltip"
+                                            class="btn btn-primary icon"
+                                            title="Add Cart">
+                                      <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                  </form>
+                                  <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                                </li>
+                                <li class="lnk wishlist">
+                                  <form action='/add_to_wishlist/' method='post'>
+                                    {% csrf_token %}
+                                    <input type='hidden' name='product' value='{{ product.id }}'>
+                                    <input type='hidden' name='user' value='{{ user.id }}'>
+                                    <button type='submit'
+                                            data-toggle="tooltip"
+                                            class="add-to-cart wishlist_css"
+                                            title="Wishlist">
+                                      <i class="icon fa fa-heart"></i>
+                                    </button>
+                                  </form>
+                                </li>
+                                <li class="lnk">
+                                  <a class="add-to-cart"
+                                     href="/category/{{ product.category }}/{{ product.slug }}/"
+                                     title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a>
+                                </li>
+                              </ul>
+                            </div>
+                            <!-- /.action -->
+                          </div>
+                        {% endif %}
+                        <!-- /.cart -->
+                      </div>
+                      <!-- /.product -->
                     </div>
-                    <div class="description"></div>
-                    <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
-                    <!-- /.product-price --> 
-                    
+                    <!-- /.products -->
                   </div>
-                  <!-- /.product-info -->
-                  {% if user.is_authenticated %}
-                  <div class="cart clearfix animate-effect">
-                    <div class="action">
-                      <ul class="list-unstyled">
-                        <li class="add-cart-button btn-group">
-                          <form action='/add_cart/' method='post'>{% csrf_token %}
-                            <input type='hidden' name='product' value='{{ product.id }}'>
-                            <input type='hidden' name='user' value='{{ user.id }}'>
-                            <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                            title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                          </form>
-                          <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
-                        </li>
-                        <li class="lnk wishlist">
-                          <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                          <input type='hidden' name='product' value='{{ product.id }}'>
-                          <input type='hidden' name='user' value='{{ user.id }}'>
-                          <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                            <i class="icon fa fa-heart"></i> </button>
-                          </form>
-                        </li>
-                        <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
-                      </ul>
-                    </div>
-                    <!-- /.action --> 
-                  </div>
-                  {% endif %}
-                  <!-- /.cart --> 
+                {% endfor %}
+              </div>
+            {% else %}
+              <div style="display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          height: 230px;
+                          background-color:white">
+                <div class="inner-container">
+                  <p class="text-center">No Data Found</p>
                 </div>
-                <!-- /.product --> 
-                
               </div>
-              <!-- /.products --> 
-            </div>
-          {% endfor %}
+            {% endif %}
+            <!-- /.item -->
+          </div>
         </div>
-        {% else %}
-            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
-              <div class="inner-container">
-                <p class="text-center">No Data Found</p>
-              </div>
-            </div>
-        {% endif %}
-          <!-- /.item --> 
-        </div>
-        </div>
-        <!-- /.home-owl-carousel --> 
+        <!-- /.home-owl-carousel -->
       </section>
-      <!-- /.section --> 
-      <!-- ============================================== FEATURED PRODUCTS : END ============================================== --> 
+      <!-- /.section -->
+      <!-- ============================================== FEATURED PRODUCTS : END ============================================== -->
       <!-- ============================================== WIDE PRODUCTS ============================================== -->
       <div class="wide-banners outer-bottom-xs">
         <div class="row">
           <div class="col-md-8">
-          {% if wide_banner_large %}
-            <div class="wide-banner1 cnt-strip">
-              <div class="image">
-                <img class="img-responsive"
-                    src="media/{{ wide_banner_large.image }}"
-                    alt=""
-                    style="height: 230px;
-                            width: 100%">
-              </div>
-              <div class="strip strip-text">
-                <div class="strip-inner">
-                  <h2 class="text-right">
-                    {{ wide_banner_large.title }}
-                    <br>
-                    <span class="shopping-needs">{{ wide_banner_large.description }}</span>
-                    <br>
-                    <div class="button-holder fadeInDown-3">
-                      <a href="/category/{{ wide_banner_large.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
-                    </div>
-                  </h2>
+            {% if wide_banner_large %}
+              <div class="wide-banner1 cnt-strip">
+                <div class="image">
+                  <img class="img-responsive"
+                       src="media/{{ wide_banner_large.image }}"
+                       alt=""
+                       style="height: 230px;
+                              width: 100%">
                 </div>
-
+                <div class="strip strip-text">
+                  <div class="strip-inner">
+                    <h2 class="text-right">
+                      {{ wide_banner_large.title }}
+                      <br>
+                      <span class="shopping-needs">{{ wide_banner_large.description }}</span>
+                      <br>
+                      <div class="button-holder fadeInDown-3">
+                        <a href="/category/{{ wide_banner_large.category }}"
+                           class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                      </div>
+                    </h2>
+                  </div>
+                </div>
+                <div class="new-label">
+                  <div class="text">NEW</div>
+                </div>
+                <!-- /.new-label -->
               </div>
-              <div class="new-label">
-                <div class="text">NEW</div>
+            {% else %}
+              <div style="display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          height: 230px;
+                          background-color:white">
+                <div class="inner-container">
+                  <p class="text-center">No Data Found</p>
+                </div>
               </div>
-              <!-- /.new-label -->
-            </div>
-          {% else %}
-            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
-              <div class="inner-container">
-                <p class="text-center">No Data Found</p>
-              </div>
-            </div>
-          {% endif %}
+            {% endif %}
           </div>
           <!-- /.col -->
           <div class="col-md-4">
-          {% if wide_banner_small %}
-            <div class="wide-banner cnt-strip">
-              <div class="image">
-                <img class="img-responsive"
-                    src="media/{{ wide_banner_small.image }}"
-                    alt=""
-                    style="height:230px;
-                            width:100%">
+            {% if wide_banner_small %}
+              <div class="wide-banner cnt-strip">
+                <div class="image">
+                  <img class="img-responsive"
+                       src="media/{{ wide_banner_small.image }}"
+                       alt=""
+                       style="height:230px;
+                              width:100%">
+                </div>
+                <div class="strip strip-text">
+                  <div class="strip-inner">
+                    <h2 class="text-right">
+                      {{ wide_banner_small.title }}
+                      <br>
+                      <span class="shopping-needs">{{ wide_banner_small.description }}</span>
+                      <br>
+                      <div class="button-holder fadeInDown-3">
+                        <a href="/category/{{ wide_banner_small.category }}"
+                           class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
+                      </div>
+                    </h2>
+                  </div>
+                </div>
+                <!-- /.wide-banner -->
               </div>
-              <div class="strip strip-text">
-                <div class="strip-inner">
-                  <h2 class="text-right">
-                    {{ wide_banner_small.title }}
-                    <br>
-                    <span class="shopping-needs">{{ wide_banner_small.description }}</span>
-                    <br>
-                    <div class="button-holder fadeInDown-3">
-                      <a href="/category/{{ wide_banner_small.category }}" class="btn-lg btn btn-uppercase btn-primary shop-now-button">Shop Now</a>
-                    </div>
-                  </h2>
+            {% else %}
+              <div style="display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          height: 230px;
+                          background-color:white">
+                <div class="inner-container">
+                  <p class="text-center">No Data Found</p>
                 </div>
               </div>
-              <!-- /.wide-banner -->
-            </div>
-          {% else %}
-            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
-              <div class="inner-container">
-                <p class="text-center">No Data Found</p>
-              </div>
-            </div>
-          {% endif %}
+            {% endif %}
           </div>
         </div>
       </div>
-      <!-- /.wide-banners --> 
-      <!-- ============================================== WIDE PRODUCTS : END ============================================== --> 
-      
-      
-      
-      <!-- /.sidebar-widget --> 
-      <!-- ============================================== BEST SELLER : END ============================================== --> 
-      
+      <!-- /.wide-banners -->
+      <!-- ============================================== WIDE PRODUCTS : END ============================================== -->
+      <!-- /.sidebar-widget -->
+      <!-- ============================================== BEST SELLER : END ============================================== -->
       <!-- ============================================== BLOG SLIDER ============================================== -->
       <section class="section latest-blog outer-bottom-vs">
         <h3 class="section-title">Latest form Blog</h3>
         <div class="blog-slider-container outer-top-xs">
           {% if blogs %}
-          <div class="owl-carousel blog-slider custom-carousel">
-          {% for blog in blogs %}
-            <div class="item">
-              <div class="blog-post">
-                <div class="blog-post-image">
-                  <div class="image"> <a href="/user/blog/{{ blog.id }}">
-                    <img src="/media/{{ blog.image }}" alt="blog.title image" style="height: 230px;"></a>
+            <div class="owl-carousel blog-slider custom-carousel">
+              {% for blog in blogs %}
+                <div class="item">
+                  <div class="blog-post">
+                    <div class="blog-post-image">
+                      <div class="image">
+                        <a href="/user/blog/{{ blog.id }}">
+                          <img src="/media/{{ blog.image }}"
+                               alt="blog.title image"
+                               style="height: 230px">
+                        </a>
+                      </div>
+                    </div>
+                    <!-- /.blog-post-image -->
+                    <div class="blog-post-info text-left">
+                      <h3 class="name">
+                        <a href="#">{{ blog.title }}</a>
+                      </h3>
+                      <span class="info">By {{ blog.user.first_name }} {{ blog.user.last_name }} &nbsp;|&nbsp; 21 March 2016</span>
+                      <p class="text">{{ blog.description|truncate_description|safe }}</p>
+                    </div>
+                    <!-- /.blog-post-info -->
                   </div>
+                  <!-- /.blog-post -->
                 </div>
-                <!-- /.blog-post-image -->
-                
-                <div class="blog-post-info text-left">
-                  <h3 class="name"><a href="#">{{ blog.title }}</a></h3>
-                  <span class="info">By {{ blog.user.first_name }} {{ blog.user.last_name }} &nbsp;|&nbsp; 21 March 2016 </span>
-                  <p class="text">{{ blog.description|truncate_description|safe }}</p>
-                 </div>
-                <!-- /.blog-post-info --> 
-                
-              </div>
-              <!-- /.blog-post --> 
+                <!-- /.item -->
+              {% endfor %}
             </div>
-            <!-- /.item -->
-          {% endfor %}            
-          </div>
           {% else %}
-            <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
+            <div style="display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 230px;
+                        background-color:white">
               <div class="inner-container">
                 <p class="text-center">No Data Found</p>
               </div>
             </div>
           {% endif %}
-          <!-- /.owl-carousel --> 
+          <!-- /.owl-carousel -->
         </div>
-        <!-- /.blog-slider-container --> 
+        <!-- /.blog-slider-container -->
       </section>
-      <!-- /.section --> 
-      <!-- ============================================== BLOG SLIDER : END ============================================== --> 
-      
+      <!-- /.section -->
+      <!-- ============================================== BLOG SLIDER : END ============================================== -->
       <!-- ============================================== FEATURED PRODUCTS ============================================== -->
       <section class="section new-arriavls">
         <h3 class="section-title">Featured Products</h3>
         {% if latest_products %}
-        <div class="owl-carousel home-owl-carousel custom-carousel owl-theme outer-top-xs">
-          {% for product in latest_products %}
-          <div class="item item-carousel">
-            <div class="products">
-              <div class="product">
-                <div class="product-image">
-                  <div class="image"> 
-                        <a href="/category/{{product.category}}/{{product.slug}}/">
-                           <img src="/media/{{product.id|product_attributes}}" alt=""> 
-                            <img src="/media/{{product.id|product_attributes}}" alt="" class="hover-image">
+          <div class="owl-carousel home-owl-carousel custom-carousel owl-theme outer-top-xs">
+            {% for product in latest_products %}
+              <div class="item item-carousel">
+                <div class="products">
+                  <div class="product">
+                    <div class="product-image">
+                      <div class="image">
+                        <a href="/category/{{ product.category }}/{{ product.slug }}/">
+                          <img src="/media/{{ product.id|product_attributes }}" alt="">
+                          <img src="/media/{{ product.id|product_attributes }}"
+                               alt=""
+                               class="hover-image">
                         </a>
-                        
+                      </div>
+                      <!-- /.image -->
+                      {% if product.tag is not None %}
+                        <div class="tag {{ product.tag.lower }}">
+                          <span>{{ product.tag }}</span>
                         </div>
-                  <!-- /.image -->
-                  {% if product.tag is not None %}
-                  <div class="tag {{ product.tag.lower }}"><span>{{ product.tag }}</span></div>
-                  {% endif %}
-                </div>
-                <!-- /.product-image -->
-                
-                <div class="product-info text-left">
-                  <h3 class="name"><a href="/category/{{product.category}}/{{product.slug}}/">{{product.name}}</a></h3>
-                  <div class="">
-
-                      {% for star in 5|range_filter %}
-                        {% if star < product|product_rating %}
+                      {% endif %}
+                    </div>
+                    <!-- /.product-image -->
+                    <div class="product-info text-left">
+                      <h3 class="name">
+                        <a href="/category/{{ product.category }}/{{ product.slug }}/">{{ product.name }}</a>
+                      </h3>
+                      <div class="">
+                        {% for star in 5|range_filter %}
+                          {% if star < product|product_rating %}
                             <span class="star_{{ product|product_rating }}">★</span>
-                        {% else %}
+                          {% else %}
                             <span class="empty-star">★</span>
-                        {% endif %}
-                      {% endfor %}
-
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="description"></div>
+                      <div class="product-price">
+                        <span class="price">&#8377; {{ product.price }}</span> <span class="price-before-discount">&#8377; 800</span>
+                      </div>
+                      <!-- /.product-price -->
+                    </div>
+                    <!-- /.product-info -->
+                    {% if user.is_authenticated %}
+                      <div class="cart clearfix animate-effect">
+                        <div class="action">
+                          <ul class="list-unstyled">
+                            <li class="add-cart-button btn-group">
+                              <form action='/add_cart/' method='post'>
+                                {% csrf_token %}
+                                <input type='hidden' name='product' value='{{ product.id }}'>
+                                <input type='hidden' name='user' value='{{ user.id }}'>
+                                <button type='submit'
+                                        data-toggle="tooltip"
+                                        class="btn btn-primary icon"
+                                        title="Add Cart">
+                                  <i class="fa fa-shopping-cart"></i>
+                                </button>
+                              </form>
+                              <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
+                            </li>
+                            <li class="lnk wishlist">
+                              <form action='/add_to_wishlist/' method='post'>
+                                {% csrf_token %}
+                                <input type='hidden' name='product' value='{{ product.id }}'>
+                                <input type='hidden' name='user' value='{{ user.id }}'>
+                                <button type='submit'
+                                        data-toggle="tooltip"
+                                        class="add-to-cart wishlist_css"
+                                        title="Wishlist">
+                                  <i class="icon fa fa-heart"></i>
+                                </button>
+                              </form>
+                            </li>
+                            <li class="lnk">
+                              <a class="add-to-cart"
+                                 href="/category/{{ product.category }}/{{ product.slug }}/"
+                                 title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a>
+                            </li>
+                          </ul>
+                        </div>
+                        <!-- /.action -->
+                      </div>
+                    {% endif %}
+                    <!-- /.cart -->
                   </div>
-                  <div class="description"></div>
-                  <div class="product-price"> <span class="price"> ${{product.price}} </span> <span class="price-before-discount">$ 800</span> </div>
-                  <!-- /.product-price --> 
-                  
+                  <!-- /.product -->
                 </div>
-                <!-- /.product-info -->
-                {% if user.is_authenticated %}
-                <div class="cart clearfix animate-effect">
-                  <div class="action">
-                    <ul class="list-unstyled">
-                      <li class="add-cart-button btn-group">
-                        <form action='/add_cart/' method='post'>{% csrf_token %}
-                          <input type='hidden' name='product' value='{{ product.id }}'>
-                          <input type='hidden' name='user' value='{{ user.id }}'>
-                          <button type='submit' data-toggle="tooltip" class="btn btn-primary icon" 
-                          title="Add Cart"> <i class="fa fa-shopping-cart"></i> </button>
-                        </form>
-                        <button class="btn btn-primary cart-btn" type="button">Add to cart</button>
-                      </li>
-                      <li class="lnk wishlist">
-                        <form action='/add_to_wishlist/' method='post'>{% csrf_token %}
-                        <input type='hidden' name='product' value='{{ product.id }}'>
-                        <input type='hidden' name='user' value='{{ user.id }}'>
-                        <button type='submit' data-toggle="tooltip" class="add-to-cart wishlist_css" title="Wishlist">
-                          <i class="icon fa fa-heart"></i> </button>
-                        </form>
-                      </li>
-                      <li class="lnk"> <a class="add-to-cart" href="/category/{{product.category}}/{{product.slug}}/" title="Compare"> <i class="fa fa-signal" aria-hidden="true"></i> </a> </li>
-                    </ul>
-                  </div>
-                  <!-- /.action --> 
-                </div>
-                {% endif %}
-                <!-- /.cart --> 
+                <!-- /.products -->
               </div>
-              <!-- /.product --> 
-              
-            </div>
-            <!-- /.products --> 
+            {% endfor %}
+            <!-- /.item -->
           </div>
-          {% endfor %}
-          <!-- /.item -->
-        </div>
         {% else %}
-                    <div style="display: flex; justify-content: center; align-items: center; height: 230px; background-color:white;">
-              <div class="inner-container">
-                <p class="text-center">No Data Found</p>
-              </div>
+          <div style="display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      height: 230px;
+                      background-color:white">
+            <div class="inner-container">
+              <p class="text-center">No Data Found</p>
             </div>
-          {% endif %}
-        <!-- /.home-owl-carousel --> 
+          </div>
+        {% endif %}
+        <!-- /.home-owl-carousel -->
       </section>
-      <!-- /.section --> 
-      <!-- ============================================== FEATURED PRODUCTS : END ============================================== --> 
-      
+      <!-- /.section -->
+      <!-- ============================================== FEATURED PRODUCTS : END ============================================== -->
     </div>
-    <!-- /.homebanner-holder --> 
-    <!-- ============================================== CONTENT : END ============================================== --> 
-
-</div>
-  <!-- /.row --> 
-
+    <!-- /.homebanner-holder -->
+    <!-- ============================================== CONTENT : END ============================================== -->
+  </div>
+  <!-- /.row -->
   <!-- ============================================== BRANDS CAROUSEL ============================================== -->
   <div id="brands-carousel" class="logo-slider">
     <div class="logo-slider-inner">
-      <div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme">
-        <div class="item m-t-15"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand1.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+      <div id="brand-slider"
+           class="owl-carousel brand-slider custom-carousel owl-theme">
+        <div class="item m-t-15">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand1.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item m-t-10"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand2.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item m-t-10">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand2.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand3.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand3.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand4.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand4.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand5.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand5.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand6.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand6.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand2.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand2.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand4.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand4.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand1.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand1.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
         <!--/.item-->
-        
-        <div class="item"> <a href="#" class="image"> <img data-echo="{% static  'assets/images/brands/brand5.png' %}" src="{% static  'assets/images/blank.gif' %}" alt=""> </a> </div>
-        <!--/.item--> 
+        <div class="item">
+          <a href="#" class="image">
+            <img data-echo="{% static  'assets/images/brands/brand5.png' %}"
+                 src="{% static  'assets/images/blank.gif' %}"
+                 alt="">
+          </a>
+        </div>
+        <!--/.item-->
       </div>
-      <!-- /.owl-carousel #logo-slider --> 
+      <!-- /.owl-carousel #logo-slider -->
     </div>
-    <!-- /.logo-slider-inner --> 
-    
+    <!-- /.logo-slider-inner -->
   </div>
-  <!-- /.logo-slider --> 
-  <!-- ============================================== BRANDS CAROUSEL : END ============================================== --> 
-
-<script>
- function showLoginPopup() {
-    // Code to show your login popup, e.g., using Bootstrap modal or custom JavaScript
-    alert('Please log in to continue.'); // Replace this with your actual login popup code
-  }
-</script>
- 
-
+  <!-- /.logo-slider -->
+  <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+  <script>
+    function showLoginPopup() {
+      // Code to show your login popup, e.g., using Bootstrap modal or custom JavaScript
+      alert('Please log in to continue.'); // Replace this with your actual login popup code
+    }
+  </script>
 {% endblock %}

@@ -51,16 +51,16 @@
 															{% endfor %}
 														</div>
 														<span class="review">( {{ order.cart.product|product_review_users_count }} Reviews )</span>
-														<div class="price">${{ order.cart.product.price }}</div>
+														<div class="price">&#8377; {{ order.cart.product.price }}</div>
 													</td>
 													<td class="col-md-3 col-sm-6 col-xs-6">
 														{{ order.payment_method }}
-														{% if order.order.payment_method == "stripe" %}
-															<p>Payment Method : {{ order.order.payment_method }}</p>
-															<p>Payment Status : {{ order.order.payment_status }}</p>
-														{% else %}
-															<p>Payment Method : Case on Delivery</p>
+														{% if order.order.payment_method == "cash on delivery" or order.order.payment_method == None %}
+															<p>Payment Method : Cash on Delivery</p>
 															<p>Payment Status : pending</p>
+                                                        {% else %}
+                                                            <p>Payment Method : {{ order.order.payment_method }}</p>
+															<p>Payment Status : {{ order.order.payment_status }}</p>
 														{% endif %}
 													</td>
 													<td class="col-md-2 ">
@@ -73,7 +73,7 @@
 																	return / replace
 																</button>
 																<div class="modal fade"
-																	id="exampleModalCenter{{ order.id }}"
+																	id="exampleModalCenter{{ order.pk }}"
 																	tabindex="-1"
 																	role="dialog"
 																	aria-labelledby="exampleModalCenterTitle"
@@ -102,7 +102,7 @@
 																							<option value="Return">Return</option>
 																							<option value="Replace">Replace</option>
 																						</select>
-																						<input type='hidden' name='order' value="{{ order.id }}">
+																						<input type='hidden' name='order' value="{{ order.pk }}">
 																						<input type='hidden' name='requested' value='True'>
 																						<input type='hidden' name='user' value="{{ user.id }}">
 																					</div>
@@ -119,6 +119,8 @@
 																{% if order.id|current_user_return_request == 'Approved' %}
 																	<b>Return Approved</b>
 																{% elif order.id|current_user_return_request == 'Replaced' %}
+                                                                {% elif order.id|check_request_is_cancel %}
+                                                                    {{ order.id|check_request_is_cancel }}
 																{% else %}
 																	In Process : {{ order.id|current_user_return_request }}
 																{% endif %}

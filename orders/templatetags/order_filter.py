@@ -36,9 +36,28 @@ def current_user_replace_request(user):
     try:
         current_time = timezone.now()
         date_before_seven_days = current_time - timedelta(days=7)
-        replace_order =  ReturnAndReplaceOrder.objects.get(action='Replace', user=user, cart=None)
-        if replace_order  and replace_order.order.active and replace_order.created_at >= date_before_seven_days and replace_order.created_at <= current_time:
-            replace_order = replace_order.id
+        replace_orders =  ReturnAndReplaceOrder.objects.filter(action='Replace', user=user, active=True)
+        replace_order =  replace_orders.filter(cart=None)
+        if replace_order.first() and replace_order.first().order.active and replace_order.first().created_at >= date_before_seven_days and replace_order.first().created_at <= current_time:
+            replace_order = replace_order.first().pk
+        else:
+            replace_order = replace_orders.exclude(cancle_reason=None, approved=True)
+            if replace_order.first() and replace_order.first().cancle_reason:
+                replace_order = replace_order.first().pk
+            else:
+                replace_order = None
+    except ReturnAndReplaceOrder.DoesNotExist:
+        replace_order = None
+    return replace_order
+
+@register.filter
+def cancle_current_user_replace_request(cart):
+    """ filter check login user request for return or replace product is cancled """
+    try:
+        cart = Cart.objects.get(id=cart)
+        replace_order =  ReturnAndReplaceOrder.objects.get(action='Replace', user=cart.user.pk, cart=cart.id, active=True )
+        if replace_order:
+            replace_order = replace_order.cancle_reason
         else:
             replace_order = None
     except ReturnAndReplaceOrder.DoesNotExist:
@@ -83,3 +102,15 @@ def user_address_count(user):
     except UserAddress.DoesNotExist:
         count = None
     return count
+
+@register.filter
+def check_request_is_cancel(orderid):
+    try:
+        replace_order = ReturnAndReplaceOrder.objects.get(order=orderid, action="Replace", approved=False)
+        if replace_order.cancle_reason:
+            return replace_order.cancle_reason
+        else:
+            return None
+    except:
+        return None
+

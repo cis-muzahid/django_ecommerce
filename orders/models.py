@@ -49,8 +49,20 @@ class ReturnAndReplaceOrder(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True,blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
+    cancle_reason = models.CharField(max_length=255, null=True)
     # tracking_number = models.CharField(max_length=255, default=None, null=True)
 
 
     def __str__(self):
         return f"{self.user.email} : {self.order.id} - {self.action}"
+
+
+class CartOrderItem(models.Model):
+    """ Model class for storing cart items if user choose stripe payment """
+
+    active = models.BooleanField(default=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Order #{self.pk} - {self.order.user.email}"

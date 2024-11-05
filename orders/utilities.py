@@ -1,11 +1,19 @@
 from cart.models import Cart
-from .models import OrderItem
-from users.models import CustomUser, UserAddress
+from .models import OrderItem, CartOrderItem
+from users.models import CustomUser, UserAddress, Vendor
 from django.conf import settings
 from random import randint
 import http.client
 from datetime import date
 import json
+import time
+import paypalrestsdk
+
+paypalrestsdk.configure({
+    "mode": settings.PAYPAL_MODE,
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_SECRET,
+})
 
 def check_default_address(user):
     """ function to check login user default address """
@@ -19,9 +27,29 @@ def order_cart_item(order, user):
     user = CustomUser.objects.get(id=user)
     carts = Cart.objects.filter(user=user, active=True)
     for cart in carts:
-        OrderItem.objects.create(order=order, cart=cart)
-        cart.active = False
+        if not CartOrderItem.objects.filter(order=order, cart=cart).exists():
+            OrderItem.objects.create(order=order, cart=cart)
+            cart.active = False
+            cart.save()
+
+def stripe_cart_item(order, user):
+    """ function to create cart order items when user choose stripe for payment """
+    user = CustomUser.objects.get(id=user)
+    carts = Cart.objects.filter(user=user, active=True)
+    for cart in carts:
+        if not CartOrderItem.objects.filter(order=order, cart=cart).exists():
+            CartOrderItem.objects.create(order=order, cart=cart).save()
+
+
+def create_order_item(order):
+    """ function to create order items after successful payment from stripe """
+    carts = CartOrderItem.objects.filter(order=order, active=True)
+    for cart in carts:
+        if not OrderItem.objects.filter(order=order, cart=cart.cart).exists():
+            OrderItem.objects.create(order=order, cart=cart.cart)
+        cart.active = cart.cart.active = False
         cart.save()
+        cart.cart.save()
 
 def current_user_cart(user):
     """ function to fetch all carts of login user """
@@ -95,3 +123,58 @@ def fetch_user_address(user):
     except:
         addresses = None
     return addresses
+
+def process_payment(order):
+    order_items = OrderItem.objects.filter(order=order)
+    for order_item in order_items:
+        vendor = order_item.cart.product.user
+        vendor_user = Vendor.objects.filter(user=vendor).first()
+        if not vendor_user:
+            vendor = Vendor.objects.create(user=vendor, account_balance = order_item.cart.product.price)
+            vendor.save()
+        else:
+            vendor_user.account_balance += order_item.cart.product.price
+            vendor_user.save()
+
+def send_payment_to_vendor(amount, email):
+    try:
+        payout = paypalrestsdk.Payout({
+            "sender_batch_header": {
+                "sender_batch_id": "batch_" + str(int(time.time())),
+                "email_subject": "You have a payment"
+            },
+            "items": [{
+                "recipient_type": "EMAIL",
+                "amount": {
+                    "value": int(float(amount)*100),
+                    "currency": "USD"
+                },
+                "receiver": email,
+                "note": "Thank you.",
+                "sender_item_id": "item_1"
+            }]
+        })
+        
+        if payout.create(sync_mode=True):
+            print("Payout created successfully")
+            return payout
+        else:
+            print("Failed to create payout")
+            print(payout.error)
+            return None
+
+    except paypalrestsdk.ResourceNotFound as error:
+        print("ResourceNotFound Error: ", error)
+    except Exception as e:
+        print("An error occurred: ", str(e))
+
+def retrive_address(address):
+    address_parts = address.split(',')
+    address = {
+        'line1': address_parts[0].strip(),
+        'line2': address_parts[1].strip() if len(address_parts) > 1 else '',
+        'city': address_parts[2].strip() if len(address_parts) > 2 else '',
+        'postal_code': address_parts[3].strip() if len(address_parts) > 3 else '',
+        'country': address_parts[4].strip() if len(address_parts) > 4 else ''
+    }
+    return address

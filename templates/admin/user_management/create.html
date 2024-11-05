@@ -24,31 +24,27 @@
 						<div class="card-body">
 							<div class="form-group">
 								<label for="email">Email address</label>
-								<input type="email" class="form-control" name="email" id="exampleInputEmail1" placeholder="Enter email">
-							</div>
-							<div class="form-group">
-								<label for="username">Username</label>
-								<input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
+								<input type="email" class="form-control" name="email" id="exampleInputEmail1" placeholder="Enter email" required>
 							</div>
 							<div class="form-group">
 								<label for="firstname">First Name</label>
-								<input type="text" class="form-control" name="first_name" id="fname" placeholder="Enter first name">
+								<input type="text" class="form-control" name="first_name" id="fname" placeholder="Enter first name" required>
 							</div>
 							<div class="form-group">
 								<label for="lastname">Last Name</label>
-								<input type="text" class="form-control" name="last_name" id="lname" placeholder="Enter last name">
+								<input type="text" class="form-control" name="last_name" id="lname" placeholder="Enter last name" required>
 							</div>
 							<div class="form-group">
 								<label for="password">Password</label>
-								<input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
+								<input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password" required>
 							</div>
 							<div class="form-group">
 								<label for="confirm_password">Confirm Password</label>
-								<input type="password" class="form-control" name="cnf_password" id="confirm_password" placeholder="Password">
+								<input type="password" class="form-control" name="cnf_password" id="confirm_password" placeholder="Password" required>
 							</div>
 							<div class="form-group">
 								<label for="user_role">Role:</label>
-								<select class="form-control" name="user_role" id="user_role">
+								<select class="form-control" name="user_role" id="user_role" required>
 									<option value="">Select a role</option>
 									{% for role in roles %}
 										<option value="{{ role.id }}">{{ role.name }}</option>

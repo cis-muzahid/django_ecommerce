@@ -35,114 +35,132 @@
                   <div class="panel-body">
                     <div class="row">
                       <!-- already-registered-login -->
-                      <div class="col-md-6 col-sm-6 already-registered-login">
-                        <div class="form-group">
-                          <h4 class="checkout-subtitle">User Profile</h4>
-                          <label class="info-title" for="username">Username:</label>
-                          <input type="text" class="form-control unicase-form-control text-input" id="username" name="username" value="{{ user.username }}" readonly>
+                      <div class="col-md-12 col-sm-6 already-registered-login">
+                        <div class="form-group row image-responsive text-center">
+                          {% if user.user_image %}
+                            <img src="/media/{{ user.user_image }}" class="img-thumbnail">
+                          {% else %}
+                            <img src="/static/assets/user.png" class="img-thumbnail" width='200'>
+                          {% endif %}
+                        </div>
+                        <div class="form-group row">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">Username : </label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control unicase-form-control text-input" id="username" name="username" value="{{ user.username }}" readonly>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">First Name : </label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control unicase-form-control text-input" id="first_name" name="first_name" value="{{ user.first_name }}" readonly>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name : </label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control unicase-form-control text-input" id="last_name" name="last_name" value="{{ user.last_name }}" readonly>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">Email : </label>
+                          <div class="col-sm-10">
+                            <input type="email" class="form-control unicase-form-control text-input" id="email" name="email" value="{{ user.email }}" readonly>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">Mobile Number : </label>
+                          <div class="col-sm-10">
+                            <input type="tel" class="form-control unicase-form-control text-input" id="mobile_no" name="mobile_no" value="{{ user.mobile_no }}" readonly>
+                          </div>
                         </div>
                         <div class="form-group">
-                          <label class="info-title" for="first_name">First Name:</label>
-                          <input type="text" class="form-control unicase-form-control text-input" id="first_name" name="first_name" value="{{ user.first_name }}" readonly>
-                        </div>
-                        <div class="form-group">
-                          <label class="info-title" for="last_name">Last Name:</label>
-                          <input type="text" class="form-control unicase-form-control text-input" id="last_name" name="last_name" value="{{ user.last_name }}" readonly>
-                        </div>
-                        <div class="form-group">
-                          <label class="info-title" for="email">Email:</label>
-                          <input type="email" class="form-control unicase-form-control text-input" id="email" name="email" value="{{ user.email }}" readonly>
-                        </div>
-                        <div class="form-group">
-                          <label class="info-title" for="mobile_no">Mobile Number:</label>
-                          <input type="tel" class="form-control unicase-form-control text-input" id="mobile_no" name="mobile_no" value="{{ user.mobile_no }}" readonly>
-                        </div>
-                        <div class="form-group">
-                          <label class="info-title" for="address">Addresses: </label>
-                          {% for address in addresses %}
-                            <div class="address-container form-control unicase-form-control text-input" style='margin-top: 10px;'>
-                              <span class="address-text" id="address">{% if address.is_default %}
-                              <b>Default : </b>
-                              {% endif %}
-                              {{ address }}
-                              </span>
-                              <button type="button" class="btn-link" data-toggle="modal" 
-                                data-target="#edit_address_{{ address.id }}" style='margin-right: 10px'><i class='fa fa-pencil text-success fa-lg'></i></button>
-                              <form action='/delete_address/' method='post'>{% csrf_token %}
-                                <input type='hidden' name='address' value='{{ address.id }}'>
-                                <button type='submit' class="btn-link"><i class="fa fa-trash text-danger fa-lg"></i></button>
-                              </form>
-                            </div>
-                            <!-- Modal -->
-                            <div class="modal fade" id="edit_address_{{ address.id }}" tabindex="-1" role="dialog" aria-labelledby="editAddressTitle" aria-hidden="true">
-                              <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h4 class="modal-title text-center" id="exampleModalLongTitle">Update Your Adress</h4>
-                                  </div>
-                                  <form action='/update_address/' method='post'>{% csrf_token %}
-                                  <div class="modal-body">
-                                    <label class="info-title" for="street">
-                                      Street <span>*</span>
-                                    </label>
-                                    <input type="text"
-                                            class="form-control unicase-form-control text-input"
-                                            id="street"
-                                            name="street"
-                                            value='{{ address.street }}'
-                                            required>
-                                    <label class="info-title" for="city">
-                                      City <span>*</span>
-                                    </label>
-                                    <input type="text"
-                                            class="form-control unicase-form-control text-input"
-                                            id="city"
-                                            name="city"
-                                            value='{{ address.city }}'
-                                            required>
-                                    <label class="info-title" for="state">
-                                      State <span>*</span>
-                                    </label>
-                                    <input type="text"
-                                            class="form-control unicase-form-control text-input"
-                                            id="state"
-                                            name="state"
-                                            value='{{ address.state }}'
-                                            required>
-                                    <label class="info-title" for="postal_code">
-                                      Postal Code <span>*</span>
-                                    </label>
-                                    <input type="text"
-                                            class="form-control unicase-form-control text-input"
-                                            id="postal_code"
-                                            name="postal_code"
-                                            value='{{ address.postal_code }}'
-                                            required>
-                                    <label class="info-title" for="country">
-                                      Country <span>*</span>
-                                    </label>
-                                    <input type="text"
-                                            class="form-control unicase-form-control text-input"
-                                            id="country"
-                                            name="country"
-                                            value='{{ address.country }}'
-                                            required>
+                          <label class="col-sm-2 col-form-label" for="address">Addresses: </label>
+                          <div class="col-sm-10">
+                            {% for address in addresses %}
+                              <div class="address-container form-control unicase-form-control text-input" style='margin-top: 10px;'>
+                                <span class="address-text" id="address">{% if address.is_default %}
+                                <b>Default : </b>
+                                {% endif %}
+                                {{ address }}
+                                </span>
+                                <button type="button" class="btn-link" data-toggle="modal" 
+                                  data-target="#edit_address_{{ address.id }}" style='margin-right: 10px'><i class='fa fa-pencil text-success fa-lg'></i></button>
+                                <form action='/delete_address/' method='post'>{% csrf_token %}
+                                  <input type='hidden' name='address' value='{{ address.id }}'>
+                                  <button type='submit' class="btn-link"><i class="fa fa-trash text-danger fa-lg"></i></button>
+                                </form>
+                              </div>
+                              <!-- Modal -->
+                              <div class="modal fade" id="edit_address_{{ address.id }}" tabindex="-1" role="dialog" aria-labelledby="editAddressTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title text-center" id="exampleModalLongTitle">Update Your Adress</h4>
+                                    </div>
+                                    <form action='/update_address/' method='post'>{% csrf_token %}
+                                    <div class="modal-body">
+                                      <label class="info-title" for="street">
+                                        Street <span>*</span>
+                                      </label>
+                                      <input type="text"
+                                              class="form-control unicase-form-control text-input"
+                                              id="street"
+                                              name="street"
+                                              value='{{ address.street }}'
+                                              required>
+                                      <label class="info-title" for="city">
+                                        City <span>*</span>
+                                      </label>
+                                      <input type="text"
+                                              class="form-control unicase-form-control text-input"
+                                              id="city"
+                                              name="city"
+                                              value='{{ address.city }}'
+                                              required>
+                                      <label class="info-title" for="state">
+                                        State <span>*</span>
+                                      </label>
+                                      <input type="text"
+                                              class="form-control unicase-form-control text-input"
+                                              id="state"
+                                              name="state"
+                                              value='{{ address.state }}'
+                                              required>
+                                      <label class="info-title" for="postal_code">
+                                        Postal Code <span>*</span>
+                                      </label>
+                                      <input type="text"
+                                              class="form-control unicase-form-control text-input"
+                                              id="postal_code"
+                                              name="postal_code"
+                                              value='{{ address.postal_code }}'
+                                              required>
+                                      <label class="info-title" for="country">
+                                        Country <span>*</span>
+                                      </label>
+                                      <input type="text"
+                                              class="form-control unicase-form-control text-input"
+                                              id="country"
+                                              name="country"
+                                              value='{{ address.country }}'
+                                              required>
 
-                                    <label>Do you want to add this addess as default address?</label>
-                                    <br>
-                                    Yes<input type="radio" name="is_default" value="True" required>
-                                    No<input type="radio" name="is_default" value="False">
-                                    <input type='hidden' name='address' value='{{ address.id }}'>
+                                      <label>Do you want to add this addess as default address?</label>
+                                      <br>
+                                      Yes<input type="radio" name="is_default" value="True" required>
+                                      No<input type="radio" name="is_default" value="False">
+                                      <input type='hidden' name='address' value='{{ address.id }}'>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-success">Update</button>
+                                    </div>
+                                    </form>
                                   </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-success">Update</button>
-                                  </div>
-                                  </form>
                                 </div>
                               </div>
-                            </div>
-                          {% endfor %}
+                            {% endfor %}
+                          </div>
                         </div>
                         {% if addresses.count < 5 %}
                           <button type="button" data-toggle="modal" data-target="#New_address" class="btn btn-info" id="add_new_address_btn">Add New Address</button>
@@ -238,7 +256,7 @@
                               <div class="modal-header">
                                 <h4 class="modal-title text-center" id="exampleModalLongTitle">Update Your Adress</h4>
                               </div>
-                              <form action="/user_profile/" method="post" id="profile-update-form">
+                              <form action="/user_profile/" method="post" id="profile-update-form" enctype="multipart/form-data">
                                 <div class="modal-body">
                                 {% csrf_token %}
                                 <div class="form-group">
@@ -279,6 +297,14 @@
                                           name="mobile_no"
                                           value='{{ user.mobile_no }}'
                                           required>
+                                  <label class="info-title" for="profile picture">
+                                    profile picture <span>*</span>
+                                  </label>
+                                  <input type="file"
+                                          class="form-control unicase-form-control text-input"
+                                          id="user_image"
+                                          name="user_image"
+                                          value='{{ user.user_image }}'>
                                   <input type='hidden' name='password' value='{{ user.password }}'>
                                   <input type='hidden' name='email' value='{{ user.email }}'>
                                   <input type='hidden' name='user_role' value='{{ user|check_user_role }}'>

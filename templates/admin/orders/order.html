@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-<div class='container'>
+<div class='container mb-5'>
     <div class='row categorie_main'>
     <div class="col-12 card">
         <div class="card-header"> 
@@ -40,12 +40,10 @@
                                             <i class='fa fa-pencil text-success'></i>
                                         </a>
                                     </span> -->
-                                    <td class="col-md-1 close-btn">
-                                        <form method='post' action='/order/cancel/'>{% csrf_token %}
+                                        <form method='post' action='/delete_order/'>{% csrf_token %}
                                             <input type='hidden' name='order' value='{{ order.id }}'>
                                             <button type="submit" class="btn btn-link"><i class="fa fa-times" style='color:#ff7878;'></i></button>
                                         </form>
-                                    </td>
                                 </div>
                             </td>
                         </tr>

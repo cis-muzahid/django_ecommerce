@@ -12,26 +12,18 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 
 # from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(os.path.join(BASE_DIR, '.env'))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_KEY", None)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
-
+# SECRET_KEY= 'django-insecure-z1e6vv%$*po+)*vpn$ox_k#3^a9akgztf6z(a8sgv8wvdi7ob^'
 
 # Application definition
 
@@ -49,6 +41,8 @@ INSTALLED_APPS = [
     'orders',
     'corsheaders',
     'blog',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +62,7 @@ TEMPLATES = [
 # region
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, '../templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,16 +82,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "ecom",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-    }
-}
+
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -144,26 +129,35 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, '../static/'),
 ]
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/assets')
+STATIC_ROOT = os.path.join(BASE_DIR, '../static/assets')
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
-# Stripe
-STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
-BACKEND_DOMAIN = os.environ.get("BACKEND_DOMAIN")
-PAYMENT_SUCCESS_URL = os.environ.get("PAYMENT_SUCCESS_URL")
-PAYMENT_CANCEL_URL = os.environ.get("PAYMENT_CANCEL_URL")
-PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
-PAYPAL_SECRET = os.environ.get('PAYPAL_SECRET')
-TRACKING_KEY = os.environ.get("TRACKING_SECRET")
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source'],
+        ],
+        'extraPlugins': ','.join([
+            'codesnippet',
+            'image2',
+        ]),
+    }
+}
