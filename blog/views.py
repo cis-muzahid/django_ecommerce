@@ -12,11 +12,13 @@ class BlogView(View):
         """ Admin blogs view """
         blogs = Blog.objects.filter(active=True)
         blogs = pagination(blogs, request.GET.get("page"))
+        form = BlogForm(request.POST, request.FILES)
         categories = BlogCategory.objects.filter(active=True)
-        return render(request, "admin/blog/blog.html", {'blogs': blogs, 'categories': categories })
+        return render(request, "admin/blog/blog.html", {'blogs': blogs, 'categories': categories, 'form': form })
 
     def post(self, request):
         """ Admin create and update view for blog """
+        breakpoint()
         if request.POST.get("blog"):
             action = "updat"
             blog = Blog.objects.get(id=request.POST.get("blog"))
@@ -39,6 +41,28 @@ class BlogView(View):
         
         return render(request, "admin/blog/blog.html", {'blogs': blogs, 'categories': categories})
     
+
+class CreateBlog(View):
+    def get(self, request):
+        form = BlogForm(request.POST, request.FILES)
+        categories = BlogCategory.objects.filter(active=True)
+        return render(request, "admin/blog/blogcreate.html", {'form': form, 'categories': categories })
+
+    def post(self, request):
+        form = BlogForm(request.POST, request.FILES)
+        blogs = Blog.objects.filter(active=True)
+        categories = BlogCategory.objects.filter(active=True)
+        try: 
+            if form.is_valid():
+                form.save()
+                messages.success(request, f" Blog added successfully.")
+                return redirect('admin_blog_view')
+            else:
+                messages.error(request, f"An error occurred while adding blog : ", form.errors)
+        except Exception as e:
+            messages.error(request, f"An error occurred while adding blog : ", e)
+        return render(request, "admin/blog/blog.html", {'blogs': blogs, 'categories': categories})
+
 class BlogDeleteView(View):
     def post(self, request):
         """ Blog Delete View """

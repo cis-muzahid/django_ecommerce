@@ -22,7 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 paypalrestsdk.configure({
-    "mode": "sandbox",  # Change to "live" for production
+    "mode": settings.PAYPAL_MODE,
     "client_id": settings.PAYPAL_CLIENT_ID,
     "client_secret": settings.PAYPAL_SECRET,
 })

@@ -14,4 +14,5 @@ urlpatterns = [
     path('user/comment/delete/', DeleteCommentView.as_view(), name='delete_comment'),
     path('blog/types/', BlogCategoryView.as_view(), name='blog_categories'),
     path('blog/types/delete/', DeleteBlogCategory.as_view(), name='delete_blog_categories'),
+    path('createblog', CreateBlog.as_view(), name='create_blog_categories'),
 ]
