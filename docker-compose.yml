@@ -4,7 +4,7 @@ services:
   web:
     build: .
     container_name: django_web
-    command: bash -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 project_name.wsgi:application"
+    command: bash -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 ecom.wsgi:application"
     ports:
       - "8000:8000"
     volumes:

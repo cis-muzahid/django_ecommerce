@@ -17,5 +17,5 @@ COPY . .
 EXPOSE 8000
 
 # Run migrations and start Gunicorn server
-CMD ["bash", "-c", "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 project_name.wsgi:application"]
+CMD ["bash", "-c", "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 ecom.wsgi:application"]
 
