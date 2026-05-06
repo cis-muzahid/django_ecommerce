@@ -7,16 +7,23 @@ __pycache__/
 
 # Environment variables file
 .env
+.env.*
+!.env.example
 
 # Django development and runtime files
 *.log
 *.pot
 *.pyc
 *.pyo
+db.sqlite3
+db.sqlite3-journal
 
 
 # Virtual environment
 venv/
+vevn
+.venv/
+env/
 
 # Temporary files
 *.pyc
@@ -28,3 +35,12 @@ venv/
 # Site-specific configurations
 local_settings.py
 *venv
+
+# static files
+staticfiles/
+
+# Uploaded media files (runtime-generated; never commit)
+media/
+
+# Seed assets are committed to git — do NOT ignore them
+!seed_assets/

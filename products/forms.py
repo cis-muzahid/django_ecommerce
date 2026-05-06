@@ -30,16 +30,16 @@ class ProductAttributeForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'value': forms.TextInput(attrs={'class': 'form-control'}),
-            'image': forms.ImageField(),
+            'product_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'out_of_stoke': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_display': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
-    
+
     def __init__(self, *args, **kwargs):
         """Init method for overriding fields objects."""
         product = kwargs.pop('product', None)
         super(ProductAttributeForm, self).__init__(*args, **kwargs)
-        
+
         self.fields['product'].initial = product
         self.fields['product'].widget = forms.HiddenInput()
 
@@ -57,7 +57,7 @@ class ProductSpecificationForm(forms.ModelForm):
         """Init method for overriding fields objects."""
         product = kwargs.pop('product', None)
         super(ProductSpecificationForm, self).__init__(*args, **kwargs)
-        
+
         self.fields['product'].initial = product
         self.fields['product'].widget = forms.HiddenInput()
 
