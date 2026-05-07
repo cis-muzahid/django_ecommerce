@@ -1,12 +1,23 @@
 version: '3'
 
 services:
-  web:
+  backend:
     build: .
-    container_name: django_web
+    container_name: django_backend
     command: bash -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 ecom.wsgi:application"
     ports:
       - "8000:8000"
     volumes:
       - .:/app
 
+  frontend:
+    build: ../frontend
+    container_name: react_frontend
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend

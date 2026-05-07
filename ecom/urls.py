@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users import views
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 # urlpatterns = [
 #     path('admin/', admin.site.urls),
 # ]
@@ -36,6 +37,20 @@ urlpatterns = [
     path('', include('cart.urls')),
     path('', include('orders.urls')),
     path('', include('blog.urls')),
+    
+    # API URLs
+    path('api/v1/', include('users.api_urls')),
+    path('api/v1/', include('products.api_urls')),
+    path('api/v1/', include('cart.api_urls')),
+    path('api/v1/', include('orders.api_urls')),
+    path('api/v1/', include('home.api_urls')),
+    path('api/v1/', include('blog.api_urls')),
+    path('api/v1/', include('category.api_urls')),
+    
+    # API Documentation
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ] 
 
 if settings.DEBUG:

@@ -42,3 +42,8 @@ django-cors-headers
 Django
 stripe
 paypalrestsdk==1.13.3
+djangorestframework
+djangorestframework-simplejwt
+django-filter
+drf-spectacular
+drf-nested-routers
