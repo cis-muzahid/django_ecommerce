@@ -180,6 +180,8 @@ class PaymentIntentSerializer(serializers.Serializer):
     """Serializer for payment intent creation"""
     payment_method = serializers.CharField(max_length=50)
     address_id = serializers.IntegerField(required=False)
+    order_id = serializers.IntegerField(required=False)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
 
 
 class OrderTrackingSerializer(serializers.Serializer):

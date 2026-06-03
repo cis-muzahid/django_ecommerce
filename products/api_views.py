@@ -58,6 +58,25 @@ class CategoryViewSet(ModelViewSet):
         subcategories = Category.objects.filter(parent_category=category, is_delete=False)
         serializer = self.get_serializer(subcategories, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def tree(self, request):
+        """Get all active parent categories with nested subcategories."""
+        def build_category_tree(category):
+            children = Category.objects.filter(parent_category=category, is_delete=False).order_by('name')
+            return {
+                'id': category.id,
+                'name': category.name,
+                'parent_category': None if category.parent_category is None else {
+                    'id': category.parent_category.id,
+                    'name': category.parent_category.name,
+                },
+                'subcategories': [build_category_tree(child) for child in children],
+                'product_count': Product.objects.filter(category=category, is_delete=False).count(),
+            }
+
+        categories = Category.objects.filter(parent_category=None, is_delete=False).order_by('name')
+        return Response([build_category_tree(category) for category in categories])
     
     @action(detail=True, methods=['get'])
     def products(self, request, pk=None):
@@ -227,22 +246,29 @@ class ProductReviewViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return ProductReviewCreateUpdateSerializer
         return ProductReviewSerializer
+
+    def create(self, request, *args, **kwargs):
+        product_id = self.kwargs.get('product_pk')
+        product = get_object_or_404(Product, id=product_id)
+
+        existing_review = ProductReview.objects.filter(
+            product=product, user=request.user
+        ).first()
+
+        if existing_review:
+            return Response(
+                {'error': 'You have already reviewed this product'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(product=product, user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_pk')
         product = get_object_or_404(Product, id=product_id)
-        
-        # Check if user already reviewed this product
-        existing_review = ProductReview.objects.filter(
-            product=product, user=self.request.user
-        ).first()
-        
-        if existing_review:
-            return Response(
-                {'error': 'You have already reviewed this product'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
         serializer.save(product=product, user=self.request.user)
     
     def get_permissions(self):
@@ -273,6 +299,16 @@ class ProductReviewViewSet(ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
         return super().destroy(request, *args, **kwargs)
+
+
+class UserProductReviewsView(APIView):
+    """API view for the current user's product reviews."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        reviews = ProductReview.objects.filter(user=request.user).order_by('-created_at')
+        serializer = ProductReviewSerializer(reviews, many=True, context={'request': request})
+        return Response(serializer.data)
 
 
 class ProductSearchView(APIView):

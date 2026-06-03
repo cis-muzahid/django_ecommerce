@@ -87,8 +87,25 @@ TEMPLATES = [
 # endregion
 
 WSGI_APPLICATION = 'ecom.wsgi.application'
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173",]
+
+# CORS Configuration
+CORS_ALLOW_ALL_ORIGINS = True  # ⚠️ For development only!
+
+# Specific origins for better security
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",      # Local development
+    "http://localhost:3000",      # Alternative port
+    "http://react_frontend:5173", # Docker container
+    "http://127.0.0.1:5173",      # Localhost IP
+]
+
+# For production, override with specific domains
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "https://yourdomain.com",
+        "https://www.yourdomain.com",
+    ]
+    CORS_ALLOW_ALL_ORIGINS = False
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 

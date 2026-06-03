@@ -9,7 +9,7 @@ from .api_views import (
 
 # Create main router
 router = DefaultRouter()
-router.register(r'categories', BlogCategoryViewSet, basename='blog-category')
+router.register(r'blog-categories', BlogCategoryViewSet, basename='blog-category')
 router.register(r'blogs', BlogViewSet, basename='blog')
 
 # Create nested router for blog comments

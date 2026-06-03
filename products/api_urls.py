@@ -4,7 +4,8 @@ from rest_framework_nested import routers
 
 from .api_views import (
     CategoryViewSet, ProductViewSet, ProductAttributeViewSet,
-    ProductSpecificationViewSet, ProductReviewViewSet, ProductSearchView
+    ProductSpecificationViewSet, ProductReviewViewSet, ProductSearchView,
+    UserProductReviewsView
 )
 
 # Create main router
@@ -21,6 +22,7 @@ products_router.register(r'reviews', ProductReviewViewSet, basename='product-rev
 urlpatterns = [
     # Search endpoint
     path('products/search/', ProductSearchView.as_view(), name='product-search'),
+    path('reviews/my/', UserProductReviewsView.as_view(), name='my-product-reviews'),
     
     # Include router URLs
     path('', include(router.urls)),

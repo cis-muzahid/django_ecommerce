@@ -22,11 +22,20 @@ def fetch_category_product(category):
 
 def fetch_categories(category):
     """ fetch all descendants of the given category """
-    categories = Category.objects.filter(parent_category=category.id).values_list('id', flat=True)
-    subcategory = Category.objects.filter(parent_category__in=categories).values_list('id', flat=True)
-    category = Category.objects.filter(id=category.id)
-    categories = subcategory.union(categories).union(category)
-    return categories
+    category_ids = [category.id]
+    pending_ids = [category.id]
+
+    while pending_ids:
+        child_ids = list(
+            Category.objects.filter(
+                parent_category__in=pending_ids,
+                is_delete=False,
+            ).values_list('id', flat=True)
+        )
+        pending_ids = [child_id for child_id in child_ids if child_id not in category_ids]
+        category_ids.extend(pending_ids)
+
+    return Category.objects.filter(id__in=category_ids, is_delete=False)
 
 def hot_deals_product():
     """ fetch all products with hot tag """

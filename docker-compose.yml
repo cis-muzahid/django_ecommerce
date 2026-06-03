@@ -9,15 +9,3 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-
-  frontend:
-    build: ../frontend
-    container_name: react_frontend
-    command: npm run dev -- --host
-    ports:
-      - "5173:5173"
-    volumes:
-      - ../frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend

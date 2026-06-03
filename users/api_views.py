@@ -224,15 +224,18 @@ class RoleViewSet(ModelViewSet):
     """ViewSet for Role management"""
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
     search_fields = ['name']
     
     def get_permissions(self):
-        """Only admin users can manage roles"""
+        """Allow anyone to list roles (for signup), but only admin can create/edit/delete"""
+        if self.action == 'list' or self.action == 'retrieve':
+            return [permissions.AllowAny()]
+        
+        # For create, update, delete - require admin
         if hasattr(self.request.user, 'user_role') and self.request.user.user_role:
             if self.request.user.user_role.name not in ['admin'] and not self.request.user.is_superuser:
                 return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.IsAdminUser()]
 
 
 class PermissionViewSet(ModelViewSet):

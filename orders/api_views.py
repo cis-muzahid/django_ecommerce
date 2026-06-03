@@ -249,17 +249,22 @@ class PaymentView(APIView):
         if serializer.is_valid():
             user = request.user
             payment_method = serializer.validated_data['payment_method']
+            order_id = serializer.validated_data.get('order_id')
             
-            # Get cart items and calculate total
-            cart_items = Cart.objects.filter(user=user, active=True)
-            if not cart_items.exists():
-                return Response({
-                    'error': 'Cart is empty'
-                }, status=status.HTTP_400_BAD_REQUEST)
-            
-            total_amount = sum(
-                item.product.price * item.quantity for item in cart_items
-            )
+            if order_id:
+                order = get_object_or_404(Order, id=order_id, user=user)
+                total_amount = order.total_amount
+            else:
+                # Get cart items and calculate total before an order has been created.
+                cart_items = Cart.objects.filter(user=user, active=True)
+                if not cart_items.exists():
+                    return Response({
+                        'error': 'Cart is empty'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                
+                total_amount = sum(
+                    item.product.price * item.quantity for item in cart_items
+                )
             
             if payment_method == 'stripe':
                 try:
@@ -269,7 +274,8 @@ class PaymentView(APIView):
                         currency='usd',  # You can make this configurable
                         metadata={
                             'user_id': user.id,
-                            'user_email': user.email
+                            'user_email': user.email,
+                            'order_id': order_id or ''
                         }
                     )
                     
