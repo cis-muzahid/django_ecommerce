@@ -1,5 +1,6 @@
 from rest_framework import status, permissions
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -103,15 +104,23 @@ class UserLogoutView(APIView):
 class UserProfileView(APIView):
     """API view for user profile management"""
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     
     def get(self, request):
         """Get user profile"""
-        serializer = UserSerializer(request.user)
+        serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
     
     def put(self, request):
         """Update user profile"""
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        data = request.data.copy()
+        remove_profile_image = str(data.pop('remove_profile_image', '')).lower() in ['true', '1', 'yes']
+
+        if remove_profile_image and request.user.profile_image:
+            request.user.profile_image.delete(save=False)
+            request.user.profile_image = None
+
+        serializer = UserSerializer(request.user, data=data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response({

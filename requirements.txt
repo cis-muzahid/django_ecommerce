@@ -40,7 +40,7 @@ zipp==1.0.0
 python-dotenv
 django-cors-headers
 Django
-stripe
+razorpay>=1.4.0
 paypalrestsdk==1.13.3
 djangorestframework
 djangorestframework-simplejwt

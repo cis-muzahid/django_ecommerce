@@ -223,13 +223,13 @@
                       <br>
                       <h4>Select your account method to continue</h4>
                       <div class="payment-methods">
-                        <label for="stripe-radio">
+                        <label for="razorpay-radio">
                           <input type="radio"
-                                id="stripe-radio"
+                                id="razorpay-radio"
                                 name="payment_method"
-                                value="stripe"
+                                value="razorpay"
                                 checked>
-                          Stripe
+                          Razorpay
                         </label>
                         <label for="paypal-radio">
                           <input type="radio" id="paypal-radio" name="payment_method" value="paypal">
@@ -237,16 +237,15 @@
                         </label>
                         <label for="no-payment-radio">
                           <input type="radio" id="no-payment-radio" name="payment_method" value="none">
-                          Checkout Without Payment
+                          Cash on Delivery
                         </label>
                       </div>
                       <br>
                       <br>
                       <div class="payment-btns-container">
                         <!-- Stripe Payment Button -->
-                        <div class='payment_btn_div stripe-btn' style="display: inline-block;">
-                          <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="{{ publishable_key }}" data-name="Ecommerce payment" data-description="Payment">
-                          </script>
+                        <div class='payment_btn_div razorpay-btn' style="display: inline-block;">
+                          <button type="button" id="razorpay-button" class="btn-checkout btn-upper btn btn-primary">Pay with Razorpay</button>
                         </div>
                         <!-- PayPal Payment Button (Hidden by default) -->
                         <div class="payment_btn_div paypal-btn"
@@ -297,8 +296,109 @@
                                 class='btn-checkout btn-upper btn btn-primary no-payment-btn'
                                 style="display: none;">Cash Payment</button>
                                       </div>
+                        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id" value="">
+                        <input type="hidden" name="razorpay_order_id" id="razorpay_order_id" value="">
+                        <input type="hidden" name="razorpay_signature" id="razorpay_signature" value="">
                       </div>
                     </form>
+                    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                    <script>
+                      document.addEventListener('DOMContentLoaded', function() {
+                        const razorpayRadio = document.getElementById('razorpay-radio');
+                        const paypalRadio = document.getElementById('paypal-radio');
+                        const noPaymentRadio = document.getElementById('no-payment-radio');
+                        const razorpayBtn = document.getElementById('razorpay-button');
+                        const paypalBtn = document.querySelector('.paypal-btn');
+                        const noPaymentBtn = document.querySelector('.no-payment-btn');
+                        const paymentForm = document.querySelector('form[action="/checkout/"]');
+                        const totalAmount = parseFloat(document.querySelector('input[name="total_amount"]').value || '0');
+                        const razorpayPaymentId = document.getElementById('razorpay_payment_id');
+                        const razorpayOrderId = document.getElementById('razorpay_order_id');
+                        const razorpaySignature = document.getElementById('razorpay_signature');
+
+                        function updateButtonVisibility() {
+                          if (razorpayRadio.checked) {
+                            razorpayBtn.style.display = 'inline-block';
+                            paypalBtn.style.display = 'none';
+                            noPaymentBtn.style.display = 'none';
+                          } else if (paypalRadio.checked) {
+                            razorpayBtn.style.display = 'none';
+                            paypalBtn.style.display = 'inline-block';
+                            noPaymentBtn.style.display = 'none';
+                          } else {
+                            razorpayBtn.style.display = 'none';
+                            paypalBtn.style.display = 'none';
+                            noPaymentBtn.style.display = 'block';
+                          }
+                        }
+
+                        function getCookie(name) {
+                          let cookieValue = null;
+                          if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                              const cookie = cookies[i].trim();
+                              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                              }
+                            }
+                          }
+                          return cookieValue;
+                        }
+
+                        razorpayBtn.addEventListener('click', async function(event) {
+                          event.preventDefault();
+                          if (!razorpayRadio.checked) return;
+
+                          const response = await fetch('/api/v1/orders/payment/', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({
+                              payment_method: 'razorpay'
+                            })
+                          });
+
+                          const data = await response.json();
+                          if (!response.ok || !data.razorpay_order_id) {
+                            alert(data.error || 'Unable to create Razorpay order.');
+                            return;
+                          }
+
+                          const options = {
+                            key: data.key_id,
+                            amount: data.amount * 100,
+                            currency: data.currency,
+                            order_id: data.razorpay_order_id,
+                            name: 'Ecommerce payment',
+                            description: 'Complete your purchase',
+                            handler: function(res) {
+                              razorpayPaymentId.value = res.razorpay_payment_id;
+                              razorpayOrderId.value = res.razorpay_order_id;
+                              razorpaySignature.value = res.razorpay_signature;
+                              paymentForm.submit();
+                            },
+                            prefill: {
+                              email: '{{ request.user.email|default:"" }}'
+                            },
+                            theme: {
+                              color: '#007bff'
+                            }
+                          };
+                          const rzp = new Razorpay(options);
+                          rzp.open();
+                        });
+
+                        razorpayRadio.addEventListener('change', updateButtonVisibility);
+                        paypalRadio.addEventListener('change', updateButtonVisibility);
+                        noPaymentRadio.addEventListener('change', updateButtonVisibility);
+                        updateButtonVisibility();
+                      });
+                    </script>
                   </div>
                   </div>
                  

@@ -1,4 +1,4 @@
-import stripe
+import razorpay
 from django.shortcuts import render
 from django.views import View
 from django.conf import settings
@@ -14,7 +14,9 @@ from django.utils import timezone
 import paypalrestsdk
 from django.views.generic.base import TemplateView
 from users.models import UserAddress
-stripe.api_key = settings.STRIPE_SECRET_KEY
+razorpay_client = None
+if settings.RAZORPAY_KEY_ID and settings.RAZORPAY_KEY_SECRET:
+    razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
 # Create your views here.
@@ -24,27 +26,49 @@ class OrderView(View):
         if request.user.id:
             default_address = check_default_address(request.user)
             all_addresses = fetch_user_address(request.user)
-            publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-            return render(request, 'orders/checkout.html',
-                        {'publishable_key': publishable_key, 'default_address': default_address,
-                         'all_addresses': all_addresses})
+            return render(request, 'orders/checkout.html', {
+                'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                'default_address': default_address,
+                'all_addresses': all_addresses,
+            })
         else:
             return redirect('login_user')
 
     def post(self, request, pk=None):
         """ Orders View for create orders """
         payment_intent = ''
-        if request.POST.get('stripeToken'):
-            payment_intent = self.__payment_method(request)
-            payment_intent = stripe.PaymentIntent.retrieve(payment_intent)
+        payment_method = request.POST.get('payment_method')
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
 
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
-            if payment_intent != '' and payment_intent['status'] == 'succeeded':
-                order.payment_method = "stripe"
-                order.payment_id = payment_intent.id
-                order.payment_status = payment_intent['status'] if payment_intent['status'] == 'succeeded' else 'failed'
+            if payment_method == 'razorpay' and razorpay_payment_id and razorpay_order_id and razorpay_signature:
+                order.payment_method = 'razorpay'
+                order.payment_id = razorpay_payment_id
+                try:
+                    if razorpay_client:
+                        razorpay_client.utility.verify_payment_signature({
+                            'razorpay_payment_id': razorpay_payment_id,
+                            'razorpay_order_id': razorpay_order_id,
+                            'razorpay_signature': razorpay_signature,
+                        })
+                        order.payment_status = 'succeeded'
+                    else:
+                        order.payment_status = 'processing'
+                except Exception:
+                    order.payment_status = 'failed'
+            elif payment_method == 'none':
+                order.payment_method = 'none'
+                order.payment_status = 'pending'
+            elif payment_method == 'paypal':
+                order.payment_method = 'paypal'
+                order.payment_status = 'pending'
+            else:
+                order.payment_method = 'none'
+                order.payment_status = 'pending'
             # order.tracking_number = create_order_tracking(order)
             order.save()
             order_cart_item(order, request.user.pk)
@@ -55,40 +79,7 @@ class OrderView(View):
             return render(request, 'orders/checkout.html')
 
     def __payment_method(self, request):
-        """ Create strip payment """
-        token = request.POST.get('stripeToken')
-        source = stripe.Source.create(
-                type='card',
-                token=token
-            )
-
-        customer = None
-        for cus in stripe.Customer.list()['data']:
-            if cus.email==request.user:
-                customer=cus
-                break
-        if customer == None:
-            customer = stripe.Customer.create( email=request.POST.get('stripeEmail'), source=source.id) 
-        try:
-            payment_intent = stripe.PaymentIntent.create(
-                amount=int(float(request.POST['total_amount'])*100),
-                currency='inr',
-                description='Product payment',
-                customer= customer.id,
-                source=source,
-                setup_future_usage='off_session',
-                automatic_payment_methods={ 'enabled': True, 'allow_redirects': 'never' }
-            )
-
-            stripe.PaymentIntent.confirm(
-                payment_intent.id,
-                )
-
-            return payment_intent.id
-
-        except stripe.error.CardError as e:
-            error_msg = e.error.message
-            return render(request, 'orders/checkout.html')
+        return ''
 
 
 class UserAddressView(View):
@@ -191,11 +182,14 @@ class ChangeOrderStatus(View):
         if order != None:
             order.active = False
             order.save()
-            if order.order.payment_status:
-                refund = stripe.Refund.create(
-                    payment_intent=order.order.payment_status,
-                    amount=order.cart.product.price,
+            if order.order.payment_method == 'razorpay' and order.order.payment_id and razorpay_client:
+                try:
+                    razorpay_client.payment.refund(
+                        order.order.payment_id,
+                        {'amount': int(order.cart.product.price * 100)},
                     )
+                except Exception:
+                    pass
             messages.success(request, 'order is cancelled successfully.')
             return redirect('orders_list')
         else:
@@ -229,11 +223,14 @@ class SupplierReturnAndReplaceView(View):
                 return_replace_request.save()
                 return redirect('admin_replace_request_list')
             elif return_replace_request.action == 'Return':
-                if return_replace_request.order.order.payment_status:
-                    stripe.Refund.create(
-                        payment_intent=return_replace_request.order.order.payment_status,
-                        amount=return_replace_request.order.cart.product.price,
+                if return_replace_request.order.order.payment_method == 'razorpay' and return_replace_request.order.order.payment_id and razorpay_client:
+                    try:
+                        razorpay_client.payment.refund(
+                            return_replace_request.order.order.payment_id,
+                            {'amount': int(return_replace_request.order.cart.product.price * 100)},
                         )
+                    except Exception:
+                        pass
                 return redirect('admin_return_request_list')
 
 class AdminOrderView(View):

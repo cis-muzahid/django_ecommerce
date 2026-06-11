@@ -1,6 +1,47 @@
 from cart.models import Cart
-from .models import OrderItem
+from .models import Order, OrderItem
 from users.models import CustomUser, UserAddress
+
+ONLINE_PAYMENT_METHODS = ('razorpay', 'paypal')
+PAID_PAYMENT_STATUSES = ('succeeded', 'authorized', 'processing')
+
+
+def finalize_order_carts(order):
+    """Mark cart items as purchased after successful payment."""
+    if not order.active:
+        order.active = True
+        order.save(update_fields=['active', 'updated_at'])
+
+    for order_item in OrderItem.objects.filter(order=order, active=True).select_related('cart'):
+        cart = order_item.cart
+        if cart.active:
+            cart.active = False
+            cart.save(update_fields=['active'])
+
+
+def cancel_unpaid_order(order):
+    """Cancel a failed/abandoned checkout without removing items from the user's cart."""
+    if order.payment_status in PAID_PAYMENT_STATUSES:
+        return False
+
+    order.status = 'cancelled'
+    order.payment_status = 'failed'
+    order.active = False
+    order.save(update_fields=['status', 'payment_status', 'active', 'updated_at'])
+    OrderItem.objects.filter(order=order).update(active=False)
+    return True
+
+
+def cancel_stale_pending_orders(user):
+    """Cancel older unpaid online-payment orders before starting a new checkout."""
+    pending_orders = Order.objects.filter(
+        user=user,
+        payment_method__in=ONLINE_PAYMENT_METHODS,
+        status__in=['initial', 'in_process'],
+    ).exclude(payment_status__in=PAID_PAYMENT_STATUSES)
+
+    for order in pending_orders:
+        cancel_unpaid_order(order)
 from django.conf import settings
 from random import randint
 import http.client

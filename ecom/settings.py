@@ -185,14 +185,20 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# Stripe
-STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+# Razorpay Payment Gateway
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET')
 BACKEND_DOMAIN = os.environ.get("BACKEND_DOMAIN")
-PAYMENT_SUCCESS_URL = os.environ.get("PAYMENT_SUCCESS_URL")
-PAYMENT_CANCEL_URL = os.environ.get("PAYMENT_CANCEL_URL")
+FRONTEND_URL = os.environ.get("FRONTEND_URL") or os.environ.get("BACKEND_DOMAIN") or "http://localhost:3000"
+PAYMENT_SUCCESS_URL = os.environ.get("PAYMENT_SUCCESS_URL") or f"{FRONTEND_URL}/payment-success/paypal"
+PAYMENT_CANCEL_URL = os.environ.get("PAYMENT_CANCEL_URL") or f"{FRONTEND_URL}/payment-cancel"
 PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
-PAYPAL_SECRET = os.environ.get('PAYPAL_SECRET')
+PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET') or os.environ.get('PAYPAL_SECRET')
+PAYPAL_SECRET = PAYPAL_CLIENT_SECRET  # backward compatibility
+PAYPAL_MODE = os.environ.get('PAYPAL_MODE', 'sandbox')
+PAYPAL_CURRENCY = os.environ.get('PAYPAL_CURRENCY', 'USD')
+PAYPAL_INR_TO_USD_RATE = os.environ.get('PAYPAL_INR_TO_USD_RATE', '83')
+PAYPAL_WEBHOOK_ID = os.environ.get('PAYPAL_WEBHOOK_ID')
 TRACKING_KEY = os.environ.get("TRACKING_SECRET")
 
 # Django REST Framework Configuration

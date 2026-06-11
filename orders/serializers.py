@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from decimal import Decimal
-from .models import Order, OrderItem, ReturnAndReplaceOrder
+from .models import Order, OrderItem, ReturnAndReplaceOrder, PaymentEvent
+from .utilities import cancel_stale_pending_orders, finalize_order_carts, ONLINE_PAYMENT_METHODS
 from cart.models import Cart
 from cart.serializers import CartSerializer
 from users.serializers import UserSerializer, UserAddressSerializer
@@ -77,7 +78,11 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         address_id = validated_data.pop('address_id', None)
-        
+        payment_method = validated_data.get('payment_method', 'none')
+
+        if payment_method in ONLINE_PAYMENT_METHODS:
+            cancel_stale_pending_orders(user)
+
         # Get user's cart items
         cart_items = Cart.objects.filter(user=user, active=True)
         if not cart_items.exists():
@@ -102,20 +107,26 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             if default_address:
                 address_text = f"{default_address.street}, {default_address.city}, {default_address.state}, {default_address.postal_code}, {default_address.country}"
         
+        order_kwargs = dict(validated_data)
+        if payment_method in ONLINE_PAYMENT_METHODS:
+            order_kwargs['payment_status'] = 'pending'
+            order_kwargs['active'] = False
+
         # Create order
         order = Order.objects.create(
             user=user,
             total_amount=total_amount,
             address=address_text,
-            **validated_data
+            **order_kwargs,
         )
         
-        # Create order items and deactivate cart items
+        # Link cart items to the order; only clear cart after payment (or immediately for COD)
         for cart_item in cart_items:
             OrderItem.objects.create(order=order, cart=cart_item)
-            cart_item.active = False
-            cart_item.save()
-        
+
+        if payment_method == 'none':
+            finalize_order_carts(order)
+
         return order
 
 
@@ -206,3 +217,12 @@ class OrderSummarySerializer(serializers.Serializer):
     delivered_orders = serializers.IntegerField()
     cancelled_orders = serializers.IntegerField()
     total_amount_spent = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class PaymentEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentEvent
+        fields = [
+            'id', 'order', 'stripe_event_id', 'event_type', 'payment_intent_id',
+            'payment_status', 'amount', 'currency', 'payload', 'created_at'
+        ]

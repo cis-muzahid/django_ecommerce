@@ -44,6 +44,7 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     mobile_no = models.CharField(max_length=30,blank=True, null=True)
+    profile_image = models.ImageField(upload_to='users/profile/', blank=True, null=True)
     user_role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
 
     objects = UserManager()
@@ -79,4 +80,3 @@ class UserAddress(models.Model):
     def __str__(self):
         return f"{self.street}, {self.city}, {self.state}, {self.postal_code}, {self.country}"
 	
-

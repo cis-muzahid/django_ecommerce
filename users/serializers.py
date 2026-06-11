@@ -51,15 +51,25 @@ class UserSerializer(serializers.ModelSerializer):
     addresses = UserAddressSerializer(many=True, read_only=True)
     user_role = RoleSerializer(read_only=True)
     user_role_id = serializers.IntegerField(write_only=True, required=False)
+    profile_image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = CustomUser
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name', 
-            'mobile_no', 'user_role', 'user_role_id', 'addresses',
-            'is_active', 'date_joined', 'last_login'
+            'mobile_no', 'profile_image', 'profile_image_url', 'user_role',
+            'user_role_id', 'addresses', 'is_active', 'date_joined',
+            'last_login'
         ]
         read_only_fields = ['id', 'username', 'date_joined', 'last_login']
+
+    def get_profile_image_url(self, obj):
+        if obj.profile_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_image.url)
+            return obj.profile_image.url
+        return None
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
