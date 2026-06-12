@@ -111,6 +111,9 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         if payment_method in ONLINE_PAYMENT_METHODS:
             order_kwargs['payment_status'] = 'pending'
             order_kwargs['active'] = False
+        elif payment_method == 'none':
+            # COD: payment not yet collected, will be collected at delivery
+            order_kwargs['payment_status'] = 'cod_pending'
 
         # Create order
         order = Order.objects.create(
@@ -135,14 +138,36 @@ class ReturnAndReplaceOrderSerializer(serializers.ModelSerializer):
     order = OrderItemSerializer(read_only=True)
     user = UserSerializer(read_only=True)
     cart = CartSerializer(read_only=True)
-    
+    payment_method = serializers.SerializerMethodField()
+    payment_status = serializers.SerializerMethodField()
+    order_id = serializers.SerializerMethodField()
+
     class Meta:
         model = ReturnAndReplaceOrder
         fields = [
             'id', 'order', 'requested', 'approved', 'reason', 'action',
-            'created_at', 'updated_at', 'cart', 'user', 'active'
+            'created_at', 'updated_at', 'cart', 'user', 'active',
+            'payment_method', 'payment_status', 'order_id',
         ]
         read_only_fields = ['id', 'user', 'created_at', 'updated_at']
+
+    def get_payment_method(self, obj):
+        try:
+            return obj.order.order.payment_method
+        except Exception:
+            return None
+
+    def get_payment_status(self, obj):
+        try:
+            return obj.order.order.payment_status
+        except Exception:
+            return None
+
+    def get_order_id(self, obj):
+        try:
+            return obj.order.order.id
+        except Exception:
+            return None
 
 
 class ReturnAndReplaceCreateSerializer(serializers.ModelSerializer):

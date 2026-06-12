@@ -201,3 +201,53 @@ def get_checkout_order(paypal_order_id):
     if not response.ok:
         raise PayPalAPIError(_extract_error_message(response), response)
     return response.json()
+
+
+def get_capture_id_from_order(paypal_order_id):
+    """
+    Retrieve the capture ID from a completed PayPal v2 order.
+    The capture ID (not the order ID) is required to issue a refund.
+    Returns the first capture ID found, or None.
+    """
+    order_data = get_checkout_order(paypal_order_id)
+    for unit in order_data.get('purchase_units', []):
+        for capture in unit.get('payments', {}).get('captures', []):
+            capture_id = capture.get('id')
+            if capture_id:
+                return capture_id
+    return None
+
+
+def refund_capture(capture_id, amount=None, currency=None, note=None):
+    """
+    Issue a full or partial refund against a PayPal capture.
+
+    Args:
+        capture_id: The PayPal capture ID (from purchase_units[].payments.captures[].id).
+        amount:     Decimal or float — the refund amount in the PayPal charge currency.
+                    Pass None for a full refund.
+        currency:   The currency code (e.g. 'USD'). Required if amount is provided.
+        note:       Optional note to the buyer visible in their PayPal account.
+
+    Returns:
+        dict: PayPal refund response JSON.
+    """
+    access_token = get_access_token()
+    payload = {}
+    if amount is not None:
+        payload['amount'] = {
+            'value': _format_amount(amount),
+            'currency_code': currency or paypal_currency(),
+        }
+    if note:
+        payload['note_to_payer'] = note[:255]  # PayPal max 255 chars
+
+    response = requests.post(
+        f'{paypal_api_base()}/v2/payments/captures/{capture_id}/refund',
+        headers=_auth_headers(access_token),
+        json=payload,
+        timeout=30,
+    )
+    if not response.ok:
+        raise PayPalAPIError(_extract_error_message(response), response)
+    return response.json()

@@ -3,7 +3,7 @@ from .models import Order, OrderItem
 from users.models import CustomUser, UserAddress
 
 ONLINE_PAYMENT_METHODS = ('razorpay', 'paypal')
-PAID_PAYMENT_STATUSES = ('succeeded', 'authorized', 'processing')
+PAID_PAYMENT_STATUSES = ('succeeded', 'authorized', 'processing', 'cod_collected')
 
 
 def finalize_order_carts(order):

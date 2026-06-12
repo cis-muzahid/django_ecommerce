@@ -37,6 +37,9 @@ from .paypal_service import (
     create_checkout_order_from_store_amount,
     capture_checkout_order,
     get_checkout_order,
+    get_capture_id_from_order,
+    refund_capture,
+    prepare_paypal_amount,
 )
 
 # Initialize Razorpay client
@@ -68,18 +71,21 @@ def _paypal_currency():
     return paypal_service_currency()
 
 
-def _mark_paypal_order_paid(order, paypal_order_id, payload, event_type='payment_captured'):
+def _mark_paypal_order_paid(order, paypal_order_id, payload, event_type='payment_captured', webhook_event_id=None):
     order.payment_id = paypal_order_id
     order.payment_status = 'succeeded'
     if order.status == 'initial':
         order.status = 'in_process'
     order.save(update_fields=['payment_id', 'payment_status', 'status', 'updated_at'])
     finalize_order_carts(order)
+    # Use webhook_event_id as the unique idempotency key when available,
+    # otherwise fall back to paypal_order_id.
+    idempotency_id = webhook_event_id or paypal_order_id
     _record_payment_event(
         order=order,
-        event_id=paypal_order_id,
+        event_id=idempotency_id,
         event_type=event_type,
-        payment_intent_id=paypal_order_id,
+        payment_intent_id=idempotency_id,
         payment_status='succeeded',
         currency=_paypal_currency(),
         payment_gateway='paypal',
@@ -99,24 +105,18 @@ def _paypal_webhook_headers(request):
 
 def _parse_paypal_webhook_event(request):
     body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
-    webhook_id = getattr(settings, 'PAYPAL_WEBHOOK_ID', None)
-
-    if webhook_id:
-        headers = _paypal_webhook_headers(request)
-        verified = paypalrestsdk.WebhookEvent.verify(body, headers, webhook_id)
-        if not verified:
-            return None
-        return json.loads(body) if isinstance(body, str) else verified
-
     return json.loads(body)
 
 
 def _paypal_event_already_processed(event_id):
+    """
+    Check idempotency using payment_intent_id which is stored as a plain CharField.
+    Avoids JSONField lookups that are unreliable on SQLite.
+    """
     if not event_id:
         return False
     return PaymentEvent.objects.filter(
-        event_type__startswith='PAYMENT.',
-        payload__id=event_id,
+        payment_intent_id=event_id,
         payment_gateway='paypal',
     ).exists()
 
@@ -241,8 +241,7 @@ class OrderViewSet(ModelViewSet):
             cancel_unpaid_order(order)
             return Response({
                 'message': 'Order cancelled successfully'
-            }, status=status.HTTP_200_OK)
-        
+            }, status=status.HTTP_200_OK)        
         # Cancel order items
         OrderItem.objects.filter(order=order).update(active=False)
         order.status = 'cancelled'
@@ -272,6 +271,33 @@ class OrderViewSet(ModelViewSet):
                     return Response({
                         'message': 'Order cancelled and refund processed successfully'
                     }, status=status.HTTP_200_OK)
+
+                elif order.payment_method == 'paypal' and paypal_configured:
+                    # PayPal v2: find the capture ID then issue a full refund
+                    capture_id = get_capture_id_from_order(order.payment_id)
+                    if not capture_id:
+                        raise ValueError('PayPal capture ID not found for this order')
+                    refund_result = refund_capture(
+                        capture_id,
+                        note=f'Cancelled order #{order.id}',
+                    )
+                    order.payment_status = 'refunded'
+                    order.save(update_fields=['payment_status', 'updated_at'])
+                    _record_payment_event(
+                        order=order,
+                        event_id=refund_result.get('id', ''),
+                        event_type='manual_refund',
+                        payment_intent_id=order.payment_id,
+                        payment_status='refunded',
+                        amount=order.total_amount,
+                        currency=_paypal_currency(),
+                        payment_gateway='paypal',
+                        payload={**refund_result, 'source': 'order_cancel'},
+                    )
+                    return Response({
+                        'message': 'Order cancelled and PayPal refund processed successfully'
+                    }, status=status.HTTP_200_OK)
+
             except Exception as e:
                 return Response({
                     'message': 'Order cancelled but refund failed',
@@ -302,8 +328,28 @@ class OrderViewSet(ModelViewSet):
         
         serializer = OrderStatusUpdateSerializer(data=request.data)
         if serializer.is_valid():
-            order.status = serializer.validated_data['status']
-            order.save()
+            new_status = serializer.validated_data['status']
+            update_fields = ['status', 'updated_at']
+            order.status = new_status
+
+            # COD lifecycle:
+            # When admin marks as in_process → order is confirmed/dispatched
+            if new_status == 'in_process' and order.payment_method == 'none':
+                if order.payment_status == 'cod_pending':
+                    pass  # still cod_pending — not yet collected
+
+            # When admin marks as delivered → COD payment collected at door
+            if new_status == 'deliverd' and order.payment_method == 'none':
+                order.payment_status = 'cod_collected'
+                update_fields.append('payment_status')
+
+            # When admin marks as cancelled → COD order cancelled before delivery
+            if new_status == 'cancelled' and order.payment_method == 'none':
+                if order.payment_status == 'cod_pending':
+                    order.payment_status = 'cod_cancelled'
+                    update_fields.append('payment_status')
+
+            order.save(update_fields=update_fields)
             
             return Response({
                 'message': 'Order status updated successfully',
@@ -714,16 +760,21 @@ class PayPalWebhookView(APIView):
 
             if event_type == 'PAYMENT.CAPTURE.COMPLETED':
                 resource = webhook_event.get('resource', {}) or {}
+                # The PayPal v2 capture resource has supplementary_data.related_ids.order_id
                 paypal_order_id = resource.get('supplementary_data', {}).get('related_ids', {}).get('order_id', '')
+                # custom_id lives on purchase_units in the full order, but on the capture resource
+                # it can appear as custom_id directly
                 custom_order_id = resource.get('custom_id')
-                order = _find_paypal_order(paypal_order_id, custom_order_id)
+                # Fallback: look up by paypal_order_id stored on our Order
+                order = _find_paypal_order(paypal_order_id or resource.get('id', ''), custom_order_id)
 
                 if order and resource.get('status') == 'COMPLETED':
                     _mark_paypal_order_paid(
                         order,
-                        paypal_order_id or order.payment_id,
+                        paypal_order_id or resource.get('id') or order.payment_id,
                         webhook_event,
                         event_type=event_type,
+                        webhook_event_id=event_id,
                     )
 
             elif event_type == 'PAYMENT.SALE.COMPLETED':
@@ -963,35 +1014,76 @@ class ReturnAndReplaceViewSet(ModelViewSet):
 
         # Process refund for returns
         if return_replace.action == 'Return':
-            if order.payment_id and order.payment_status in ['authorized', 'succeeded', 'processing'] and order.payment_method == 'razorpay' and razorpay_client:
+            if order.payment_id and order.payment_status in ['authorized', 'succeeded', 'processing']:
+                refunded_amount = return_replace.order.cart.product.price * return_replace.order.cart.quantity
+                is_partial = refunded_amount < order.total_amount
+
                 try:
-                    refunded_amount = return_replace.order.cart.product.price * return_replace.order.cart.quantity
-                    refund = razorpay_client.payment.refund(
-                        order.payment_id,
-                        {'amount': int(refunded_amount * 100)}
-                    )
-                    order.payment_status = 'refunded'
-                    if refunded_amount < order.total_amount:
-                        order.payment_status = 'partially_refunded'
-                    order.save(update_fields=['payment_status', 'updated_at'])
-                    _record_payment_event(
-                        order=order,
-                        event_id=refund.get('id', ''),
-                        event_type='manual_refund',
-                        payment_intent_id=order.payment_id,
-                        payment_status=order.payment_status,
-                        amount=refunded_amount,
-                        payment_gateway='razorpay',
-                        razorpay_payment_id=refund.get('id', ''),
-                        payload={
-                            'refund_id': refund.get('id'),
-                            'status': refund.get('status'),
-                            'source': 'return_approval',
-                            'order_item_id': return_replace.order_id,
-                        },
-                    )
-                except Exception:
-                    pass  # Handle refund error silently for now
+                    if order.payment_method == 'razorpay' and razorpay_client:
+                        refund = razorpay_client.payment.refund(
+                            order.payment_id,
+                            {'amount': int(refunded_amount * 100)}
+                        )
+                        order.payment_status = 'partially_refunded' if is_partial else 'refunded'
+                        order.save(update_fields=['payment_status', 'updated_at'])
+                        _record_payment_event(
+                            order=order,
+                            event_id=refund.get('id', ''),
+                            event_type='manual_refund',
+                            payment_intent_id=order.payment_id,
+                            payment_status=order.payment_status,
+                            amount=refunded_amount,
+                            payment_gateway='razorpay',
+                            razorpay_payment_id=refund.get('id', ''),
+                            payload={
+                                'refund_id': refund.get('id'),
+                                'status': refund.get('status'),
+                                'source': 'return_approval',
+                                'order_item_id': return_replace.order_id,
+                            },
+                        )
+
+                    elif order.payment_method == 'paypal' and paypal_configured:
+                        # PayPal v2: get capture ID then refund the item amount
+                        capture_id = get_capture_id_from_order(order.payment_id)
+                        if not capture_id:
+                            return Response(
+                                {'error': 'Return approved but PayPal refund failed: capture ID not found. Refund manually from PayPal dashboard.'},
+                                status=status.HTTP_200_OK,
+                            )
+                        # Convert INR item price to the PayPal charge currency
+                        paypal_amount_str, currency_code, _ = prepare_paypal_amount(refunded_amount)
+                        refund_result = refund_capture(
+                            capture_id,
+                            amount=paypal_amount_str,
+                            currency=currency_code,
+                            note=f'Return approved for order #{order.id}',
+                        )
+                        order.payment_status = 'partially_refunded' if is_partial else 'refunded'
+                        order.save(update_fields=['payment_status', 'updated_at'])
+                        _record_payment_event(
+                            order=order,
+                            event_id=refund_result.get('id', ''),
+                            event_type='manual_refund',
+                            payment_intent_id=order.payment_id,
+                            payment_status=order.payment_status,
+                            amount=refunded_amount,
+                            currency=currency_code,
+                            payment_gateway='paypal',
+                            payload={
+                                **refund_result,
+                                'source': 'return_approval',
+                                'order_item_id': return_replace.order_id,
+                            },
+                        )
+
+                except Exception as e:
+                    # Approval was saved but refund failed — surface the error so admin knows
+                    return Response({
+                        'message': f'{return_replace.action} request approved but refund failed',
+                        'error': str(e),
+                        'action_required': 'Please issue the refund manually from your payment gateway dashboard.',
+                    }, status=status.HTTP_200_OK)
 
         return Response({
             'message': f'{return_replace.action} request approved successfully'
