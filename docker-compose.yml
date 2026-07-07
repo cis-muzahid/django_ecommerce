@@ -1,11 +1,17 @@
-version: '3'
-
 services:
   backend:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
     container_name: django_backend
-    command: bash -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 ecom.wsgi:application"
+
+    command: >
+      bash -c "python manage.py migrate &&
+               gunicorn --bind 0.0.0.0:8000 ecom.wsgi:application"
+
     ports:
       - "8000:8000"
+
     volumes:
-      - .:/app
+      - ./backend:/app
