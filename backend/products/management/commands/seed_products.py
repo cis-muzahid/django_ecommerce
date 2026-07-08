@@ -163,6 +163,36 @@ SEED_PRODUCTS = [
         "category_name": "Toys & Games",
         "slug": "lego-classic-creative-bricks",
     },
+    {
+        "name": "Fresh Organic Apples (1kg)",
+        "description": (
+            "Crisp and juicy organic apples packed fresh for daily snacking "
+            "and healthy meals."
+        ),
+        "price": "4.99",
+        "weight": "1.00",
+        "length": "10.00",
+        "width": "10.00",
+        "height": "10.00",
+        "tag": "apples,organic,fruit,groceries",
+        "category_name": "Fresh Produce",
+        "slug": "fresh-organic-apples-1kg",
+    },
+    {
+        "name": "Classic Peanut Butter 500g",
+        "description": (
+            "Smooth peanut butter made from roasted peanuts with a rich "
+            "and creamy texture for sandwiches and baking."
+        ),
+        "price": "3.49",
+        "weight": "0.50",
+        "length": "8.00",
+        "width": "6.00",
+        "height": "12.00",
+        "tag": "peanut-butter,spread,grocery,food",
+        "category_name": "Snacks & Beverages",
+        "slug": "classic-peanut-butter-500g",
+    },
 ]
 
 
@@ -198,6 +228,7 @@ class Command(BaseCommand):
                 continue
 
             defaults = {
+                "name": data["name"],
                 "description": data["description"],
                 "price": data["price"],
                 "weight": data["weight"],

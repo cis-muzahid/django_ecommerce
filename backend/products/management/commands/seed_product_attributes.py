@@ -281,6 +281,56 @@ SEED_ATTRIBUTES = {
             "is_display": True,
         },
     ],
+    "canon-eos-r6-mark-ii": [
+        {
+            "title": "color",
+            "value": "Black",
+            "image_file": "images.jpeg",
+            "image_dest": "canon-eos-r6-mark-ii-black.jpeg",
+            "out_of_stoke": False,
+            "is_display": True,
+        }
+    ],
+    "organic-green-tea-100g": [
+        {
+            "title": "variant",
+            "value": "Classic",
+            "image_file": "nature.jpg",
+            "image_dest": "organic-green-tea-classic.jpeg",
+            "out_of_stoke": False,
+            "is_display": True,
+        }
+    ],
+    "lego-classic-creative-bricks": [
+        {
+            "title": "color",
+            "value": "Multicolor",
+            "image_file": "images.jpeg",
+            "image_dest": "lego-classic-creative-bricks-multicolor.jpeg",
+            "out_of_stoke": False,
+            "is_display": True,
+        }
+    ],
+    "fresh-organic-apples-1kg": [
+        {
+            "title": "variant",
+            "value": "1kg Bag",
+            "image_file": "dairyegg.jpg",
+            "image_dest": "fresh-organic-apples-1kg.jpg",
+            "out_of_stoke": False,
+            "is_display": True,
+        }
+    ],
+    "classic-peanut-butter-500g": [
+        {
+            "title": "variant",
+            "value": "500g Jar",
+            "image_file": "snack.jpg",
+            "image_dest": "classic-peanut-butter-500g.jpg",
+            "out_of_stoke": False,
+            "is_display": True,
+        }
+    ],
 }
 
 # seed_assets sub-directory that holds product attribute images.
